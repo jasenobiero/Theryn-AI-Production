@@ -1,0 +1,16 @@
+packages:
+  "react-markdown": "Render markdown responses from AI"
+  "remark-gfm": "Github flavored markdown support for tables and formatting"
+  "framer-motion": "Smooth animations, page transitions, and interactive elements"
+
+images:
+  - path: "artifacts/ai-hub/public/images/hero-bg.png"
+    description: "Abstract deep dark background with glowing neon purple and electric cyan gradient meshes, futuristic cyber aesthetic, smooth light leaks"
+    aspect_ratio: "16:9"
+  - path: "artifacts/ai-hub/public/images/agent-bg.png"
+    description: "Dark high-tech circuit board pattern with subtle glowing amethyst nodes, low opacity"
+    aspect_ratio: "16:9"
+
+notes:
+  - The frontend expects the backend to return SSE streams in the format `data: {"content": "..."}` followed by `data: {"done": true}`
+  - We use standard HTML audio elements to play base64 audio returned from ElevenLabs

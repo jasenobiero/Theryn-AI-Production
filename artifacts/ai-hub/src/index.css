@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@500;600;700;800&display=swap');
+@layer theme, base, clerk, components, utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+:root {
+  /* THERYN / command redline */
+  --background: 0 0% 4%;
+  --foreground: 0 0% 94%;
+
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 94%;
+
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 94%;
+
+  --primary: 0 78% 52%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 0 0% 11%;
+  --secondary-foreground: 0 0% 94%;
+
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 58%;
+
+  --accent: 7 71% 64%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 75% 54%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 0 0% 15%;
+  --input: 0 0% 11%;
+  --ring: 0 78% 52%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 94%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 94%;
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 94%;
+  --primary: 0 77% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 11%;
+  --secondary-foreground: 0 0% 94%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 58%;
+  --accent: 7 71% 64%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 75% 54%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 15%;
+  --input: 0 0% 11%;
+  --ring: 0 78% 52%;
+}
+
+@layer base {
+  * { @apply border-border; }
+
+  /* Clerk's development-only badge is useful during setup but should not be
+     part of THERYN's customer-facing authentication surface. */
+  [data-localization-key*="development"],
+  [data-localization-key*="Development"],
+  [class*="developmentMode"],
+  [class*="development-mode"],
+  [data-testid*="development"],
+  [aria-label*="Development mode"] {
+    display: none !important;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(circle at 85% -12%, hsl(0 78% 52% / 0.12), transparent 32rem),
+      radial-gradient(circle at 15% 110%, hsl(8 72% 48% / 0.04), transparent 30rem),
+      linear-gradient(90deg, hsl(0 0% 100% / 0.014) 1px, transparent 1px);
+    background-size: auto, auto, 72px 72px;
+    min-width: 320px;
+  }
+
+  h1, h2, h3, h4, h5, h6 { @apply font-display tracking-tight; }
+  ::selection { background: hsl(var(--primary) / 0.35); color: hsl(var(--foreground)); }
+  button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: 2px solid hsl(var(--ring) / 0.7);
+    outline-offset: 2px;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(0 0% 20%); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 30%); }
+
+@layer utilities {
+  .glass {
+    @apply bg-card/80 backdrop-blur-xl border border-white/8 shadow-[0_18px_50px_-28px_rgba(0,0,0,0.95)];
+  }
+
+  .glass-panel {
+    @apply bg-background/90 backdrop-blur-2xl border-r border-white/5;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white/[0.035] border border-white/[0.08] p-5 shadow-[0_14px_40px_-28px_rgba(0,0,0,0.9)];
+  }
+
+  .page-shell {
+    @apply mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 sm:py-8;
+  }
+
+  .section-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30;
+  }
+
+  .text-glow-red {
+    text-shadow: 0 0 20px hsl(0 84% 50% / 0.5);
+  }
+
+  .box-glow-red {
+    box-shadow: 0 18px 40px -20px hsl(0 77% 52% / 0.6);
+  }
+
+  .font-mono { font-family: 'Space Mono', monospace; }
+
+  .command-rule {
+    background: linear-gradient(90deg, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.15), transparent);
+  }
+
+  .touch-target { min-width: 44px; min-height: 44px; }
+}
+
+@keyframes theryn-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-theryn-rise { animation: theryn-rise .45s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Markdown prose overrides */
+.prose {
+  --tw-prose-body: hsl(var(--foreground));
+  --tw-prose-headings: hsl(var(--foreground));
+  --tw-prose-links: hsl(var(--primary));
+  --tw-prose-bold: hsl(var(--foreground));
+  --tw-prose-code: hsl(0 84% 70%);
+  --tw-prose-pre-bg: hsl(var(--secondary));
+  --tw-prose-pre-code: hsl(var(--foreground));
+}
+.prose pre { @apply rounded-xl border border-white/8; }
+.prose code { @apply px-1.5 py-0.5 rounded bg-white/8 text-sm font-mono; }
+.prose pre code { @apply bg-transparent p-0; }
+
+/* Input autofill fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px hsl(0 0% 8%) inset !important;
+  -webkit-text-fill-color: white !important;
+}

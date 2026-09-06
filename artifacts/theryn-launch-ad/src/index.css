@@ -1,0 +1,79 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --ink: #070908;
+  --ink-soft: #0d100e;
+  --paper: #f4f1ea;
+  --mist: #aab0a8;
+  --line: rgba(244, 241, 234, 0.14);
+  --red: #f42e35;
+  --red-deep: #a71924;
+  --sage: #819b8f;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "DM Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+.video-shell {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: var(--ink);
+}
+.grain {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  opacity: .075;
+  z-index: 20;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  animation: grainShift .22s steps(2) infinite;
+}
+.scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .065;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 5px, rgba(244,241,234,.15) 6px);
+  mix-blend-mode: overlay;
+}
+.font-mono { font-family: var(--font-mono); }
+.hairline { height: 1px; background: var(--line); transform-origin: left; }
+.ui-frame {
+  border: 1px solid rgba(244,241,234,.18);
+  background: rgba(10,12,11,.78);
+  box-shadow: 0 24px 80px rgba(0,0,0,.42), inset 0 0 0 1px rgba(244,241,234,.035);
+}
+.product-shot {
+  border-radius: 1.3vw;
+  overflow: hidden;
+  position: relative;
+  background: #080a09;
+}
+.product-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.product-shot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(130deg, rgba(244,241,234,.12), transparent 25%, transparent 72%, rgba(242,46,54,.08));
+  mix-blend-mode: screen;
+}
+.product-shot .scan { position:absolute; inset:0; background: linear-gradient(transparent 45%, rgba(244,241,234,.16) 50%, transparent 55%); animation: scan 4.6s ease-in-out infinite; opacity: .3; }
+.red-dot { width: .48vw; height: .48vw; min-width: 5px; min-height: 5px; border-radius: 999px; background: var(--red); box-shadow: 0 0 16px rgba(244,46,53,.9); }
+.corner-mark { position: absolute; width: 2.2vw; height: 2.2vw; min-width: 20px; min-height: 20px; border-color: rgba(244,241,234,.55); }
+.corner-mark.tl { top: 3.1vh; left: 3.1vw; border-top: 1px solid; border-left: 1px solid; }
+.corner-mark.br { bottom: 3.1vh; right: 3.1vw; border-bottom: 1px solid; border-right: 1px solid; }
+
+@keyframes grainShift { 0% { transform: translate3d(0,0,0) } 25% { transform: translate3d(2%, -1%,0) } 50% { transform: translate3d(-1%, 2%,0) } 75% { transform: translate3d(1%, 1%,0) } 100% { transform: translate3d(-2%, -1%,0) } }
+@keyframes scan { 0%, 100% { transform: translateY(-85%); } 50% { transform: translateY(85%); } }

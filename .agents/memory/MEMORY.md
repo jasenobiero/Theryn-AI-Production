@@ -1,0 +1,9 @@
+- [Clerk Auth Migration](clerk-auth-migration.md) — Clerk replaces Replit Auth; key patterns: proxy setup, route guard, Tailwind v4 CSS, user field mapping, routing gotchas.
+- [Grok model deprecation](grok-model.md) — grok-3 and grok-4 are deprecated; current working model is x-ai/grok-4.3 via OpenRouter.
+- [Agent chat route](agent-chat-route.md) — Agent chat uses POST /api/agents/:id/chat (not /conversations); auto-creates a conversation.
+- [Expo API URL pattern](expo-api-url.md) — EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN set in dev script; call setBaseUrl in _layout.tsx.
+- [expo-av SDK 54 deprecation](expo-av-deprecated.md) — expo-av deprecated in SDK 54; prefer expo-audio + expo-video for new code.
+- [VitePWA SVG icons](vite-pwa-svg.md) — vite-plugin-pwa accepts SVG icons in manifest with purpose "any maskable"; no PNG conversion needed.
+- [Browser PWA installation](vite-pwa-install.md) — address-bar install controls need manifest, service worker, HTTPS, and raster icons; an in-app banner is separate.
+- [THERYN interface direction](theryn-interface-direction.md) — combine ChatGPT/Gemini interaction patterns with THERYN branding across focused desktop and native mobile experiences.
+- [Expo web auth layout](expo-web-auth-layout.md) — prefer natural scrollable columns over browser-only spacers and fixed hero heights on mobile auth screens.

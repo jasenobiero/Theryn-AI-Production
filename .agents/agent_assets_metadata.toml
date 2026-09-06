@@ -1,0 +1,21 @@
+uploads = []
+
+[[generated]]
+id = "iy88PJ1NNGvrQvt8lwY1C"
+uri = "file://artifacts/theryn-mobile/assets/images/icon.png"
+type = "image"
+title = "THERYN mobile app icon"
+
+[[outputs]]
+id = "SwczjqAEdfrpWhX5MdLo5"
+uri = "file://artifacts/theryn-launch-ad/public/exports/theryn-launch-film.mp4"
+type = "video"
+title = "THERYN Launch Film — 16:9 MP4"
+description = "A 54-second, 1920×1080 cinematic THERYN launch advertisement using the real product interface captures, motion-designed capability reveals, and final brand lockup."
+logical_id = "fb921c8b-b5cc-4434-9ccc-133ee535d273"
+content_hash = "sha256:503afb45d01e5ea558734f371e2f5902728268fdc433b39b75c15c8e0f5470d5"
+size = 1814920
+mtime_ms = 1788292359074
+storage_uri = "gcs://replit-rams-assets-worf/rams/assets/repl:753735e5-edb1-44eb-ab27-550931bb15f1/fb921c8b-b5cc-4434-9ccc-133ee535d273/9251b40b-84cd-4b92-b0cd-2ccfdfb2260f"
+storage_version_token = "1788292433815909"
+content_type = "video/mp4"
