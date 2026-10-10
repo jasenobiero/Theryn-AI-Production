@@ -38,58 +38,58 @@
 }
 
 :root {
-  /* THERYN / command redline */
-  --background: 0 0% 4%;
-  --foreground: 0 0% 94%;
+  /* THERYN / signal field */
+  --background: 210 31% 5%;
+  --foreground: 204 33% 96%;
 
-  --card: 0 0% 7%;
-  --card-foreground: 0 0% 94%;
+  --card: 210 25% 9%;
+  --card-foreground: 204 33% 96%;
 
-  --popover: 0 0% 8%;
-  --popover-foreground: 0 0% 94%;
+  --popover: 210 25% 10%;
+  --popover-foreground: 204 33% 96%;
 
-  --primary: 0 78% 52%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 190 100% 61%;
+  --primary-foreground: 210 31% 5%;
 
-  --secondary: 0 0% 11%;
-  --secondary-foreground: 0 0% 94%;
+  --secondary: 210 20% 13%;
+  --secondary-foreground: 204 33% 96%;
 
-  --muted: 0 0% 12%;
-  --muted-foreground: 0 0% 58%;
+  --muted: 210 19% 15%;
+  --muted-foreground: 211 13% 60%;
 
-  --accent: 7 71% 64%;
-  --accent-foreground: 0 0% 100%;
+  --accent: 344 100% 71%;
+  --accent-foreground: 210 31% 5%;
 
-  --destructive: 0 75% 54%;
-  --destructive-foreground: 0 0% 100%;
+  --destructive: 344 100% 71%;
+  --destructive-foreground: 210 31% 5%;
 
-  --border: 0 0% 15%;
-  --input: 0 0% 11%;
-  --ring: 0 78% 52%;
+  --border: 210 17% 19%;
+  --input: 210 21% 12%;
+  --ring: 190 100% 61%;
 
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: 0 0% 4%;
-  --foreground: 0 0% 94%;
-  --card: 0 0% 7%;
-  --card-foreground: 0 0% 94%;
-  --popover: 0 0% 8%;
-  --popover-foreground: 0 0% 94%;
-  --primary: 0 77% 52%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 11%;
-  --secondary-foreground: 0 0% 94%;
-  --muted: 0 0% 12%;
-  --muted-foreground: 0 0% 58%;
-  --accent: 7 71% 64%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 75% 54%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 15%;
-  --input: 0 0% 11%;
-  --ring: 0 78% 52%;
+  --background: 210 31% 5%;
+  --foreground: 204 33% 96%;
+  --card: 210 25% 9%;
+  --card-foreground: 204 33% 96%;
+  --popover: 210 25% 10%;
+  --popover-foreground: 204 33% 96%;
+  --primary: 190 100% 61%;
+  --primary-foreground: 210 31% 5%;
+  --secondary: 210 20% 13%;
+  --secondary-foreground: 204 33% 96%;
+  --muted: 210 19% 15%;
+  --muted-foreground: 211 13% 60%;
+  --accent: 344 100% 71%;
+  --accent-foreground: 210 31% 5%;
+  --destructive: 344 100% 71%;
+  --destructive-foreground: 210 31% 5%;
+  --border: 210 17% 19%;
+  --input: 210 21% 12%;
+  --ring: 190 100% 61%;
 }
 
 @layer base {
@@ -110,10 +110,8 @@
     @apply font-sans antialiased bg-background text-foreground;
     background-color: hsl(var(--background));
     background-image:
-      radial-gradient(circle at 85% -12%, hsl(0 78% 52% / 0.12), transparent 32rem),
-      radial-gradient(circle at 15% 110%, hsl(8 72% 48% / 0.04), transparent 30rem),
-      linear-gradient(90deg, hsl(0 0% 100% / 0.014) 1px, transparent 1px);
-    background-size: auto, auto, 72px 72px;
+      radial-gradient(circle at 85% -12%, hsl(190 100% 61% / 0.09), transparent 32rem),
+      radial-gradient(circle at 15% 110%, hsl(344 100% 71% / 0.06), transparent 30rem);
     min-width: 320px;
   }
 
@@ -153,22 +151,91 @@
     @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30;
   }
 
-  .text-glow-red {
-    text-shadow: 0 0 20px hsl(0 84% 50% / 0.5);
+   .text-glow-red {
+     text-shadow: 0 0 20px hsl(190 100% 61% / 0.45);
   }
 
   .box-glow-red {
-    box-shadow: 0 18px 40px -20px hsl(0 77% 52% / 0.6);
+     box-shadow: 0 18px 40px -20px hsl(190 100% 61% / 0.35);
   }
 
   .font-mono { font-family: 'Space Mono', monospace; }
 
   .command-rule {
-    background: linear-gradient(90deg, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.15), transparent);
+     background: linear-gradient(90deg, hsl(190 100% 61% / 0.9), hsl(344 100% 71% / 0.25), transparent);
   }
 
   .touch-target { min-width: 44px; min-height: 44px; }
 }
+
+.signal-app { position: relative; isolation: isolate; }
+.signal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, hsl(210 30% 10% / .3), transparent 48%),
+    linear-gradient(180deg, hsl(210 31% 5% / .94), hsl(210 31% 5% / .98));
+}
+.signal-backdrop-compact { opacity: .72; }
+.signal-app > aside,
+.signal-app > main {
+  position: relative;
+  z-index: 1;
+}
+.signal-app > aside {
+  background: hsl(210 30% 7% / .82) !important;
+  backdrop-filter: blur(22px);
+}
+.signal-app > main { background: transparent !important; }
+.signal-app > main > div:first-child { scrollbar-gutter: stable; }
+.signal-app > main > div:first-child > div { position: relative; }
+.signal-grid {
+  position: absolute;
+  inset: -25%;
+  background-image:
+    linear-gradient(hsl(190 100% 61% / .055) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(190 100% 61% / .055) 1px, transparent 1px);
+  background-size: 76px 76px;
+  transform: perspective(720px) rotateX(58deg) translateY(24%);
+  transform-origin: center bottom;
+  mask-image: linear-gradient(to top, black, transparent 72%);
+  animation: signal-grid-drift 24s linear infinite;
+}
+.signal-orb { position: absolute; width: 36rem; height: 36rem; border-radius: 50%; filter: blur(78px); opacity: .16; }
+.signal-orb-cyan { top: -18rem; right: -8rem; background: hsl(190 100% 61%); }
+.signal-orb-coral { bottom: -22rem; left: -10rem; background: hsl(344 100% 71%); }
+.signal-orbit {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  border: 1px solid hsl(190 100% 61% / .10);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(18deg);
+}
+.signal-orbit-one { width: 48rem; height: 18rem; }
+.signal-orbit-two { width: 68rem; height: 24rem; border-color: hsl(344 100% 71% / .08); transform: translate(-50%, -50%) rotate(-26deg); }
+.signal-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(190 100% 61% / .5), transparent);
+  box-shadow: 0 0 18px hsl(190 100% 61% / .55);
+  animation: signal-scan 9s ease-in-out infinite;
+}
+.signal-grain {
+  position: absolute;
+  inset: 0;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+}
+@keyframes signal-grid-drift { from { background-position: 0 0; } to { background-position: 76px 76px; } }
+@keyframes signal-scan { 0%, 100% { transform: translateY(0); opacity: 0; } 12%, 78% { opacity: .75; } 50% { transform: translateY(118vh); } }
 
 @keyframes theryn-rise {
   from { opacity: 0; transform: translateY(8px); }

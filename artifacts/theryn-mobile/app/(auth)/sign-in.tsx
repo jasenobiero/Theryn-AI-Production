@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { SignalMark } from "@/components/SignalMark";
 
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -55,6 +57,7 @@ export default function SignInScreen() {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
+      <SignalBackdrop />
       <KeyboardAwareScrollViewCompat
         style={styles.scroll}
         contentContainerStyle={[styles.container, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 32 }]}
@@ -71,11 +74,7 @@ export default function SignInScreen() {
 
           {/* Header */}
           <View style={styles.header}>
-            <View style={styles.logoSmall}>
-              <LinearGradient colors={["#dc2626", "#991b1b"]} style={styles.logoGrad}>
-                <Text style={styles.logoLetter}>T</Text>
-              </LinearGradient>
-            </View>
+             <View style={styles.logoSmall}><SignalMark size={60} /></View>
             <Text style={styles.title}>Welcome back</Text>
             <Text style={styles.subtitle}>Sign in to your THERYN account</Text>
           </View>
@@ -161,6 +160,7 @@ export default function SignInScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#0a0a0a" },
+  scroll: { flex: 1 },
   container: { paddingHorizontal: 24, gap: 0, width: "100%", maxWidth: 480, alignSelf: "center" },
   backBtn: {
     width: 40, height: 40,

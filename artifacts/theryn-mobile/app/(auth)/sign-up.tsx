@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { SignalMark } from "@/components/SignalMark";
 
 type Step = "form" | "verify";
 
@@ -68,6 +70,7 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.root}>
+      <SignalBackdrop />
       <KeyboardAwareScrollViewCompat
         style={styles.scroll}
         contentContainerStyle={[styles.container, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 32 }]}
@@ -81,11 +84,7 @@ export default function SignUpScreen() {
           </Link>
 
           <View style={styles.header}>
-            <View style={styles.logoSmall}>
-              <LinearGradient colors={["#dc2626", "#991b1b"]} style={styles.logoGrad}>
-                <Text style={styles.logoLetter}>T</Text>
-              </LinearGradient>
-            </View>
+             <View style={styles.logoSmall}><SignalMark size={60} /></View>
             <Text style={styles.title}>{step === "form" ? "Create account" : "Verify email"}</Text>
             <Text style={styles.subtitle}>
               {step === "form"

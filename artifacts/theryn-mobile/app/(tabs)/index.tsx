@@ -18,6 +18,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { SignalMark } from "@/components/SignalMark";
 
 type Provider = "openai" | "anthropic" | "openrouter";
 
@@ -191,15 +193,14 @@ export default function ChatScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <SignalBackdrop />
       {/* Compact, touch-first workspace header */}
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 12) }]}>
         <Pressable onPress={() => setHistoryOpen(true)} style={styles.menuBtn} accessibilityLabel="Open conversations">
           <Feather name="menu" size={19} color="rgba(255,255,255,0.7)" />
         </Pressable>
         <View style={styles.brandGroup}>
-          <View style={styles.headerMark}>
-            <Text style={styles.headerMarkText}>T</Text>
-          </View>
+           <View style={styles.headerMark}><SignalMark size={30} /></View>
           <View style={styles.greetingWrap}>
             <Text style={styles.kicker}>THERYN</Text>
             <Text style={styles.headerMode}>AI workspace</Text>
@@ -255,9 +256,7 @@ export default function ChatScreen() {
           ListEmptyComponent={
             <View style={styles.empty}>
               <View style={[styles.emptyIcon, { borderColor: p.color + "45", backgroundColor: p.color + "12" }]}>
-                <View style={[styles.emptyIconCore, { backgroundColor: p.color }]}>
-                  <Text style={styles.emptyIconLetter}>T</Text>
-                </View>
+                 <View style={styles.emptyIconCore}><SignalMark size={46} /></View>
               </View>
               <Text style={styles.emptyKicker}>READY WHEN YOU ARE</Text>
               <Text style={styles.emptyTitle}>What are we working on, {firstName}?</Text>

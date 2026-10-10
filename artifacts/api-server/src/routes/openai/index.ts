@@ -1,12 +1,12 @@
 import { Router, type IRouter } from "express";
 import { db, conversations, messages } from "@workspace/db";
-import { openai } from "@workspace/integrations-openai-ai-server";
 import { generateImageBuffer } from "@workspace/integrations-openai-ai-server/image";
 import {
   CreateOpenaiConversationBody,
   GenerateOpenaiImageBody,
 } from "@workspace/api-zod";
 import { eq, asc } from "drizzle-orm";
+import { getOpenAIClientForRequest, getProviderKey } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
@@ -79,7 +79,8 @@ router.post("/conversations/:id/messages", async (req, res) => {
     return { role: m.role as "user" | "assistant" | "system", content };
   });
 
-  const stream = await openai.chat.completions.create({
+  const client = await getOpenAIClientForRequest(req);
+  const stream = await client.chat.completions.create({
     model: "gpt-5.2",
     max_completion_tokens: 8192,
     messages: apiMessages,
@@ -101,7 +102,11 @@ router.post("/conversations/:id/messages", async (req, res) => {
 
 router.post("/generate-image", async (req, res) => {
   const body = GenerateOpenaiImageBody.parse(req.body);
-  const buffer = await generateImageBuffer(body.prompt, (body.size as "1024x1024" | "512x512" | "256x256") ?? "1024x1024");
+  const buffer = await generateImageBuffer(
+    body.prompt,
+    (body.size as "1024x1024" | "512x512" | "256x256") ?? "1024x1024",
+    await getProviderKey(req, "openaiApiKey"),
+  );
   res.json({ b64_json: buffer.toString("base64") });
 });
 

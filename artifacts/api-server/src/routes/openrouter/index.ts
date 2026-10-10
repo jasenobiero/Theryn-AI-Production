@@ -1,8 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db, conversations, messages } from "@workspace/db";
-import { openrouter } from "@workspace/integrations-openrouter-ai";
 import { CreateOpenrouterConversationBody } from "@workspace/api-zod";
 import { eq, asc } from "drizzle-orm";
+import { getOpenRouterClientForRequest } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
@@ -87,7 +87,8 @@ router.post("/conversations/:id/messages", async (req, res) => {
     return { role: m.role as "user" | "assistant" | "system", content };
   });
 
-  const stream = await openrouter.chat.completions.create({
+  const client = await getOpenRouterClientForRequest(req);
+  const stream = await client.chat.completions.create({
     model,
     max_tokens: 8192,
     messages: apiMessages,

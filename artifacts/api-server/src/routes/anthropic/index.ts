@@ -1,8 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db, conversations, messages } from "@workspace/db";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
 import { CreateAnthropicConversationBody } from "@workspace/api-zod";
 import { eq, asc } from "drizzle-orm";
+import { getAnthropicClientForRequest } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
@@ -85,7 +85,8 @@ router.post("/conversations/:id/messages", async (req, res) => {
     return { role: m.role as "user" | "assistant", content };
   });
 
-  const stream = anthropic.messages.stream({
+  const client = await getAnthropicClientForRequest(req);
+  const stream = client.messages.stream({
     model: "claude-sonnet-4-6",
     max_tokens: 8192,
     messages: apiMessages,

@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
 
 const API_BASE = process.env.EXPO_PUBLIC_DOMAIN
   ? `https://${process.env.EXPO_PUBLIC_DOMAIN}`
@@ -111,6 +112,7 @@ export default function VoiceScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <SignalBackdrop />
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 12) }]}>
         <View>
           <Text style={styles.kicker}>THERYN / AUDIO</Text>

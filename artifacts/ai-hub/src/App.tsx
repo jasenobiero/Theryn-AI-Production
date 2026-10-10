@@ -32,6 +32,7 @@ import TermsPage from "@/pages/terms";
 import PrivacyPage from "@/pages/privacy";
 import { TherynIcon } from "@/components/nexus-icon";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
+import { SignalBackdrop } from "@/components/signal-backdrop";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,12 +74,12 @@ const clerkAppearance = {
     socialButtonsVariant: "blockButton" as const,
   },
   variables: {
-    colorPrimary: "#dc2626",
+      colorPrimary: "#38d9ff",
     colorForeground: "#ffffff",
     colorMutedForeground: "rgba(255,255,255,0.35)",
-    colorDanger: "#ef4444",
-    colorBackground: "hsl(0,0%,7%)",
-    colorInput: "hsl(0,0%,11%)",
+      colorDanger: "#ff6b8a",
+      colorBackground: "hsl(210,31%,7%)",
+      colorInput: "hsl(210,25%,11%)",
     colorInputForeground: "#ffffff",
     colorNeutral: "rgba(255,255,255,0.08)",
      fontFamily: "'DM Sans', sans-serif",
@@ -86,24 +87,24 @@ const clerkAppearance = {
   },
   elements: {
     rootBox: "w-full flex justify-center",
-    cardBox: "rounded-2xl w-[400px] max-w-full overflow-hidden shadow-[0_0_60px_-15px_rgba(220,38,38,0.2)] border border-white/[0.08]",
+    cardBox: "rounded-2xl w-[400px] max-w-full overflow-hidden shadow-[0_0_60px_-15px_rgba(56,217,255,0.2)] border border-white/[0.08]",
     card: "!shadow-none !border-0 !bg-transparent !rounded-none",
     footer: "!shadow-none !border-0 !bg-transparent !rounded-none",
     headerTitle: "text-white font-bold",
     headerSubtitle: "text-white/40",
     socialButtonsBlockButtonText: "font-semibold text-white/80",
     formFieldLabel: "text-white/50 text-xs uppercase tracking-wide",
-    footerActionLink: "text-red-400 hover:text-red-300 font-medium",
+    footerActionLink: "text-cyan-200 hover:text-cyan-100 font-medium",
     footerActionText: "text-white/30",
     dividerText: "text-white/25",
-    identityPreviewEditButton: "text-red-400",
+    identityPreviewEditButton: "text-cyan-200",
     formFieldSuccessText: "text-green-400",
     alertText: "text-white/80",
     logoBox: "mb-1",
     logoImage: "h-10 w-10",
     socialButtonsBlockButton: "border-white/[0.08] hover:bg-white/[0.06] transition-colors",
-    formButtonPrimary: "bg-red-600 hover:bg-red-500 active:bg-red-700 text-white shadow-[0_0_20px_-6px_rgba(220,38,38,0.5)] transition-all",
-    formFieldInput: "text-white focus:border-red-500/40 transition-colors",
+    formButtonPrimary: "bg-cyan-300 hover:bg-cyan-200 active:bg-cyan-400 text-slate-950 shadow-[0_0_24px_-6px_rgba(56,217,255,0.55)] transition-all",
+    formFieldInput: "text-white focus:border-cyan-300/40 transition-colors",
     footerAction: "border-t border-white/[0.05]",
     dividerLine: "bg-white/[0.07]",
     alert: "border-white/[0.08]",
@@ -131,18 +132,14 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center relative overflow-hidden" style={{ background: "hsl(0 0% 3.5%)" }} data-testid="auth-layout">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full blur-[140px]" style={{ background: "rgba(220,38,38,0.06)" }} />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full blur-[120px]" style={{ background: "rgba(220,38,38,0.04)" }} />
-        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
-      </div>
+    <div className="min-h-[100dvh] w-full flex items-center justify-center relative overflow-hidden bg-background" data-testid="auth-layout">
+      <SignalBackdrop />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-20">
         <div className="lg:hidden flex items-center gap-2.5 self-start">
-          <TherynIcon size={30} className="drop-shadow-[0_0_12px_rgba(220,38,38,0.55)]" />
+           <TherynIcon size={30} className="drop-shadow-[0_0_14px_rgba(56,217,255,0.45)]" />
           <div>
             <p className="text-lg font-display font-black tracking-[0.2em] text-white">THERYN</p>
-            <p className="text-[9px] text-red-400/80 font-mono uppercase tracking-[0.18em]">AI Command Center</p>
+             <p className="text-[9px] text-cyan-200/80 font-mono uppercase tracking-[0.18em]">Signal Intelligence System</p>
           </div>
         </div>
         <motion.div
@@ -152,16 +149,16 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
           className="flex-1 space-y-10 hidden lg:block lg:pl-8"
         >
           <div className="flex items-center gap-3">
-            <TherynIcon size={44} className="drop-shadow-[0_0_16px_rgba(220,38,38,0.6)]" />
+             <TherynIcon size={48} className="drop-shadow-[0_0_18px_rgba(56,217,255,0.5)]" />
             <div>
               <h1 className="text-3xl font-display font-black tracking-widest text-white">THERYN</h1>
-              <p className="text-[11px] text-red-400/80 font-mono uppercase tracking-[0.2em]">AI Command Center</p>
+               <p className="text-[11px] text-cyan-200/80 font-mono uppercase tracking-[0.2em]">Signal Intelligence System</p>
             </div>
           </div>
           <div>
             <h2 className="text-3xl font-display font-bold text-white leading-tight mb-3">
-              The next generation<br />
-              <span className="text-red-400">AI interface</span>
+               Think in signals.<br />
+               <span className="text-cyan-200">Build in motion.</span>
             </h2>
             <p className="text-sm text-white/40 leading-relaxed max-w-sm">
               Multiple AI engines, custom agents, image generation, and voice synthesis — all in one command center.
@@ -176,8 +173,8 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
                 transition={{ delay: 0.2 + i * 0.08 }}
                 className="flex items-start gap-3 p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02]"
               >
-                <div className="w-7 h-7 rounded-lg bg-red-600/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <f.icon className="w-3.5 h-3.5 text-red-400" />
+                 <div className="w-7 h-7 rounded-lg bg-cyan-300/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                   <f.icon className="w-3.5 h-3.5 text-cyan-200" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-white/80">{f.label}</p>
@@ -196,8 +193,8 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
         >
           <div className="rounded-[22px] border border-white/[0.06] bg-[hsl(0_0%_6%)] px-1 py-2">
             <div className="px-6 pt-3 pb-1 flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,.8)]" />
-              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30">Secure workspace access</span>
+               <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(56,217,255,.8)]" />
+               <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30">Encrypted workspace access</span>
             </div>
             {children}
           </div>
@@ -272,7 +269,7 @@ function AppRoutes() {
     return (
       <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "hsl(0 0% 4%)" }}>
         <div className="flex flex-col items-center gap-4">
-          <TherynIcon size={48} className="drop-shadow-[0_0_16px_rgba(220,38,38,0.6)] animate-pulse" />
+           <TherynIcon size={48} className="drop-shadow-[0_0_18px_rgba(56,217,255,0.5)] animate-pulse" />
           <p className="text-white/30 text-xs font-mono tracking-[0.2em] uppercase">Initializing...</p>
         </div>
       </div>
@@ -300,7 +297,6 @@ function ClerkProviderWithRoutes() {
       publishableKey={clerkPubKey}
       proxyUrl={clerkProxyUrl}
       appearance={clerkAppearance}
-        showDevelopmentModeBadge={false}
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
       localization={{

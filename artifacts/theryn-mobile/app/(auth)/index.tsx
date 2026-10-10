@@ -16,6 +16,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { SignalMark } from "@/components/SignalMark";
 
 const { width, height } = Dimensions.get("window");
 
@@ -53,6 +55,7 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
+      <SignalBackdrop />
       <LinearGradient
         colors={["#0a0a0a", "#100000", "#0a0a0a"]}
         style={StyleSheet.absoluteFill}
@@ -70,7 +73,7 @@ export default function WelcomeScreen() {
         {/* Compact brand bar */}
         <View style={[styles.topBar, { paddingTop: insets.top + 18 }]}>
           <View style={styles.topBrand}>
-            <View style={styles.topBrandMark}><Text style={styles.topBrandLetter}>T</Text></View>
+             <View style={styles.topBrandMark}><SignalMark size={26} /></View>
             <Text style={styles.topBrandName}>THERYN</Text>
           </View>
           <View style={styles.livePill}>
@@ -82,7 +85,7 @@ export default function WelcomeScreen() {
         {/* Focused mobile hero */}
         <View style={[styles.logoSection, { paddingTop: 84 }]}>
           <Animated.View style={{ transform: [{ scale: logoScale }], opacity: logoOpacity }}>
-            <Animated.View style={[styles.logoOuter, { transform: [{ scale: pulseAnim }] }]}>
+             <Animated.View style={[styles.logoOuter, { transform: [{ scale: pulseAnim }] }]}>
               <LinearGradient
                 colors={["rgba(220,38,38,0.15)", "rgba(220,38,38,0.05)"]}
                 style={styles.logoGlow}
@@ -90,14 +93,7 @@ export default function WelcomeScreen() {
                 end={{ x: 1, y: 1 }}
               >
                 <View style={styles.logoInner}>
-                  <LinearGradient
-                    colors={["#dc2626", "#991b1b"]}
-                    style={styles.logoBox}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.logoLetter}>T</Text>
-                  </LinearGradient>
+                   <SignalMark size={76} />
                 </View>
               </LinearGradient>
             </Animated.View>

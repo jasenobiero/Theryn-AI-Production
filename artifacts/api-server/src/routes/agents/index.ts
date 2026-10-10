@@ -1,14 +1,16 @@
 import { Router, type IRouter } from "express";
 import { db, agents, agentConversations, agentMessages } from "@workspace/db";
-import { openai } from "@workspace/integrations-openai-ai-server";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
-import { openrouter } from "@workspace/integrations-openrouter-ai";
 import {
   CreateAgentBody,
   UpdateAgentBody,
   ChatWithAgentBody,
 } from "@workspace/api-zod";
 import { eq, asc } from "drizzle-orm";
+import {
+  getAnthropicClientForRequest,
+  getOpenAIClientForRequest,
+  getOpenRouterClientForRequest,
+} from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
@@ -113,7 +115,8 @@ router.post("/:id/chat", async (req, res) => {
   let fullResponse = "";
 
   if (agent.provider === "anthropic") {
-    const stream = anthropic.messages.stream({
+    const client = await getAnthropicClientForRequest(req);
+    const stream = client.messages.stream({
       model: agent.model,
       max_tokens: 8192,
       system: agent.systemPrompt,
@@ -126,7 +129,8 @@ router.post("/:id/chat", async (req, res) => {
       }
     }
   } else if (agent.provider === "openrouter") {
-    const stream = await openrouter.chat.completions.create({
+    const client = await getOpenRouterClientForRequest(req);
+    const stream = await client.chat.completions.create({
       model: agent.model,
       max_tokens: 8192,
       messages: chatMessages,
@@ -140,7 +144,8 @@ router.post("/:id/chat", async (req, res) => {
       }
     }
   } else {
-    const stream = await openai.chat.completions.create({
+    const client = await getOpenAIClientForRequest(req);
+    const stream = await client.chat.completions.create({
       model: agent.model,
       max_completion_tokens: 8192,
       messages: chatMessages,

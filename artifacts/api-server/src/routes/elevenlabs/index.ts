@@ -1,16 +1,17 @@
 import { Router, type IRouter } from "express";
 import { ElevenLabsTtsBody } from "@workspace/api-zod";
+import { getProviderKey } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL";
 
 router.post("/tts", async (req, res) => {
   const body = ElevenLabsTtsBody.parse(req.body);
   const voiceId = body.voiceId ?? DEFAULT_VOICE_ID;
 
-  if (!ELEVENLABS_API_KEY) {
+  const elevenLabsApiKey = await getProviderKey(req, "elevenlabsApiKey") ?? process.env.ELEVENLABS_API_KEY;
+  if (!elevenLabsApiKey) {
     res.status(503).json({ error: "ElevenLabs API key not configured. Please connect ElevenLabs in settings." });
     return;
   }
@@ -18,7 +19,7 @@ router.post("/tts", async (req, res) => {
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: "POST",
     headers: {
-      "xi-api-key": ELEVENLABS_API_KEY,
+      "xi-api-key": elevenLabsApiKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

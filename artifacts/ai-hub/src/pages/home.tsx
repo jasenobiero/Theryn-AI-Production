@@ -10,27 +10,27 @@ import {
 } from "lucide-react";
 
 const PROMPTS = [
-  { icon: Code2,        text: "Write a Python script to scrape a website",       color: "text-red-400",     bg: "hover:bg-red-500/8 border-white/[0.06] hover:border-red-500/20" },
+  { icon: Code2,        text: "Write a Python script to scrape a website",       color: "text-cyan-200",    bg: "hover:bg-cyan-300/8 border-white/[0.06] hover:border-cyan-300/20" },
   { icon: Pencil,       text: "Draft a compelling product launch email",          color: "text-white/70",    bg: "hover:bg-white/[0.05] border-white/[0.06] hover:border-white/15" },
-  { icon: FlaskConical, text: "Explain quantum entanglement simply",              color: "text-red-400",     bg: "hover:bg-red-500/8 border-white/[0.06] hover:border-red-500/20" },
+  { icon: FlaskConical, text: "Explain quantum entanglement simply",              color: "text-cyan-200",    bg: "hover:bg-cyan-300/8 border-white/[0.06] hover:border-cyan-300/20" },
   { icon: TrendingUp,   text: "Analyze the pros and cons of remote work",         color: "text-white/70",    bg: "hover:bg-white/[0.05] border-white/[0.06] hover:border-white/15" },
-  { icon: Globe,        text: "Summarize the latest AI trends in 2025",           color: "text-red-400",     bg: "hover:bg-red-500/8 border-white/[0.06] hover:border-red-500/20" },
+  { icon: Globe,        text: "Summarize the latest AI trends in 2025",           color: "text-cyan-200",    bg: "hover:bg-cyan-300/8 border-white/[0.06] hover:border-cyan-300/20" },
   { icon: BookOpen,     text: "Create a study plan for learning machine learning", color: "text-white/70",   bg: "hover:bg-white/[0.05] border-white/[0.06] hover:border-white/15" },
-  { icon: Lightbulb,    text: "Brainstorm 10 startup ideas for Gen Z",             color: "text-red-400",    bg: "hover:bg-red-500/8 border-white/[0.06] hover:border-red-500/20" },
+  { icon: Lightbulb,    text: "Brainstorm 10 startup ideas for Gen Z",             color: "text-cyan-200",   bg: "hover:bg-cyan-300/8 border-white/[0.06] hover:border-cyan-300/20" },
   { icon: Wand2,        text: "Write a short sci-fi story about time travel",      color: "text-white/70",   bg: "hover:bg-white/[0.05] border-white/[0.06] hover:border-white/15" },
 ];
 
 const QUICK = [
-  { icon: MessageSquare, label: "AI Chat",      sub: "Theryn · Vesper · Prism",   href: "/chat",   color: "bg-red-600" },
+  { icon: MessageSquare, label: "AI Chat",      sub: "Theryn · Vesper · Prism",   href: "/chat",   color: "bg-cyan-300" },
   { icon: ImageIcon,     label: "Image Gen",    sub: "Visual synthesis",          href: "/images", color: "bg-white/10" },
   { icon: Mic,           label: "Voice TTS",    sub: "Neural voice synthesis",    href: "/voice",  color: "bg-white/10" },
   { icon: Bot,           label: "Agent Studio", sub: "Build custom AI agents",    href: "/agents", color: "bg-white/10" },
 ];
 
 const MODELS = [
-  { value: "openai",     label: "Theryn",    dot: "bg-red-400" },
+  { value: "openai",     label: "Theryn",    dot: "bg-cyan-300" },
   { value: "anthropic",  label: "Vesper",    dot: "bg-white/50" },
-  { value: "openrouter", label: "Prism",     dot: "bg-red-300" },
+  { value: "openrouter", label: "Prism",     dot: "bg-cyan-200" },
 ];
 
 export default function Home() {
@@ -59,11 +59,11 @@ export default function Home() {
           All systems operational
         </div>
         <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.14em] text-white/20">
-          <span>Workspace</span><span className="text-white/10">/</span><span className="text-red-300/60">New session</span>
+          <span>Workspace</span><span className="text-white/10">/</span><span className="text-cyan-200/60">New session</span>
         </div>
       </div>
-      {/* Faint red glow at top */}
-      <div className="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-red-600/5 blur-[120px] rounded-full" />
+      {/* Soft spectral bloom */}
+      <div className="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-300/[0.04] blur-[120px] rounded-full" />
 
       {/* CENTER SECTION */}
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-2xl mx-auto">
@@ -75,10 +75,10 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center gap-4 mb-8"
         >
-          <TherynIcon size={56} className="drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" />
+          <TherynIcon size={56} className="drop-shadow-[0_0_24px_rgba(56,217,255,0.38)]" />
           <div className="text-center">
-            <h1 className="text-4xl font-display font-black tracking-tight text-white">THERYN</h1>
-            <p className="text-sm text-white/30 mt-1">{greeting}, {firstName}</p>
+            <h1 className="text-4xl font-display font-black tracking-[0.16em] text-white">THERYN</h1>
+            <p className="text-sm text-white/40 mt-2">{greeting}, {firstName}. What are we making?</p>
           </div>
         </motion.div>
 
@@ -90,7 +90,7 @@ export default function Home() {
           className="w-full"
         >
           <div
-            className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] shadow-[0_0_0_1px_rgba(255,255,255,0.04)] focus-within:border-red-500/30 focus-within:shadow-[0_0_30px_-8px_rgba(220,38,38,0.2)] transition-all duration-300"
+            className="relative rounded-2xl border border-cyan-200/[0.12] bg-slate-950/35 shadow-[0_0_0_1px_rgba(255,255,255,0.035),0_28px_90px_-45px_rgba(56,217,255,0.28)] backdrop-blur-xl focus-within:border-cyan-200/35 focus-within:shadow-[0_0_38px_-12px_rgba(56,217,255,0.24)] transition-all duration-300"
           >
             <textarea
               data-testid="input-home-prompt"
@@ -141,7 +141,7 @@ export default function Home() {
                             key={opt.value}
                             onClick={() => { setModel(opt.value); setShowPicker(false); }}
                             data-testid={`button-home-model-${opt.value}`}
-                            className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs transition-colors ${model === opt.value ? "bg-red-600/15 text-white" : "text-white/40 hover:text-white hover:bg-white/[0.05]"}`}
+                            className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs transition-colors ${model === opt.value ? "bg-cyan-300/15 text-white" : "text-white/40 hover:text-white hover:bg-white/[0.05]"}`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${opt.dot}`} />
                             {opt.label}
@@ -157,7 +157,7 @@ export default function Home() {
                   onClick={() => send()}
                   data-testid="button-home-send"
                   disabled={!input.trim()}
-                  className="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_12px_-2px_rgba(220,38,38,0.4)]"
+                  className="w-8 h-8 rounded-xl bg-cyan-300 text-slate-950 hover:bg-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-5px_rgba(56,217,255,0.55)]"
                 >
                   <ArrowUp className="w-3.5 h-3.5 text-white" />
                 </button>

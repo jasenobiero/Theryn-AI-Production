@@ -1,10 +1,12 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
-import { openai } from "@workspace/integrations-openai-ai-server";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
-import { openrouter } from "@workspace/integrations-openrouter-ai";
 import { db, studioProjects } from "@workspace/db";
 import { eq, and, desc } from "drizzle-orm";
+import {
+  getAnthropicClientForRequest,
+  getOpenAIClientForRequest,
+  getOpenRouterClientForRequest,
+} from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
@@ -290,7 +292,8 @@ router.post("/chat", async (req, res) => {
 
   try {
     if (provider === "anthropic") {
-      const stream = anthropic.messages.stream({
+      const client = await getAnthropicClientForRequest(req);
+      const stream = client.messages.stream({
         model: model ?? "claude-sonnet-4-6",
         max_tokens: 32000,
         system: SYSTEM_PROMPT,
@@ -302,7 +305,8 @@ router.post("/chat", async (req, res) => {
         }
       }
     } else if (provider === "openrouter") {
-      const stream = await openrouter.chat.completions.create({
+      const client = await getOpenRouterClientForRequest(req);
+      const stream = await client.chat.completions.create({
         model: model ?? "x-ai/grok-4.3",
         max_tokens: 16000,
         messages: history,
@@ -314,7 +318,8 @@ router.post("/chat", async (req, res) => {
       }
     } else {
       // OpenAI (Theryn)
-      const stream = await openai.chat.completions.create({
+      const client = await getOpenAIClientForRequest(req);
+      const stream = await client.chat.completions.create({
         model: "gpt-5.2",
         max_completion_tokens: 32000,
         messages: history,

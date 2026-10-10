@@ -19,6 +19,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useColors } from "@/hooks/useColors";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { SignalMark } from "@/components/SignalMark";
 
 type Settings = {
   displayName: string | null;
@@ -205,12 +207,13 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <SignalBackdrop />
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View>
           <Text style={styles.kicker}>THERYN / CONTROL</Text>
           <Text style={styles.title}>Account</Text>
         </View>
-        <View style={styles.headerMark}><Text style={styles.headerMarkText}>T</Text></View>
+         <View style={styles.headerMark}><SignalMark size={34} /></View>
       </View>
 
       <KeyboardAwareScrollViewCompat
@@ -232,7 +235,7 @@ export default function SettingsScreen() {
         <Section title="PROVIDER KEYS">
           <View style={styles.keyIntro}>
             <View style={styles.keyIntroIcon}><Feather name="shield" size={15} color="#eb3d3d" /></View>
-            <Text style={styles.keyIntroText}>Connect your own keys. Saved values are encrypted server-side and only their masked form is returned.</Text>
+            <Text style={styles.keyIntroText}>Connect your own keys. Saved values are only shown here in masked form after saving.</Text>
           </View>
           {settingsLoading ? (
             <View style={styles.loadingRow}><View style={styles.skeletonWide} /><View style={styles.skeletonShort} /></View>

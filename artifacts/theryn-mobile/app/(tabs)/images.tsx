@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { SignalBackdrop } from "@/components/SignalBackdrop";
 
 interface GeneratedImage {
   id: string;
@@ -72,6 +73,7 @@ export default function ImagesScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <SignalBackdrop />
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 12) }]}>
         <View style={styles.headerLeft}>

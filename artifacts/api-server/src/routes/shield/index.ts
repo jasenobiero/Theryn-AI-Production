@@ -1,8 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db, socialAccounts, securityAlerts } from "@workspace/db";
-import { openai } from "@workspace/integrations-openai-ai-server";
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
 import { eq, and, desc } from "drizzle-orm";
+import { getOpenAIClientForRequest } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
 
@@ -77,7 +77,8 @@ Respond with ONLY valid JSON in this exact format:
 
   let analysisText = "";
   try {
-    const completion = await openai.chat.completions.create({
+     const client = await getOpenAIClientForRequest(req);
+     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
