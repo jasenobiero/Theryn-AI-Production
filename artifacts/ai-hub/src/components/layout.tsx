@@ -71,7 +71,7 @@ export function Layout({ children }: LayoutProps) {
         {/* Logo */}
         <div className="h-14 flex items-center px-4 border-b border-white/[0.05] bg-white/[0.015]">
           <Link href="/" onClick={() => setMobileNavOpen(false)} data-testid="link-sidebar-home" className="flex items-center gap-2.5 group flex-1 min-w-0">
-             <TherynIcon size={30} className="drop-shadow-[0_0_12px_rgba(56,217,255,0.4)]" />
+             <TherynIcon size={30} className="drop-shadow-[0_0_12px_rgba(255,255,255,0.18)]" />
             <span className="font-display font-bold text-[17px] tracking-[0.24em] text-white">
               THERYN
             </span>
@@ -123,7 +123,7 @@ export function Layout({ children }: LayoutProps) {
                       className={cn(
                          "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative group",
                         isActive
-                           ? "bg-cyan-300/10 text-white border border-cyan-200/20 shadow-[0_0_24px_-12px_rgba(56,217,255,.9)]"
+                           ? "bg-white/[0.08] text-white border border-white/[0.18] shadow-[0_0_20px_-12px_rgba(255,255,255,.2)]"
                           : "text-white/45 hover:text-white hover:bg-white/[0.05]"
                       )}
                     >
@@ -196,7 +196,7 @@ export function Layout({ children }: LayoutProps) {
 
       {/* ── Main ── */}
       <main className="flex-1 flex flex-col min-w-0 min-h-[100dvh] overflow-hidden">
-         <div className="md:hidden h-14 flex items-center justify-between px-4 border-b border-white/[0.07] bg-[hsl(210_30%_7%_/_0.8)] backdrop-blur-xl">
+         <div className="md:hidden h-14 flex items-center justify-between px-4 border-b border-white/[0.07] bg-[hsl(0_0%_7%_/_0.8)] backdrop-blur-xl">
           <button onClick={() => setMobileNavOpen(true)} data-testid="button-open-navigation" className="touch-target flex items-center justify-center -ml-2 text-white/60 hover:text-white" aria-label="Open navigation">
             <Menu className="w-5 h-5" />
           </button>

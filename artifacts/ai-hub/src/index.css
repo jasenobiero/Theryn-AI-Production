@@ -38,58 +38,109 @@
 }
 
 :root {
-  /* THERYN / signal field */
-  --background: 210 31% 5%;
-  --foreground: 204 33% 96%;
+  /* THERYN / monochrome signal field */
+  --background: 0 0% 4%;
+  --foreground: 0 0% 96%;
 
-  --card: 210 25% 9%;
-  --card-foreground: 204 33% 96%;
+  --card: 0 0% 8%;
+  --card-foreground: 0 0% 96%;
 
-  --popover: 210 25% 10%;
-  --popover-foreground: 204 33% 96%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 96%;
 
-  --primary: 190 100% 61%;
-  --primary-foreground: 210 31% 5%;
+  --primary: 0 0% 96%;
+  --primary-foreground: 0 0% 4%;
 
-  --secondary: 210 20% 13%;
-  --secondary-foreground: 204 33% 96%;
+  --secondary: 0 0% 13%;
+  --secondary-foreground: 0 0% 96%;
 
-  --muted: 210 19% 15%;
-  --muted-foreground: 211 13% 60%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 61%;
 
-  --accent: 344 100% 71%;
-  --accent-foreground: 210 31% 5%;
+  --accent: 0 0% 24%;
+  --accent-foreground: 0 0% 96%;
 
-  --destructive: 344 100% 71%;
-  --destructive-foreground: 210 31% 5%;
+  --destructive: 0 0% 72%;
+  --destructive-foreground: 0 0% 4%;
 
-  --border: 210 17% 19%;
-  --input: 210 21% 12%;
-  --ring: 190 100% 61%;
+  --border: 0 0% 20%;
+  --input: 0 0% 12%;
+  --ring: 0 0% 82%;
 
   --radius: 0.75rem;
+
+  /* Keep legacy utility colors in the same black-and-white palette. */
+  --color-amber-300: var(--color-zinc-300);
+  --color-amber-400: var(--color-zinc-400);
+  --color-amber-500: var(--color-zinc-500);
+  --color-blue-300: var(--color-zinc-300);
+  --color-blue-400: var(--color-zinc-400);
+  --color-blue-500: var(--color-zinc-500);
+  --color-blue-600: var(--color-zinc-600);
+  --color-cyan-50: var(--color-zinc-50);
+  --color-cyan-100: var(--color-zinc-100);
+  --color-cyan-200: var(--color-zinc-200);
+  --color-cyan-300: var(--color-zinc-300);
+  --color-cyan-400: var(--color-zinc-400);
+  --color-cyan-500: var(--color-zinc-500);
+  --color-emerald-400: var(--color-zinc-400);
+  --color-emerald-500: var(--color-zinc-500);
+  --color-fuchsia-600: var(--color-zinc-600);
+  --color-green-300: var(--color-zinc-300);
+  --color-green-400: var(--color-zinc-400);
+  --color-green-500: var(--color-zinc-500);
+  --color-green-600: var(--color-zinc-600);
+  --color-indigo-600: var(--color-zinc-600);
+  --color-orange-300: var(--color-zinc-300);
+  --color-orange-400: var(--color-zinc-400);
+  --color-orange-500: var(--color-zinc-500);
+  --color-orange-600: var(--color-zinc-600);
+  --color-pink-300: var(--color-zinc-300);
+  --color-pink-500: var(--color-zinc-500);
+  --color-purple-400: var(--color-zinc-400);
+  --color-purple-500: var(--color-zinc-500);
+  --color-purple-600: var(--color-zinc-600);
+  --color-red-50: var(--color-zinc-50);
+  --color-red-300: var(--color-zinc-300);
+  --color-red-400: var(--color-zinc-400);
+  --color-red-500: var(--color-zinc-500);
+  --color-red-600: var(--color-zinc-600);
+  --color-rose-200: var(--color-zinc-200);
+  --color-rose-300: var(--color-zinc-300);
+  --color-rose-400: var(--color-zinc-400);
+  --color-sky-600: var(--color-zinc-600);
+  --color-sky-700: var(--color-zinc-700);
+  --color-sky-800: var(--color-zinc-800);
+  --color-slate-950: var(--color-zinc-950);
+  --color-teal-500: var(--color-zinc-500);
+  --color-teal-600: var(--color-zinc-600);
+  --color-violet-400: var(--color-zinc-400);
+  --color-violet-500: var(--color-zinc-500);
+  --color-yellow-300: var(--color-zinc-300);
+  --color-yellow-400: var(--color-zinc-400);
+  --color-yellow-500: var(--color-zinc-500);
 }
 
 .dark {
-  --background: 210 31% 5%;
-  --foreground: 204 33% 96%;
-  --card: 210 25% 9%;
-  --card-foreground: 204 33% 96%;
-  --popover: 210 25% 10%;
-  --popover-foreground: 204 33% 96%;
-  --primary: 190 100% 61%;
-  --primary-foreground: 210 31% 5%;
-  --secondary: 210 20% 13%;
-  --secondary-foreground: 204 33% 96%;
-  --muted: 210 19% 15%;
-  --muted-foreground: 211 13% 60%;
-  --accent: 344 100% 71%;
-  --accent-foreground: 210 31% 5%;
-  --destructive: 344 100% 71%;
-  --destructive-foreground: 210 31% 5%;
-  --border: 210 17% 19%;
-  --input: 210 21% 12%;
-  --ring: 190 100% 61%;
+  --background: 0 0% 4%;
+  --foreground: 0 0% 96%;
+  --card: 0 0% 8%;
+  --card-foreground: 0 0% 96%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 96%;
+  --primary: 0 0% 96%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 13%;
+  --secondary-foreground: 0 0% 96%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 61%;
+  --accent: 0 0% 24%;
+  --accent-foreground: 0 0% 96%;
+  --destructive: 0 0% 72%;
+  --destructive-foreground: 0 0% 4%;
+  --border: 0 0% 20%;
+  --input: 0 0% 12%;
+  --ring: 0 0% 82%;
 }
 
 @layer base {
@@ -110,8 +161,8 @@
     @apply font-sans antialiased bg-background text-foreground;
     background-color: hsl(var(--background));
     background-image:
-      radial-gradient(circle at 85% -12%, hsl(190 100% 61% / 0.09), transparent 32rem),
-      radial-gradient(circle at 15% 110%, hsl(344 100% 71% / 0.06), transparent 30rem);
+      radial-gradient(circle at 85% -12%, hsl(0 0% 100% / 0.075), transparent 32rem),
+      radial-gradient(circle at 15% 110%, hsl(0 0% 62% / 0.035), transparent 30rem);
     min-width: 320px;
   }
 
@@ -152,17 +203,17 @@
   }
 
    .text-glow-red {
-     text-shadow: 0 0 20px hsl(190 100% 61% / 0.45);
+     text-shadow: 0 0 16px hsl(0 0% 100% / 0.16);
   }
 
   .box-glow-red {
-     box-shadow: 0 18px 40px -20px hsl(190 100% 61% / 0.35);
+     box-shadow: 0 18px 40px -20px hsl(0 0% 100% / 0.12);
   }
 
   .font-mono { font-family: 'Space Mono', monospace; }
 
   .command-rule {
-     background: linear-gradient(90deg, hsl(190 100% 61% / 0.9), hsl(344 100% 71% / 0.25), transparent);
+     background: linear-gradient(90deg, hsl(0 0% 100% / 0.48), hsl(0 0% 65% / 0.14), transparent);
   }
 
   .touch-target { min-width: 44px; min-height: 44px; }
@@ -176,13 +227,13 @@
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 50%, hsl(210 30% 10% / .3), transparent 48%),
-    linear-gradient(180deg, hsl(210 31% 5% / .94), hsl(210 31% 5% / .98));
+    radial-gradient(circle at 50% 50%, hsl(0 0% 10% / .3), transparent 48%),
+    linear-gradient(180deg, hsl(0 0% 4% / .94), hsl(0 0% 4% / .98));
 }
 .signal-backdrop-compact { opacity: .72; }
 .signal-app > aside {
   z-index: 40;
-  background: hsl(210 30% 7% / .82) !important;
+  background: hsl(0 0% 7% / .82) !important;
   backdrop-filter: blur(22px);
 }
 .signal-app > main {
@@ -194,8 +245,8 @@
   position: absolute;
   inset: -25%;
   background-image:
-    linear-gradient(hsl(190 100% 61% / .055) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(190 100% 61% / .055) 1px, transparent 1px);
+    linear-gradient(hsl(0 0% 100% / .045) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(0 0% 100% / .045) 1px, transparent 1px);
   background-size: 76px 76px;
   transform: perspective(720px) rotateX(58deg) translateY(24%);
   transform-origin: center bottom;
@@ -203,26 +254,26 @@
   animation: signal-grid-drift 24s linear infinite;
 }
 .signal-orb { position: absolute; width: 36rem; height: 36rem; border-radius: 50%; filter: blur(78px); opacity: .16; }
-.signal-orb-cyan { top: -18rem; right: -8rem; background: hsl(190 100% 61%); }
-.signal-orb-coral { bottom: -22rem; left: -10rem; background: hsl(344 100% 71%); }
+.signal-orb-white { top: -18rem; right: -8rem; background: hsl(0 0% 100%); }
+.signal-orb-gray { bottom: -22rem; left: -10rem; background: hsl(0 0% 44%); }
 .signal-orbit {
   position: absolute;
   left: 50%;
   top: 42%;
-  border: 1px solid hsl(190 100% 61% / .10);
+  border: 1px solid hsl(0 0% 100% / .09);
   border-radius: 50%;
   transform: translate(-50%, -50%) rotate(18deg);
 }
 .signal-orbit-one { width: 48rem; height: 18rem; }
-.signal-orbit-two { width: 68rem; height: 24rem; border-color: hsl(344 100% 71% / .08); transform: translate(-50%, -50%) rotate(-26deg); }
+.signal-orbit-two { width: 68rem; height: 24rem; border-color: hsl(0 0% 68% / .07); transform: translate(-50%, -50%) rotate(-26deg); }
 .signal-scanline {
   position: absolute;
   left: 0;
   right: 0;
   top: -10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, hsl(190 100% 61% / .5), transparent);
-  box-shadow: 0 0 18px hsl(190 100% 61% / .55);
+  background: linear-gradient(90deg, transparent, hsl(0 0% 100% / .26), transparent);
+  box-shadow: 0 0 12px hsl(0 0% 100% / .18);
   animation: signal-scan 9s ease-in-out infinite;
 }
 .signal-grain {
@@ -250,13 +301,17 @@
   }
 }
 
+.cl-socialButtonsProviderIcon {
+  filter: grayscale(1);
+}
+
 /* Markdown prose overrides */
 .prose {
   --tw-prose-body: hsl(var(--foreground));
   --tw-prose-headings: hsl(var(--foreground));
   --tw-prose-links: hsl(var(--primary));
   --tw-prose-bold: hsl(var(--foreground));
-  --tw-prose-code: hsl(0 84% 70%);
+  --tw-prose-code: hsl(0 0% 82%);
   --tw-prose-pre-bg: hsl(var(--secondary));
   --tw-prose-pre-code: hsl(var(--foreground));
 }

@@ -56,7 +56,7 @@ export function PWAInstallPrompt() {
           style={{ background: "hsl(0 0% 9%)" }}
         >
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-30" style={{ background: "rgba(56,217,255,0.32)" }} />
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-20" style={{ background: "rgba(255,255,255,0.16)" }} />
           </div>
           <div className="relative p-4">
             <div className="flex items-start gap-3">

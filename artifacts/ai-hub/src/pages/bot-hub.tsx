@@ -23,8 +23,8 @@ const PLATFORMS: Platform[] = [
     id: "discord",
     name: "Discord",
     icon: "DS",
-    color: "#5865F2",
-    bg: "bg-[#5865F2]/10",
+    color: "#e5e5e5",
+    bg: "bg-white/10",
     envVars: ["DISCORD_BOT_TOKEN"],
     steps: [
       {
@@ -54,8 +54,8 @@ const PLATFORMS: Platform[] = [
     id: "telegram",
     name: "Telegram",
     icon: "TG",
-    color: "#26A5E4",
-    bg: "bg-[#26A5E4]/10",
+    color: "#d4d4d4",
+    bg: "bg-white/10",
     envVars: ["TELEGRAM_BOT_TOKEN"],
     steps: [
       {
@@ -81,7 +81,7 @@ const PLATFORMS: Platform[] = [
     id: "slack",
     name: "Slack",
     icon: "SL",
-    color: "#4A154B",
+    color: "#a3a3a3",
     bg: "bg-purple-500/10",
     envVars: ["SLACK_BOT_TOKEN", "SLACK_APP_TOKEN"],
     steps: [
@@ -175,7 +175,7 @@ function PlatformCard({ platform }: { platform: Platform }) {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-[10px] px-2 py-1 rounded-full font-semibold border" style={{
-            color: "#f97316",
+            color: "#a3a3a3",
             background: "rgba(249,115,22,0.1)",
             borderColor: "rgba(249,115,22,0.2)",
           }}>
@@ -235,7 +235,7 @@ function PlatformCard({ platform }: { platform: Platform }) {
 
 export default function BotHubPage() {
   return (
-    <div className="flex-1 overflow-y-auto p-8" style={{ background: "hsl(210 31% 5% / .48)" }}>
+    <div className="flex-1 overflow-y-auto p-8" style={{ background: "hsl(0 0% 4% / .48)" }}>
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">

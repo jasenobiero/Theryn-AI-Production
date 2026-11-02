@@ -125,7 +125,7 @@ export default function ImagesScreen() {
               ]}
             >
               <LinearGradient
-                colors={["#38d9ff", "#168ca8"]}
+                colors={["#ffffff", "#777777"]}
                 style={styles.genBtnGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               >
@@ -139,7 +139,7 @@ export default function ImagesScreen() {
 
         {error && (
           <View style={styles.errorBox}>
-            <Feather name="alert-circle" size={14} color="#f87171" />
+                <Feather name="alert-circle" size={14} color="#d4d4d4" />
             <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
@@ -154,7 +154,7 @@ export default function ImagesScreen() {
                 onPress={() => { setPrompt(s); Haptics.selectionAsync(); }}
                 style={({ pressed }) => [styles.suggestion, pressed && { opacity: 0.7 }]}
               >
-                <Feather name="chevron-right" size={13} color="rgba(56,217,255,0.8)" />
+                <Feather name="chevron-right" size={13} color="rgba(255,255,255,0.8)" />
                 <Text style={styles.suggestionText}>{s}</Text>
               </Pressable>
             ))}
@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
   title: { fontFamily: "Inter_700Bold", fontSize: 20, color: "#fff" },
-  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(154,239,255,0.8)", letterSpacing: 1.6, marginBottom: 3 },
+  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(255,255,255,0.78)", letterSpacing: 1.6, marginBottom: 3 },
   badge: {
     paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 8, backgroundColor: "rgba(56,217,255,0.12)",
-    borderWidth: 1, borderColor: "rgba(56,217,255,0.24)",
+    borderRadius: 8, backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1, borderColor: "rgba(255,255,255,0.18)",
   },
-  badgeText: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#9aefff", letterSpacing: 1 },
+  badgeText: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#d4d4d4", letterSpacing: 1 },
   headerSub: { fontFamily: "Inter_400Regular", fontSize: 11, color: "rgba(255,255,255,0.25)" },
   scroll: { padding: 16, gap: 12 },
   promptCard: {
@@ -240,10 +240,10 @@ const styles = StyleSheet.create({
   errorBox: {
     flexDirection: "row", alignItems: "center", gap: 8,
     padding: 12, borderRadius: 12,
-    backgroundColor: "rgba(239,68,68,0.08)",
-    borderWidth: 1, borderColor: "rgba(239,68,68,0.2)",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderWidth: 1, borderColor: "rgba(255,255,255,0.14)",
   },
-  errorText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#f87171", flex: 1 },
+  errorText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#d4d4d4", flex: 1 },
   sectionLabel: {
     fontFamily: "Inter_600SemiBold", fontSize: 9,
     color: "rgba(255,255,255,0.2)", letterSpacing: 1.5,

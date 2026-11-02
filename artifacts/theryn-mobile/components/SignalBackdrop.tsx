@@ -33,14 +33,14 @@ export function SignalBackdrop() {
     }, [drift, pulse]),
   );
 
-  const cyanTransform = {
+  const lightTransform = {
     transform: [
       { translateX: drift.interpolate({ inputRange: [0, 1], outputRange: [-34, 24] }) },
       { translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [-12, 22] }) },
       { scale: pulse },
     ],
   };
-  const coralTransform = {
+  const grayTransform = {
     transform: [
       { translateX: drift.interpolate({ inputRange: [0, 1], outputRange: [20, -28] }) },
       { translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [22, -12] }) },
@@ -49,9 +49,9 @@ export function SignalBackdrop() {
 
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-      <LinearGradient colors={[colors.background, colors.background, `${colors.primary}10`]} style={StyleSheet.absoluteFill} />
-      <Animated.View style={[styles.orb, styles.cyanOrb, { backgroundColor: colors.primary }, cyanTransform]} />
-      <Animated.View style={[styles.orb, styles.coralOrb, { backgroundColor: colors.accent }, coralTransform]} />
+       <LinearGradient colors={[colors.background, colors.background, `${colors.primary}0D`]} style={StyleSheet.absoluteFill} />
+       <Animated.View style={[styles.orb, styles.lightOrb, { backgroundColor: colors.primary }, lightTransform]} />
+       <Animated.View style={[styles.orb, styles.grayOrb, { backgroundColor: colors.accent }, grayTransform]} />
        <View style={[styles.grid, { borderColor: `${colors.primary}12` }]}>
          {Array.from({ length: 10 }, (_, index) => (
            <View key={`h-${index}`} style={[styles.gridLineHorizontal, { bottom: index * 28, backgroundColor: `${colors.primary}12` }]} />
@@ -67,8 +67,8 @@ export function SignalBackdrop() {
 
 const styles = StyleSheet.create({
   orb: { position: "absolute", width: 260, height: 260, borderRadius: 130, opacity: 0.1 },
-  cyanOrb: { top: -130, right: -80 },
-  coralOrb: { bottom: -150, left: -90, opacity: 0.08 },
+  lightOrb: { top: -130, right: -80 },
+  grayOrb: { bottom: -150, left: -90, opacity: 0.08 },
   grid: {
     position: "absolute",
     left: -80,

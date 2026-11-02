@@ -130,7 +130,7 @@ export default function ChatPage() {
 
       {/* Sidebar */}
        <div className={cn(
-           "w-[280px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[hsl(210_31%_5%_/_0.78)]",
+           "w-[280px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[hsl(0_0%_4%_/_0.78)]",
          showHistory ? "fixed inset-y-0 left-0 z-50 flex shadow-2xl shadow-black/70" : "hidden",
          "lg:flex lg:relative lg:inset-auto lg:z-auto lg:shadow-none"
        )}>
@@ -233,11 +233,11 @@ export default function ChatPage() {
 
        {/* Chat area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <div className="min-h-16 flex-shrink-0 flex items-center gap-3 px-4 md:px-8 py-2.5 border-b border-white/[0.06] bg-[hsl(210_31%_5%_/_0.72)]">
+          <div className="min-h-16 flex-shrink-0 flex items-center gap-3 px-4 md:px-8 py-2.5 border-b border-white/[0.06] bg-[hsl(0_0%_4%_/_0.72)]">
            <button onClick={() => setShowHistory(true)} className="lg:hidden p-2 -ml-2 text-white/45 hover:text-white" aria-label="Show conversations">
              <PanelLeft className="w-4 h-4" />
            </button>
-          <TherynIcon size={24} className="drop-shadow-[0_0_10px_rgba(56,217,255,0.32)]" />
+          <TherynIcon size={24} className="drop-shadow-[0_0_10px_rgba(255,255,255,0.18)]" />
            <div className="min-w-0">
              <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold text-white leading-none truncate">{PROVIDER_NAMES[provider]}</p>

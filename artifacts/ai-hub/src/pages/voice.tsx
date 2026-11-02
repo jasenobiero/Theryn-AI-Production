@@ -69,7 +69,7 @@ export default function VoicePage() {
             <button
               onClick={handleGenerate}
               disabled={generate.isPending || !text}
-              className="w-full sm:w-auto px-8 h-14 rounded-full font-bold text-slate-950 bg-gradient-to-r from-cyan-300 to-sky-600 hover:brightness-110 flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_-5px_rgba(56,217,255,0.28)]"
+              className="w-full sm:w-auto px-8 h-14 rounded-full font-bold text-black bg-gradient-to-r from-white to-neutral-400 hover:brightness-110 flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_24px_-10px_rgba(255,255,255,0.2)]"
             >
               {generate.isPending ? (
                 <>

@@ -271,7 +271,7 @@ export default function AgentsPage() {
               transition={{ duration: 0.2 }}
               className="fixed inset-0 flex items-center justify-center z-50 p-4"
             >
-              <div className="w-full max-w-lg bg-[#0f0f18] border border-white/10 rounded-2xl shadow-2xl">
+              <div className="w-full max-w-lg bg-[#101010] border border-white/10 rounded-2xl shadow-2xl">
                 <div className="flex items-center justify-between p-6 border-b border-white/5">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-emerald-400" />

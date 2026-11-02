@@ -165,7 +165,7 @@ function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
           </div>
           <button
             onClick={() => onUse(prompt)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-300 hover:bg-cyan-200 text-slate-950 text-xs font-semibold transition-all shadow-[0_0_16px_-5px_rgba(56,217,255,0.36)]"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-white/90 text-black text-xs font-semibold transition-all shadow-[0_0_16px_-8px_rgba(255,255,255,0.18)]"
           >
             <ArrowRight className="w-3.5 h-3.5" />
             Use this prompt

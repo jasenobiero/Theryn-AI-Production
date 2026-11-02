@@ -11,20 +11,20 @@ import { useToast } from "@/hooks/use-toast";
 const PLATFORMS: Array<{
   id: string; label: string; color: string; bg: string; icon: string; placeholder: string;
 }> = [
-  { id: "tiktok",         label: "TikTok",         color: "#FF0050", bg: "bg-[#FF0050]/10",   icon: "TT", placeholder: "@username" },
-  { id: "instagram",      label: "Instagram",      color: "#E1306C", bg: "bg-[#E1306C]/10",   icon: "IG", placeholder: "@username" },
-  { id: "youtube",        label: "YouTube",         color: "#FF0000", bg: "bg-[#FF0000]/10",   icon: "YT",  placeholder: "@channel or handle" },
-  { id: "twitter",        label: "X / Twitter",    color: "#1DA1F2", bg: "bg-[#1DA1F2]/10",   icon: "𝕏",  placeholder: "@username" },
-  { id: "discord",        label: "Discord Account", color: "#5865F2", bg: "bg-[#5865F2]/10",   icon: "DS", placeholder: "username#0000 or username" },
-  { id: "discord_server", label: "Discord Server",  color: "#5865F2", bg: "bg-[#5865F2]/10",   icon: "SV", placeholder: "server name or invite code" },
-  { id: "reddit",         label: "Reddit",          color: "#FF4500", bg: "bg-[#FF4500]/10",   icon: "RD", placeholder: "u/username" },
-  { id: "facebook",       label: "Facebook",        color: "#1877F2", bg: "bg-[#1877F2]/10",   icon: "FB", placeholder: "profile name or URL" },
-  { id: "linkedin",       label: "LinkedIn",        color: "#0A66C2", bg: "bg-[#0A66C2]/10",   icon: "IN", placeholder: "profile name or URL" },
-  { id: "twitch",         label: "Twitch",          color: "#9146FF", bg: "bg-[#9146FF]/10",   icon: "TW", placeholder: "@streamer" },
-  { id: "snapchat",       label: "Snapchat",        color: "#FFFC00", bg: "bg-[#FFFC00]/10",   icon: "SC", placeholder: "@username" },
+  { id: "tiktok",         label: "TikTok",         color: "#e5e5e5", bg: "bg-white/10", icon: "TT", placeholder: "@username" },
+  { id: "instagram",      label: "Instagram",      color: "#d4d4d4", bg: "bg-white/10", icon: "IG", placeholder: "@username" },
+  { id: "youtube",        label: "YouTube",         color: "#e5e5e5", bg: "bg-white/10", icon: "YT",  placeholder: "@channel or handle" },
+  { id: "twitter",        label: "X / Twitter",    color: "#d4d4d4", bg: "bg-white/10", icon: "𝕏",  placeholder: "@username" },
+  { id: "discord",        label: "Discord Account", color: "#e5e5e5", bg: "bg-white/10", icon: "DS", placeholder: "username#0000 or username" },
+  { id: "discord_server", label: "Discord Server",  color: "#d4d4d4", bg: "bg-white/10", icon: "SV", placeholder: "server name or invite code" },
+  { id: "reddit",         label: "Reddit",          color: "#e5e5e5", bg: "bg-white/10", icon: "RD", placeholder: "u/username" },
+  { id: "facebook",       label: "Facebook",        color: "#d4d4d4", bg: "bg-white/10", icon: "FB", placeholder: "profile name or URL" },
+  { id: "linkedin",       label: "LinkedIn",        color: "#e5e5e5", bg: "bg-white/10", icon: "IN", placeholder: "profile name or URL" },
+  { id: "twitch",         label: "Twitch",          color: "#d4d4d4", bg: "bg-white/10", icon: "TW", placeholder: "@streamer" },
+  { id: "snapchat",       label: "Snapchat",        color: "#e5e5e5", bg: "bg-white/10", icon: "SC", placeholder: "@username" },
   { id: "github",         label: "GitHub",          color: "#ffffff", bg: "bg-white/10",       icon: "GH", placeholder: "@username" },
-  { id: "telegram",       label: "Telegram",        color: "#26A5E4", bg: "bg-[#26A5E4]/10",   icon: "TG",  placeholder: "@username or channel" },
-  { id: "spotify",        label: "Spotify",         color: "#1DB954", bg: "bg-[#1DB954]/10",   icon: "SP", placeholder: "profile name or URL" },
+  { id: "telegram",       label: "Telegram",        color: "#d4d4d4", bg: "bg-white/10", icon: "TG",  placeholder: "@username or channel" },
+  { id: "spotify",        label: "Spotify",         color: "#e5e5e5", bg: "bg-white/10", icon: "SP", placeholder: "profile name or URL" },
 ];
 
 const getPlatform = (id: string) => PLATFORMS.find(p => p.id === id);
@@ -52,7 +52,7 @@ function RiskRing({ score, size = 56 }: { score: number; size?: number }) {
   const radius = (size - 8) / 2;
   const circ = 2 * Math.PI * radius;
   const pct = Math.min(100, Math.max(0, score)) / 100;
-  const color = score >= 70 ? "#ef4444" : score >= 40 ? "#f97316" : score >= 20 ? "#eab308" : "#22c55e";
+  const color = score >= 70 ? "#d4d4d4" : score >= 40 ? "#a3a3a3" : score >= 20 ? "#737373" : "#4b4b4b";
   return (
     <svg width={size} height={size} className="rotate-[-90deg]">
       <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={5} />
@@ -73,7 +73,7 @@ function OverallRing({ score }: { score: number }) {
   const circ = 2 * Math.PI * radius;
   const pct = Math.min(100, Math.max(0, score)) / 100;
   const safeScore = 100 - score;
-  const color = score >= 70 ? "#ef4444" : score >= 40 ? "#f97316" : score >= 20 ? "#eab308" : "#22c55e";
+  const color = score >= 70 ? "#d4d4d4" : score >= 40 ? "#a3a3a3" : score >= 20 ? "#737373" : "#4b4b4b";
   const label = score >= 70 ? "CRITICAL" : score >= 40 ? "AT RISK" : score >= 20 ? "CAUTION" : "PROTECTED";
   return (
     <div className="flex flex-col items-center gap-1">
@@ -290,7 +290,7 @@ export default function ShieldPage() {
                 </div>
                 <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                   <span className="text-[10px] font-bold" style={{
-                    color: account.riskScore >= 70 ? "#ef4444" : account.riskScore >= 40 ? "#f97316" : account.riskScore >= 20 ? "#eab308" : "#22c55e"
+                    color: account.riskScore >= 70 ? "#d4d4d4" : account.riskScore >= 40 ? "#a3a3a3" : account.riskScore >= 20 ? "#737373" : "#4b4b4b"
                   }}>
                     {account.riskScore}
                   </span>
@@ -440,7 +440,7 @@ export default function ShieldPage() {
                     threats: Array<{ type: string; severity: string; title: string; description: string }>;
                     recommendations: string[];
                   };
-                  const statusColor = a.shieldStatus === "PROTECTED" ? "#22c55e" : a.shieldStatus === "AT_RISK" ? "#f97316" : "#ef4444";
+                  const statusColor = a.shieldStatus === "PROTECTED" ? "#d4d4d4" : a.shieldStatus === "AT_RISK" ? "#a3a3a3" : "#737373";
                   return (
                     <div className="space-y-5">
                       {/* Scan header */}

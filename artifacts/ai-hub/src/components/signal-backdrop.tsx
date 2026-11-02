@@ -5,12 +5,12 @@ export function SignalBackdrop({ compact = false }: { compact?: boolean }) {
     <div className={`signal-backdrop ${compact ? "signal-backdrop-compact" : ""}`} aria-hidden="true">
       <div className="signal-grid" />
       <motion.div
-        className="signal-orb signal-orb-cyan"
+        className="signal-orb signal-orb-white"
         animate={{ x: [0, 42, -18, 0], y: [0, -24, 18, 0], scale: [1, 1.08, 0.96, 1] }}
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="signal-orb signal-orb-coral"
+        className="signal-orb signal-orb-gray"
         animate={{ x: [0, -34, 12, 0], y: [0, 26, -14, 0], scale: [1, 0.94, 1.06, 1] }}
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
       />

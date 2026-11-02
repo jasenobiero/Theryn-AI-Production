@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/brand-mark.png",
       "resizeMode": "contain",
-      "backgroundColor": "#070b11"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": false,
@@ -21,7 +21,7 @@
       "package": "com.theryn.mobile",
       "adaptiveIcon": {
           "foregroundImage": "./assets/images/brand-mark.png",
-          "backgroundColor": "#070b11"
+          "backgroundColor": "#000000"
       }
     },
     "web": {

@@ -83,7 +83,7 @@ export default function SignInScreen() {
           <View style={styles.form}>
             {error ? (
               <View style={styles.errorBox}>
-                <Feather name="alert-circle" size={14} color="#f87171" />
+                <Feather name="alert-circle" size={14} color="#d4d4d4" />
                 <Text style={styles.errorText}>{error}</Text>
               </View>
             ) : null}
@@ -135,9 +135,9 @@ export default function SignInScreen() {
               testID="sign-in-submit"
               style={({ pressed }) => [styles.submitBtn, pressed && { opacity: 0.85 }, loading && { opacity: 0.6 }]}
             >
-              <LinearGradient colors={["#38d9ff", "#168ca8"]} style={styles.submitGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+              <LinearGradient colors={["#ffffff", "#777777"]} style={styles.submitGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
                 {loading ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color="#000000" />
                 ) : (
                   <Text style={styles.submitText}>Sign In</Text>
                 )}
@@ -179,10 +179,10 @@ const styles = StyleSheet.create({
   errorBox: {
     flexDirection: "row", alignItems: "center", gap: 8,
     padding: 12, borderRadius: 12,
-    backgroundColor: "rgba(239,68,68,0.08)",
-    borderWidth: 1, borderColor: "rgba(239,68,68,0.2)",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderWidth: 1, borderColor: "rgba(255,255,255,0.14)",
   },
-  errorText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#f87171", flex: 1, lineHeight: 17 },
+  errorText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#d4d4d4", flex: 1, lineHeight: 17 },
   fieldLabel: {
     fontFamily: "Inter_600SemiBold", fontSize: 9,
     color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 8,
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
   eyeBtn: { padding: 4 },
   submitBtn: { borderRadius: 16, overflow: "hidden", marginTop: 8 },
   submitGrad: { paddingVertical: 18, alignItems: "center", justifyContent: "center" },
-  submitText: { fontFamily: "Inter_700Bold", fontSize: 16, color: "#fff" },
+  submitText: { fontFamily: "Inter_700Bold", fontSize: 16, color: "#000000" },
   footer: { flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 24 },
   footerText: { fontFamily: "Inter_400Regular", fontSize: 14, color: "rgba(255,255,255,0.4)" },
-  footerLink: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#38d9ff" },
+  footerLink: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#ffffff" },
 });

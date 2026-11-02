@@ -390,7 +390,7 @@ export default function ArenaPage() {
               </button>
             ) : (
               <button onClick={fire} disabled={!input.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-300 hover:bg-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed text-slate-950 text-xs font-semibold transition-all shadow-[0_0_18px_-4px_rgba(56,217,255,0.3)]">
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-white/90 disabled:opacity-20 disabled:cursor-not-allowed text-black text-xs font-semibold transition-all shadow-[0_0_18px_-8px_rgba(255,255,255,0.18)]">
                 <Zap className="w-3.5 h-3.5" />
                 Race all models
               </button>

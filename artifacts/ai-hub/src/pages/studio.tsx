@@ -648,7 +648,7 @@ export default function StudioPage() {
               <FolderOpen className="w-4 h-4" />
             </button>
 
-            <TherynIcon size={18} className="drop-shadow-[0_0_10px_rgba(56,217,255,0.32)] flex-shrink-0" />
+            <TherynIcon size={18} className="drop-shadow-[0_0_10px_rgba(255,255,255,0.18)] flex-shrink-0" />
 
             {editingTitle ? (
               <input ref={titleInputRef} value={titleDraft} onChange={e => setTitleDraft(e.target.value)}
@@ -840,7 +840,7 @@ export default function StudioPage() {
           <div className={cn(
             "rounded-2xl border transition-all",
             input ? "border-white/[0.10] bg-white/[0.03]" : "border-white/[0.07] bg-white/[0.02]",
-            "focus-within:border-cyan-200/25 focus-within:shadow-[0_0_20px_-8px_rgba(56,217,255,0.18)]"
+            "focus-within:border-white/25 focus-within:shadow-[0_0_20px_-10px_rgba(255,255,255,0.12)]"
           )}>
             <textarea
               ref={textareaRef}
@@ -863,7 +863,7 @@ export default function StudioPage() {
                   </button>
                 ) : (
                   <button onClick={() => sendMessage(input)} disabled={!input.trim()}
-                    className="w-8 h-8 rounded-xl bg-cyan-300 hover:bg-cyan-200 text-slate-950 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-4px_rgba(56,217,255,0.32)]">
+                    className="w-8 h-8 rounded-xl bg-white hover:bg-white/90 text-black disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-8px_rgba(255,255,255,0.18)]">
                     <Send className="w-3.5 h-3.5 text-white" />
                   </button>
                 )}

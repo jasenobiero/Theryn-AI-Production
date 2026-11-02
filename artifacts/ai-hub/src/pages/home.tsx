@@ -75,7 +75,7 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center gap-4 mb-8"
         >
-          <TherynIcon size={56} className="drop-shadow-[0_0_24px_rgba(56,217,255,0.38)]" />
+          <TherynIcon size={56} className="drop-shadow-[0_0_20px_rgba(255,255,255,0.18)]" />
           <div className="text-center">
             <h1 className="text-4xl font-display font-black tracking-[0.16em] text-white">THERYN</h1>
             <p className="text-sm text-white/40 mt-2">{greeting}, {firstName}. What are we making?</p>
@@ -90,7 +90,7 @@ export default function Home() {
           className="w-full"
         >
           <div
-            className="relative rounded-2xl border border-cyan-200/[0.12] bg-slate-950/35 shadow-[0_0_0_1px_rgba(255,255,255,0.035),0_28px_90px_-45px_rgba(56,217,255,0.28)] backdrop-blur-xl focus-within:border-cyan-200/35 focus-within:shadow-[0_0_38px_-12px_rgba(56,217,255,0.24)] transition-all duration-300"
+            className="relative rounded-2xl border border-white/[0.12] bg-black/35 shadow-[0_0_0_1px_rgba(255,255,255,0.035),0_28px_90px_-45px_rgba(255,255,255,0.08)] backdrop-blur-xl focus-within:border-white/35 focus-within:shadow-[0_0_30px_-14px_rgba(255,255,255,0.12)] transition-all duration-300"
           >
             <textarea
               data-testid="input-home-prompt"
@@ -157,7 +157,7 @@ export default function Home() {
                   onClick={() => send()}
                   data-testid="button-home-send"
                   disabled={!input.trim()}
-                  className="w-8 h-8 rounded-xl bg-cyan-300 text-slate-950 hover:bg-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-5px_rgba(56,217,255,0.55)]"
+                  className="w-8 h-8 rounded-xl bg-white text-black hover:bg-white/90 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-8px_rgba(255,255,255,0.2)]"
                 >
                   <ArrowUp className="w-3.5 h-3.5 text-white" />
                 </button>

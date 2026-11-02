@@ -148,7 +148,7 @@ export default function VoiceScreen() {
                     {
                       height: h,
                       backgroundColor: playing
-                        ? `rgba(56,217,255,${0.3 + Math.abs(Math.sin((i / 24) * Math.PI * 2)) * 0.7})`
+                        ? `rgba(255,255,255,${0.3 + Math.abs(Math.sin((i / 24) * Math.PI * 2)) * 0.7})`
                         : "rgba(255,255,255,0.08)",
                     },
                   ]}
@@ -164,7 +164,7 @@ export default function VoiceScreen() {
               style={({ pressed }) => [pressed && { opacity: 0.8 }]}
             >
               <LinearGradient
-                colors={playing ? ["#0e6072", "#168ca8"] : ["#38d9ff", "#168ca8"]}
+                colors={playing ? ["#555555", "#222222"] : ["#ffffff", "#777777"]}
                 style={styles.playBtn}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
@@ -194,7 +194,7 @@ export default function VoiceScreen() {
               onPress={() => { setVoice(v.id); Haptics.selectionAsync(); }}
               style={[
                 styles.voiceChip,
-                v.id === voice && { borderColor: "#38d9ff", backgroundColor: "rgba(56,217,255,0.1)" },
+                v.id === voice && { borderColor: "#ffffff", backgroundColor: "rgba(255,255,255,0.08)" },
               ]}
             >
               <Text style={[styles.voiceName, v.id === voice && { color: "#fff" }]}>{v.name}</Text>
@@ -224,7 +224,7 @@ export default function VoiceScreen() {
               pressed && { opacity: 0.75 },
             ]}
           >
-            <LinearGradient colors={["#38d9ff", "#168ca8"]} style={styles.synthBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+            <LinearGradient colors={["#ffffff", "#777777"]} style={styles.synthBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
               <Feather name="volume-2" size={14} color="#fff" />
               <Text style={styles.synthBtnText}>Speak</Text>
             </LinearGradient>
@@ -236,7 +236,7 @@ export default function VoiceScreen() {
         {PRESETS.map((p, i) => (
           <Pressable key={i} onPress={() => { setText(p); Haptics.selectionAsync(); }}
             style={({ pressed }) => [styles.preset, pressed && { opacity: 0.7 }]}>
-            <Feather name="chevron-right" size={13} color="rgba(56,217,255,0.8)" />
+            <Feather name="chevron-right" size={13} color="rgba(255,255,255,0.8)" />
             <Text style={styles.presetText}>{p}</Text>
           </Pressable>
         ))}
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   playBtn: {
     width: 72, height: 72, borderRadius: 36,
     alignItems: "center", justifyContent: "center",
-    shadowColor: "#38d9ff", shadowOffset: { width: 0, height: 6 },
+    shadowColor: "#ffffff", shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4, shadowRadius: 16, elevation: 12,
   },
   vizLabel: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.3)" },
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   textInput: { fontFamily: "Inter_400Regular", fontSize: 14, color: "#fff", minHeight: 80, lineHeight: 22 },
   synthBtn: { borderRadius: 12, overflow: "hidden", alignSelf: "flex-end" },
   synthBtnGrad: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 10 },
-  synthBtnText: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: "#fff" },
+  synthBtnText: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: "#000000" },
   preset: { flexDirection: "row", alignItems: "center", gap: 10, padding: 13, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.02)", borderWidth: 1, borderColor: "rgba(255,255,255,0.05)" },
   presetText: { fontFamily: "Inter_400Regular", fontSize: 13, color: "rgba(255,255,255,0.5)", flex: 1 },
   note: { flexDirection: "row", alignItems: "flex-start", gap: 8, padding: 12, borderRadius: 12, backgroundColor: "rgba(255,255,255,0.02)", borderWidth: 1, borderColor: "rgba(255,255,255,0.04)", marginTop: 4 },

@@ -237,7 +237,7 @@ export default function SettingsScreen() {
 
         <Section title="PROVIDER KEYS">
           <View style={styles.keyIntro}>
-            <View style={styles.keyIntroIcon}><Feather name="shield" size={15} color="#38d9ff" /></View>
+            <View style={styles.keyIntroIcon}><Feather name="shield" size={15} color="#e5e5e5" /></View>
             <Text style={styles.keyIntroText}>Connect your own keys. Saved values are only shown here in masked form after saving.</Text>
           </View>
           {settingsLoading ? (
@@ -306,9 +306,9 @@ export default function SettingsScreen() {
         </Section>
 
         <Section title="RESOURCES">
-          <Row icon="globe" label="Open web command center" color="#38d9ff" onPress={() => { Haptics.selectionAsync(); void Linking.openURL(webUrl); }} testID="settings-open-web" />
+          <Row icon="globe" label="Open web command center" color="#e5e5e5" onPress={() => { Haptics.selectionAsync(); void Linking.openURL(webUrl); }} testID="settings-open-web" />
           <View style={styles.divider} />
-          <Row icon="download" label="Download for desktop" color="#38d9ff" onPress={() => { Haptics.selectionAsync(); void Linking.openURL(`${webUrl}/downloads`); }} testID="settings-download" />
+          <Row icon="download" label="Download for desktop" color="#e5e5e5" onPress={() => { Haptics.selectionAsync(); void Linking.openURL(`${webUrl}/downloads`); }} testID="settings-download" />
         </Section>
 
         <Section title="APP">
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   headerMark: { width: 34, height: 34, borderRadius: 11, backgroundColor: "#102c36", alignItems: "center", justifyContent: "center" },
   headerMarkText: { fontFamily: "Inter_700Bold", fontSize: 17, color: "#fff" },
   profileCard: { flexDirection: "row", alignItems: "center", padding: 18, borderRadius: 18, borderWidth: 1, borderColor: "rgba(154,229,245,0.14)", gap: 14 },
-  avatar: { width: 55, height: 55, borderRadius: 18, backgroundColor: "#168ca8", alignItems: "center", justifyContent: "center", position: "relative" },
+  avatar: { width: 55, height: 55, borderRadius: 18, backgroundColor: "#303030", alignItems: "center", justifyContent: "center", position: "relative" },
   avatarText: { fontFamily: "Inter_700Bold", fontSize: 20, color: "#fff" },
   online: { width: 11, height: 11, borderRadius: 6, backgroundColor: "#76d49e", borderWidth: 2, borderColor: "#2a0f10", position: "absolute", right: -1, bottom: -1 },
   profileInfo: { flex: 1, gap: 3 },
@@ -358,8 +358,8 @@ const styles = StyleSheet.create({
   rowFill: { flex: 1 },
   rowValue: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.35)" },
   divider: { height: 1, backgroundColor: "rgba(255,255,255,0.055)", marginLeft: 57 },
-  keyIntro: { flexDirection: "row", alignItems: "flex-start", gap: 10, padding: 14, backgroundColor: "rgba(56,217,255,0.06)", borderBottomWidth: 1, borderBottomColor: "rgba(56,217,255,0.12)" },
-  keyIntroIcon: { width: 28, height: 28, borderRadius: 9, backgroundColor: "rgba(56,217,255,0.13)", alignItems: "center", justifyContent: "center" },
+  keyIntro: { flexDirection: "row", alignItems: "flex-start", gap: 10, padding: 14, backgroundColor: "rgba(255,255,255,0.05)", borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.12)" },
+  keyIntroIcon: { width: 28, height: 28, borderRadius: 9, backgroundColor: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" },
   keyIntroText: { flex: 1, fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: "rgba(255,255,255,0.48)" },
   keyRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14, paddingTop: 14 },
   keyIcon: { width: 31, height: 31, borderRadius: 10, alignItems: "center", justifyContent: "center" },
@@ -375,11 +375,11 @@ const styles = StyleSheet.create({
   smallButtonText: { fontFamily: "Inter_500Medium", fontSize: 10, color: "rgba(255,255,255,0.65)" },
   removeButton: { width: 31, height: 31, borderRadius: 9, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(239,119,119,0.09)" },
   editor: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 14, gap: 9 },
-  secretInputWrap: { flexDirection: "row", alignItems: "center", backgroundColor: "#101c26", borderWidth: 1, borderColor: "rgba(56,217,255,0.3)", borderRadius: 11, paddingLeft: 12 },
+  secretInputWrap: { flexDirection: "row", alignItems: "center", backgroundColor: "#101010", borderWidth: 1, borderColor: "rgba(255,255,255,0.24)", borderRadius: 11, paddingLeft: 12 },
   secretInput: { flex: 1, minHeight: 42, fontFamily: "Inter_400Regular", fontSize: 13, color: "#fff" },
   eyeButton: { padding: 12 },
   editorActions: { flexDirection: "row", gap: 8 },
-  saveButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 13, paddingVertical: 10, borderRadius: 10, backgroundColor: "#168ca8" },
+  saveButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 13, paddingVertical: 10, borderRadius: 10, backgroundColor: "#333333" },
   saveButtonText: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: "#fff" },
   cancelButton: { justifyContent: "center", paddingHorizontal: 12, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.06)" },
   cancelText: { fontFamily: "Inter_500Medium", fontSize: 12, color: "rgba(255,255,255,0.55)" },

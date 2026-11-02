@@ -149,7 +149,7 @@ export function ChatInterface({
                   className={cn(
                      "max-w-[88%] rounded-2xl px-4 py-3.5 text-sm",
                     msg.role === "user"
-                      ? "bg-cyan-300 text-slate-950 rounded-br-sm shadow-[0_0_20px_-6px_rgba(56,217,255,0.28)]"
+                      ? "bg-white text-black rounded-br-sm shadow-[0_0_18px_-8px_rgba(255,255,255,0.16)]"
                       : "bg-white/[0.05] border border-white/[0.07] text-white/90 rounded-bl-sm"
                   )}
                 >
@@ -185,15 +185,15 @@ export function ChatInterface({
       </div>
 
       {/* Input area */}
-       <div className="px-4 md:px-8 pb-5 pt-3 border-t border-white/[0.05]" style={{ background: "hsl(210 31% 4% / .72)" }}>
+       <div className="px-4 md:px-8 pb-5 pt-3 border-t border-white/[0.05]" style={{ background: "hsl(0 0% 4% / .72)" }}>
          <div className="max-w-3xl mx-auto">
           <div
             className={cn(
                "rounded-[24px] border transition-all duration-200",
               attachedImages.length > 0 || input
-                ? "border-white/[0.1] bg-white/[0.03] shadow-[0_0_20px_-8px_rgba(56,217,255,0.14)]"
+                ? "border-white/[0.1] bg-white/[0.03] shadow-[0_0_20px_-8px_rgba(255,255,255,0.08)]"
                 : "border-white/[0.07] bg-white/[0.02]",
-              "focus-within:border-cyan-200/30 focus-within:shadow-[0_0_25px_-8px_rgba(56,217,255,0.18)]"
+              "focus-within:border-white/30 focus-within:shadow-[0_0_24px_-10px_rgba(255,255,255,0.12)]"
             )}
           >
             {/* Attached image previews */}
@@ -270,7 +270,7 @@ export function ChatInterface({
                     type="button"
                     onClick={handleSubmit}
                     disabled={!canSend}
-                    className="w-8 h-8 rounded-xl bg-cyan-300 text-slate-950 hover:bg-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-4px_rgba(56,217,255,0.35)]"
+                    className="w-8 h-8 rounded-xl bg-white text-black hover:bg-white/90 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-8px_rgba(255,255,255,0.2)]"
                   >
                     <Send className="w-3.5 h-3.5 text-white" />
                   </button>
