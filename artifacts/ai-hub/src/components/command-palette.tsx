@@ -176,14 +176,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                               onMouseEnter={() => setSelected(flatIdx)}
                               className={cn(
                                 "flex items-center gap-3 w-full px-4 py-2.5 text-left transition-colors",
-                                isSelected ? "bg-red-600/15" : "hover:bg-white/[0.04]"
+                                isSelected ? "bg-cyan-300/15" : "hover:bg-white/[0.04]"
                               )}
                             >
                               <div className={cn(
                                 "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors",
-                                isSelected ? "bg-red-600/20" : "bg-white/[0.05]"
+                                isSelected ? "bg-cyan-300/20" : "bg-white/[0.05]"
                               )}>
-                                <item.icon className={cn("w-3.5 h-3.5", item.color ?? (isSelected ? "text-red-400" : "text-white/40"))} />
+                                <item.icon className={cn("w-3.5 h-3.5", item.color ?? (isSelected ? "text-cyan-200" : "text-white/40"))} />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className={cn("text-sm font-medium truncate", isSelected ? "text-white" : "text-white/70")}>{item.label}</p>
@@ -199,7 +199,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                                     ))}
                                   </div>
                                 )}
-                                {isSelected && <ArrowRight className="w-3.5 h-3.5 text-red-400/60" />}
+                                {isSelected && <ArrowRight className="w-3.5 h-3.5 text-cyan-200/70" />}
                               </div>
                             </button>
                           );

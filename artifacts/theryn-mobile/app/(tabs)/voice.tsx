@@ -18,6 +18,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { useTabScreenTransition } from "@/hooks/useTabScreenTransition";
 
 const API_BASE = process.env.EXPO_PUBLIC_DOMAIN
   ? `https://${process.env.EXPO_PUBLIC_DOMAIN}`
@@ -38,6 +39,7 @@ const PRESETS = [
 ];
 
 export default function VoiceScreen() {
+  const transitionStyle = useTabScreenTransition();
   const insets = useSafeAreaInsets();
   const colors = useColors();
   const [text, setText] = useState("");
@@ -111,7 +113,7 @@ export default function VoiceScreen() {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <Animated.View style={[styles.root, { backgroundColor: colors.background }, transitionStyle]}>
       <SignalBackdrop />
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 12) }]}>
         <View>
@@ -146,7 +148,7 @@ export default function VoiceScreen() {
                     {
                       height: h,
                       backgroundColor: playing
-                        ? `rgba(220,38,38,${0.3 + Math.abs(Math.sin((i / 24) * Math.PI * 2)) * 0.7})`
+                        ? `rgba(56,217,255,${0.3 + Math.abs(Math.sin((i / 24) * Math.PI * 2)) * 0.7})`
                         : "rgba(255,255,255,0.08)",
                     },
                   ]}
@@ -162,7 +164,7 @@ export default function VoiceScreen() {
               style={({ pressed }) => [pressed && { opacity: 0.8 }]}
             >
               <LinearGradient
-                colors={playing ? ["#7f1d1d", "#991b1b"] : ["#dc2626", "#b91c1c"]}
+                colors={playing ? ["#0e6072", "#168ca8"] : ["#38d9ff", "#168ca8"]}
                 style={styles.playBtn}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
@@ -192,7 +194,7 @@ export default function VoiceScreen() {
               onPress={() => { setVoice(v.id); Haptics.selectionAsync(); }}
               style={[
                 styles.voiceChip,
-                v.id === voice && { borderColor: "#dc2626", backgroundColor: "rgba(220,38,38,0.1)" },
+                v.id === voice && { borderColor: "#38d9ff", backgroundColor: "rgba(56,217,255,0.1)" },
               ]}
             >
               <Text style={[styles.voiceName, v.id === voice && { color: "#fff" }]}>{v.name}</Text>
@@ -222,7 +224,7 @@ export default function VoiceScreen() {
               pressed && { opacity: 0.75 },
             ]}
           >
-            <LinearGradient colors={["#dc2626", "#b91c1c"]} style={styles.synthBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+            <LinearGradient colors={["#38d9ff", "#168ca8"]} style={styles.synthBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
               <Feather name="volume-2" size={14} color="#fff" />
               <Text style={styles.synthBtnText}>Speak</Text>
             </LinearGradient>
@@ -234,7 +236,7 @@ export default function VoiceScreen() {
         {PRESETS.map((p, i) => (
           <Pressable key={i} onPress={() => { setText(p); Haptics.selectionAsync(); }}
             style={({ pressed }) => [styles.preset, pressed && { opacity: 0.7 }]}>
-            <Feather name="chevron-right" size={13} color="rgba(220,38,38,0.7)" />
+            <Feather name="chevron-right" size={13} color="rgba(56,217,255,0.8)" />
             <Text style={styles.presetText}>{p}</Text>
           </Pressable>
         ))}
@@ -244,7 +246,7 @@ export default function VoiceScreen() {
           <Text style={styles.noteText}>Requires ELEVENLABS_API_KEY on the server to generate audio.</Text>
         </View>
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -256,7 +258,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", gap: 10,
   },
   title: { fontFamily: "Inter_700Bold", fontSize: 20, color: "#fff" },
-  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(224,59,59,0.8)", letterSpacing: 1.6, marginBottom: 3 },
+  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(154,239,255,0.8)", letterSpacing: 1.6, marginBottom: 3 },
   headerBadge: {
     paddingHorizontal: 8, paddingVertical: 3,
     borderRadius: 8, backgroundColor: "rgba(168,85,247,0.15)",
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
   playBtn: {
     width: 72, height: 72, borderRadius: 36,
     alignItems: "center", justifyContent: "center",
-    shadowColor: "#dc2626", shadowOffset: { width: 0, height: 6 },
+    shadowColor: "#38d9ff", shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4, shadowRadius: 16, elevation: 12,
   },
   vizLabel: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.3)" },

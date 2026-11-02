@@ -29,8 +29,8 @@ const NAV_SECTIONS = [
       { href: "/images",  icon: ImageIcon,   label: "Image Gen" },
       { href: "/voice",   icon: Mic,         label: "Voice TTS" },
       { href: "/agents",  icon: Bot,         label: "Agent Studio" },
-      { href: "/prompts", icon: BookMarked,  label: "Prompt Library", badge: "40+", badgeColor: "bg-red-500/15 text-red-300/70 border-red-500/15" },
-      { href: "/shield",  icon: ShieldCheck, label: "Social Shield",  badge: "NEW", badgeColor: "bg-red-600/20 text-red-300 border-red-600/20" },
+      { href: "/prompts", icon: BookMarked,  label: "Prompt Library", badge: "40+", badgeColor: "bg-cyan-300/10 text-cyan-100/80 border-cyan-200/15" },
+      { href: "/shield",  icon: ShieldCheck, label: "Social Shield",  badge: "NEW", badgeColor: "bg-rose-400/10 text-rose-200 border-rose-300/15" },
       { href: "/bot-hub",   icon: Radio,    label: "Bot Hub",    badge: "NEW", badgeColor: "bg-blue-600/20 text-blue-300 border-blue-600/20" },
       { href: "/downloads", icon: Download, label: "Get App",    badge: "PWA", badgeColor: "bg-green-600/20 text-green-300 border-green-600/20" },
     ],
@@ -63,13 +63,13 @@ export function Layout({ children }: LayoutProps) {
       {/* ── Sidebar ── */}
       <aside
         className={cn(
-          "w-[264px] flex-shrink-0 flex flex-col z-40 border-r border-white/[0.07] bg-[hsl(0_0%_5.5%)]",
+          "w-[264px] flex-shrink-0 flex flex-col z-40 border-r border-white/[0.07]",
           "fixed inset-y-0 left-0 -translate-x-full md:relative md:translate-x-0 transition-transform duration-300",
           mobileNavOpen && "translate-x-0"
         )}
       >
         {/* Logo */}
-        <div className="h-14 flex items-center px-4 border-b border-white/[0.05]">
+        <div className="h-14 flex items-center px-4 border-b border-white/[0.05] bg-white/[0.015]">
           <Link href="/" onClick={() => setMobileNavOpen(false)} data-testid="link-sidebar-home" className="flex items-center gap-2.5 group flex-1 min-w-0">
              <TherynIcon size={30} className="drop-shadow-[0_0_12px_rgba(56,217,255,0.4)]" />
             <span className="font-display font-bold text-[17px] tracking-[0.24em] text-white">
@@ -195,7 +195,7 @@ export function Layout({ children }: LayoutProps) {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col min-w-0 min-h-[100dvh] overflow-hidden bg-background">
+      <main className="flex-1 flex flex-col min-w-0 min-h-[100dvh] overflow-hidden">
          <div className="md:hidden h-14 flex items-center justify-between px-4 border-b border-white/[0.07] bg-[hsl(210_30%_7%_/_0.8)] backdrop-blur-xl">
           <button onClick={() => setMobileNavOpen(true)} data-testid="button-open-navigation" className="touch-target flex items-center justify-center -ml-2 text-white/60 hover:text-white" aria-label="Open navigation">
             <Menu className="w-5 h-5" />

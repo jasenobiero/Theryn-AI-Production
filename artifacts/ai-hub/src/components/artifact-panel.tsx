@@ -240,12 +240,12 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
           <div className="flex items-center rounded-lg border border-white/[0.07] overflow-hidden mr-1">
             <button onClick={() => { setView("preview"); setIsEditing(false); }} disabled={artifact.isStreaming}
               className={cn("flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-medium transition-colors disabled:opacity-30",
-                view === "preview" ? "bg-red-600/20 text-red-300" : "text-white/30 hover:text-white/70")}>
+                view === "preview" ? "bg-cyan-300/15 text-cyan-100" : "text-white/30 hover:text-white/70")}>
               <Eye className="w-3 h-3" />Preview
             </button>
             <button onClick={() => { setView("code"); setIsEditing(false); }}
               className={cn("flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-medium transition-colors border-l border-white/[0.07]",
-                view === "code" && !isEditing ? "bg-red-600/20 text-red-300" : "text-white/30 hover:text-white/70")}>
+                view === "code" && !isEditing ? "bg-cyan-300/15 text-cyan-100" : "text-white/30 hover:text-white/70")}>
               <Code2 className="w-3 h-3" />Code
             </button>
             {!artifact.isStreaming && (
@@ -264,7 +264,7 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
                 <button key={d.id} onClick={() => setDeviceSize(d.id)}
                   title={d.label}
                   className={cn("p-1.5 transition-colors", i > 0 && "border-l border-white/[0.07]",
-                    deviceSize === d.id ? "bg-red-600/20 text-red-300" : "text-white/25 hover:text-white/70")}>
+                    deviceSize === d.id ? "bg-cyan-300/15 text-cyan-100" : "text-white/25 hover:text-white/70")}>
                   <d.icon className="w-3 h-3" />
                 </button>
               ))}
@@ -288,7 +288,7 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
           <button onClick={onClose} title="Close"
-            className="p-1.5 rounded-lg text-white/25 hover:text-red-400 hover:bg-red-500/10 transition-all">
+            className="p-1.5 rounded-lg text-white/25 hover:text-cyan-200 hover:bg-cyan-300/10 transition-all">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -332,7 +332,7 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
             <div className="h-full overflow-hidden flex flex-col">
               {artifact.isStreaming && (
                 <div className="flex-shrink-0 px-4 py-1.5 border-b border-white/[0.04] flex items-center gap-2" style={{ background: "hsl(0 0% 7%)" }}>
-                  <Code2 className="w-3 h-3 text-red-400/70" />
+                  <Code2 className="w-3 h-3 text-cyan-200/70" />
                   <span className="text-[9px] text-white/25 font-mono uppercase tracking-widest">Writing code…</span>
                   <span className="ml-auto text-[9px] text-white/20 font-mono">{artifact.content.length.toLocaleString()} chars</span>
                 </div>
@@ -344,7 +344,7 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
               >
                 <code>{artifact.content}</code>
                 {artifact.isStreaming && (
-                  <span className="inline-block w-2 h-3.5 bg-red-400/70 rounded-sm animate-pulse ml-0.5 align-middle" />
+                  <span className="inline-block w-2 h-3.5 bg-cyan-200/70 rounded-sm animate-pulse ml-0.5 align-middle" />
                 )}
               </pre>
             </div>
@@ -355,7 +355,7 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
             artifact.isStreaming ? (
               <div className="h-full flex items-center justify-center text-white/20 text-xs flex-col gap-2">
                 <div className="flex gap-1">
-                  {[0,1,2].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-red-500/50 animate-bounce" style={{ animationDelay: `${i*0.12}s` }} />)}
+                  {[0,1,2].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-cyan-300/60 animate-bounce" style={{ animationDelay: `${i*0.12}s` }} />)}
                 </div>
                 Preview renders when build completes…
               </div>

@@ -368,7 +368,7 @@ export default function ArenaPage() {
         <div className={cn(
           "rounded-2xl border transition-all",
           input ? "border-white/[0.10] bg-white/[0.03]" : "border-white/[0.07] bg-white/[0.02]",
-          "focus-within:border-red-500/30"
+          "focus-within:border-cyan-200/30"
         )}>
           <textarea
             ref={textareaRef}
@@ -390,7 +390,7 @@ export default function ArenaPage() {
               </button>
             ) : (
               <button onClick={fire} disabled={!input.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-20 disabled:cursor-not-allowed text-white text-xs font-semibold transition-all shadow-[0_0_12px_-2px_rgba(220,38,38,0.4)]">
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-300 hover:bg-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed text-slate-950 text-xs font-semibold transition-all shadow-[0_0_18px_-4px_rgba(56,217,255,0.3)]">
                 <Zap className="w-3.5 h-3.5" />
                 Race all models
               </button>

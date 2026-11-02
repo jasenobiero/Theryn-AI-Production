@@ -6,6 +6,7 @@ import { fetch as expoFetch } from "expo/fetch";
 import React, { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -20,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { SignalBackdrop } from "@/components/SignalBackdrop";
 import { SignalMark } from "@/components/SignalMark";
+import { useTabScreenTransition } from "@/hooks/useTabScreenTransition";
 
 type Provider = "openai" | "anthropic" | "openrouter";
 
@@ -48,6 +50,7 @@ const QUICK_PROMPTS = [
 ] as const;
 
 export default function ChatScreen() {
+  const transitionStyle = useTabScreenTransition();
   const { user } = useUser();
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -168,7 +171,7 @@ export default function ChatScreen() {
           isUser ? styles.userBubble : [styles.aiBubble, { borderColor: p.color + "18" }],
         ]}>
           {isUser ? (
-            <LinearGradient colors={["#dc2626", "#b91c1c"]} style={styles.userGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+            <LinearGradient colors={["#38d9ff", "#168ca8"]} style={styles.userGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <Text style={styles.userText}>{item.content}</Text>
             </LinearGradient>
           ) : (
@@ -192,7 +195,7 @@ export default function ChatScreen() {
   const firstName = user?.firstName ?? "there";
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <Animated.View style={[styles.root, { backgroundColor: colors.background }, transitionStyle]}>
       <SignalBackdrop />
       {/* Compact, touch-first workspace header */}
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 12) }]}>
@@ -340,7 +343,7 @@ export default function ChatScreen() {
               <View style={styles.historyEmpty}><Feather name="inbox" size={18} color="rgba(255,255,255,0.2)" /><Text style={styles.historyEmptyText}>Your new conversations will appear here.</Text></View>
             ) : recent.map(item => (
               <Pressable key={item.id} onPress={() => openConversation(item.id)} style={[styles.historyItem, convId === item.id && styles.historyItemActive]}>
-                <Feather name="message-square" size={15} color={convId === item.id ? "#e03b3b" : "rgba(255,255,255,0.28)"} />
+                <Feather name="message-square" size={15} color={convId === item.id ? "#38d9ff" : "rgba(255,255,255,0.28)"} />
                 <Text numberOfLines={1} style={styles.historyItemText}>{item.title}</Text>
                 <Feather name="chevron-right" size={14} color="rgba(255,255,255,0.16)" />
               </Pressable>
@@ -348,7 +351,7 @@ export default function ChatScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -356,7 +359,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   menuBtn: { width: 38, height: 38, borderRadius: 13, backgroundColor: "rgba(255,255,255,0.06)", alignItems: "center", justifyContent: "center", marginRight: 10 },
   brandGroup: { flex: 1, flexDirection: "row", alignItems: "center", gap: 9 },
-  headerMark: { width: 30, height: 30, borderRadius: 10, backgroundColor: "#dc2626", alignItems: "center", justifyContent: "center" },
+  headerMark: { width: 30, height: 30, borderRadius: 10, backgroundColor: "#102c36", alignItems: "center", justifyContent: "center" },
   headerMarkText: { fontFamily: "Inter_700Bold", fontSize: 16, color: "#fff" },
   greetingWrap: { flex: 1 },
   kicker: { fontFamily: "Inter_700Bold", fontSize: 11, color: "#fff", letterSpacing: 1.8 },
@@ -440,7 +443,7 @@ const styles = StyleSheet.create({
   },
   emptyIconCore: { width: 46, height: 46, borderRadius: 16, alignItems: "center", justifyContent: "center" },
   emptyIconLetter: { fontFamily: "Inter_700Bold", fontSize: 22, color: "#fff" },
-  emptyKicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(224,59,59,0.85)", letterSpacing: 1.6 },
+  emptyKicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(154,239,255,0.85)", letterSpacing: 1.6 },
   emptyTitle: { fontFamily: "Inter_700Bold", fontSize: 22, color: "#fff", textAlign: "center", lineHeight: 29, marginTop: 2 },
   emptySub: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.38)", textAlign: "center" },
   quickPromptGrid: { width: "100%", gap: 8, marginTop: 14 },
@@ -487,13 +490,13 @@ const styles = StyleSheet.create({
   sheetKicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(255,255,255,0.3)", letterSpacing: 1.5 },
   sheetTitle: { fontFamily: "Inter_700Bold", fontSize: 24, color: "#fff", marginTop: 3 },
   closeBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: "rgba(255,255,255,0.06)", alignItems: "center", justifyContent: "center" },
-  newSession: { flexDirection: "row", alignItems: "center", gap: 12, padding: 13, borderRadius: 16, backgroundColor: "rgba(224,59,59,0.12)", borderWidth: 1, borderColor: "rgba(224,59,59,0.25)", marginBottom: 20 },
-  newSessionIcon: { width: 34, height: 34, borderRadius: 11, backgroundColor: "#e03b3b", alignItems: "center", justifyContent: "center" },
+  newSession: { flexDirection: "row", alignItems: "center", gap: 12, padding: 13, borderRadius: 16, backgroundColor: "rgba(56,217,255,0.09)", borderWidth: 1, borderColor: "rgba(56,217,255,0.22)", marginBottom: 20 },
+  newSessionIcon: { width: 34, height: 34, borderRadius: 11, backgroundColor: "#168ca8", alignItems: "center", justifyContent: "center" },
   newSessionTitle: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#fff" },
   newSessionSub: { fontFamily: "Inter_400Regular", fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 },
   historyLabel: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(255,255,255,0.24)", letterSpacing: 1.5, marginBottom: 8 },
   historyItem: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 12, paddingVertical: 13, borderRadius: 13, marginBottom: 5 },
-  historyItemActive: { backgroundColor: "rgba(224,59,59,0.09)" },
+  historyItemActive: { backgroundColor: "rgba(56,217,255,0.09)" },
   historyItemText: { flex: 1, fontFamily: "Inter_400Regular", fontSize: 13, color: "rgba(255,255,255,0.7)" },
   historyEmpty: { alignItems: "center", gap: 9, paddingVertical: 25 },
   historyEmptyText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.3)", textAlign: "center" },

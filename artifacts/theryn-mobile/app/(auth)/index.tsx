@@ -87,7 +87,7 @@ export default function WelcomeScreen() {
           <Animated.View style={{ transform: [{ scale: logoScale }], opacity: logoOpacity }}>
              <Animated.View style={[styles.logoOuter, { transform: [{ scale: pulseAnim }] }]}>
               <LinearGradient
-                colors={["rgba(220,38,38,0.15)", "rgba(220,38,38,0.05)"]}
+                colors={["rgba(56,217,255,0.15)", "rgba(56,217,255,0.02)"]}
                 style={styles.logoGlow}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -115,7 +115,7 @@ export default function WelcomeScreen() {
           ].map((f, i) => (
             <View key={i} style={styles.featureRow}>
               <View style={styles.featureIcon}>
-                <Feather name={f.icon as any} size={16} color="#dc2626" />
+                <Feather name={f.icon as any} size={16} color="#38d9ff" />
               </View>
               <View>
                 <Text style={styles.featureLabel}>{f.label}</Text>
@@ -138,7 +138,7 @@ export default function WelcomeScreen() {
               style={({ pressed }) => [styles.primaryBtn, pressed && styles.pressed]}
             >
               <LinearGradient
-                colors={["#dc2626", "#b91c1c"]}
+                colors={["#38d9ff", "#168ca8"]}
                 style={styles.primaryBtnGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -173,11 +173,11 @@ const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1 },
   topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 24 },
   topBrand: { flexDirection: "row", alignItems: "center", gap: 9 },
-  topBrandMark: { width: 26, height: 26, borderRadius: 8, backgroundColor: "#dc2626", alignItems: "center", justifyContent: "center" },
+  topBrandMark: { width: 26, height: 26, borderRadius: 8, backgroundColor: "#12333c", alignItems: "center", justifyContent: "center" },
   topBrandLetter: { fontFamily: "Inter_700Bold", fontSize: 14, color: "#fff" },
   topBrandName: { fontFamily: "Inter_700Bold", fontSize: 13, color: "#fff", letterSpacing: 2.4 },
   livePill: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 9, paddingVertical: 6, borderRadius: 12, backgroundColor: "rgba(255,255,255,0.05)", borderWidth: 1, borderColor: "rgba(255,255,255,0.08)" },
-  liveDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#dc2626" },
+  liveDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#38d9ff" },
   liveText: { fontFamily: "Inter_600SemiBold", fontSize: 8, color: "rgba(255,255,255,0.42)", letterSpacing: 1 },
   bgGlow: {
     position: "absolute",
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: "rgba(220,38,38,0.08)",
+    backgroundColor: "rgba(56,217,255,0.08)",
     transform: [{ scaleX: 2 }],
   },
   logoSection: {
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     height: 76,
     borderRadius: 22,
     overflow: "hidden",
-    shadowColor: "#dc2626",
+    shadowColor: "#38d9ff",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#dc2626",
+    backgroundColor: "#38d9ff",
   },
   tagline: {
     fontFamily: "Inter_500Medium",
@@ -286,9 +286,9 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "rgba(220,38,38,0.1)",
+    backgroundColor: "rgba(56,217,255,0.1)",
     borderWidth: 1,
-    borderColor: "rgba(220,38,38,0.15)",
+    borderColor: "rgba(56,217,255,0.15)",
     alignItems: "center",
     justifyContent: "center",
   },

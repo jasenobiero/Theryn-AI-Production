@@ -130,7 +130,7 @@ export default function ChatPage() {
 
       {/* Sidebar */}
        <div className={cn(
-           "w-[280px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[hsl(0_0%_6%)]",
+           "w-[280px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[hsl(210_31%_5%_/_0.78)]",
          showHistory ? "fixed inset-y-0 left-0 z-50 flex shadow-2xl shadow-black/70" : "hidden",
          "lg:flex lg:relative lg:inset-auto lg:z-auto lg:shadow-none"
        )}>
@@ -142,7 +142,7 @@ export default function ChatPage() {
                 onClick={() => setProvider(p)}
                 className={cn(
                   "flex-1 text-[11px] font-semibold py-1.5 rounded-lg transition-all",
-                  provider === p ? "bg-red-600 text-white" : "text-white/35 hover:text-white/70"
+                  provider === p ? "bg-cyan-300 text-slate-950" : "text-white/35 hover:text-white/70"
                 )}
               >
                 {PROVIDER_NAMES[p]}
@@ -175,7 +175,7 @@ export default function ChatPage() {
                         onClick={() => { setSelectedModel(m.value); setShowModelPicker(false); }}
                         className={cn(
                           "w-full text-left px-3 py-2 rounded-lg text-xs transition-colors",
-                          selectedModel === m.value ? "bg-red-600/15 text-white" : "text-white/40 hover:text-white hover:bg-white/[0.05]"
+                          selectedModel === m.value ? "bg-cyan-300/15 text-cyan-50" : "text-white/40 hover:text-white hover:bg-white/[0.05]"
                         )}
                       >
                         {m.label}
@@ -198,7 +198,7 @@ export default function ChatPage() {
 
          <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {conversationId === null && messages.length > 0 && (
-            <div className="px-3 py-2.5 rounded-lg text-xs text-white border border-red-500/20 bg-red-600/10">
+            <div className="px-3 py-2.5 rounded-lg text-xs text-white border border-cyan-200/15 bg-cyan-300/5">
               <p className="font-medium truncate">Current session</p>
               <p className="text-[10px] text-white/30 mt-0.5">Unsaved</p>
             </div>
@@ -210,7 +210,7 @@ export default function ChatPage() {
               className={cn(
                 "w-full text-left px-3 py-2.5 rounded-lg transition-all flex flex-col gap-0.5",
                 conversationId === c.id
-                  ? "bg-red-600/12 border border-red-500/20 text-white"
+                  ? "bg-cyan-300/10 border border-cyan-200/20 text-white"
                   : "text-white/40 hover:text-white/80 hover:bg-white/[0.04] border border-transparent"
               )}
             >
@@ -233,24 +233,24 @@ export default function ChatPage() {
 
        {/* Chat area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <div className="min-h-16 flex-shrink-0 flex items-center gap-3 px-4 md:px-8 py-2.5 border-b border-white/[0.06] bg-[hsl(0_0%_5%)]">
+          <div className="min-h-16 flex-shrink-0 flex items-center gap-3 px-4 md:px-8 py-2.5 border-b border-white/[0.06] bg-[hsl(210_31%_5%_/_0.72)]">
            <button onClick={() => setShowHistory(true)} className="lg:hidden p-2 -ml-2 text-white/45 hover:text-white" aria-label="Show conversations">
              <PanelLeft className="w-4 h-4" />
            </button>
-          <TherynIcon size={24} className="drop-shadow-[0_0_6px_rgba(220,38,38,0.4)]" />
+          <TherynIcon size={24} className="drop-shadow-[0_0_10px_rgba(56,217,255,0.32)]" />
            <div className="min-w-0">
              <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold text-white leading-none truncate">{PROVIDER_NAMES[provider]}</p>
                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
              </div>
             {provider === "openrouter" && (
-              <p className="text-[9px] text-red-400/70 font-mono uppercase tracking-wider mt-0.5">{selectedModelLabel}</p>
+              <p className="text-[9px] text-cyan-100/70 font-mono uppercase tracking-wider mt-0.5">{selectedModelLabel}</p>
             )}
           </div>
            <div className="ml-auto flex items-center gap-2">
              <div className="hidden sm:flex items-center gap-1 p-1 rounded-lg bg-black/25 border border-white/[0.06]">
                {(["openai", "anthropic", "openrouter"] as Provider[]).map(p => (
-                 <button key={p} onClick={() => setProvider(p)} className={cn("px-2 py-1 rounded-md text-[10px] transition-colors", provider === p ? "bg-red-600/80 text-white" : "text-white/35 hover:text-white/70")}>
+                 <button key={p} onClick={() => setProvider(p)} className={cn("px-2 py-1 rounded-md text-[10px] transition-colors", provider === p ? "bg-cyan-300/20 text-cyan-50" : "text-white/35 hover:text-white/70")}>
                    {PROVIDER_NAMES[p]}
                  </button>
                ))}

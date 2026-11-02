@@ -56,12 +56,12 @@ export function PWAInstallPrompt() {
           style={{ background: "hsl(0 0% 9%)" }}
         >
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-30" style={{ background: "rgba(220,38,38,0.4)" }} />
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-30" style={{ background: "rgba(56,217,255,0.32)" }} />
           </div>
           <div className="relative p-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-red-600/20 flex items-center justify-center flex-shrink-0 border border-red-500/20">
-                <Download className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-xl bg-cyan-300/10 flex items-center justify-center flex-shrink-0 border border-cyan-200/20">
+                <Download className="w-5 h-5 text-cyan-200" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white">Install THERYN</p>
@@ -74,7 +74,7 @@ export function PWAInstallPrompt() {
             <div className="flex items-center gap-2 mt-3">
               <button
                 onClick={install}
-                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-cyan-300 hover:bg-cyan-200 text-slate-950 text-xs font-semibold transition-colors"
               >
                 <Download className="w-3.5 h-3.5" />
                 Install App

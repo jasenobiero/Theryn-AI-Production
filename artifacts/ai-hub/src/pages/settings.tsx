@@ -261,7 +261,7 @@ export default function SettingsPage() {
                      <div className="card p-4 flex items-start gap-3 border-amber-500/15 bg-amber-500/[0.035]">
                       <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-muted-foreground/80 leading-relaxed">
-                         Keys are sent over the authenticated connection, stored securely by THERYN, and never shown in full after saving. Only a masked fingerprint is displayed here; the original value is not readable from this screen. Keys are used instead of platform defaults when set.
+                         Keys are sent over the authenticated connection and masked in this settings view after saving. Your own saved keys take precedence over platform defaults.
                       </p>
                     </div>
 

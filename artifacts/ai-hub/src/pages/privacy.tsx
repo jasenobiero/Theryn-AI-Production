@@ -74,7 +74,7 @@ export default function PrivacyPage() {
         <Link href="/terms" className="text-xs text-white/30 hover:text-white/60 transition-colors underline underline-offset-2">
           ← Terms of Service
         </Link>
-        <Link href="/" className="text-xs text-red-400/70 hover:text-red-400 transition-colors">
+        <Link href="/" className="text-xs text-cyan-200/70 hover:text-cyan-100 transition-colors">
           Back to THERYN
         </Link>
       </div>

@@ -127,7 +127,7 @@ function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
       layout
       className={cn(
         "rounded-2xl border transition-colors cursor-pointer group",
-        expanded ? "border-red-500/20 bg-red-600/[0.04]" : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]"
+        expanded ? "border-cyan-200/20 bg-cyan-300/[0.04]" : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]"
       )}
       onClick={() => setExpanded(v => !v)}
     >
@@ -150,7 +150,7 @@ function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
           {prompt.builtin && (
             <button
               onClick={() => onSave(prompt)}
-              className={cn("p-1.5 rounded-lg transition-all", isSaved ? "text-red-400 bg-red-500/10" : "text-white/25 hover:text-red-400 hover:bg-red-500/10")}
+              className={cn("p-1.5 rounded-lg transition-all", isSaved ? "text-cyan-200 bg-cyan-300/10" : "text-white/25 hover:text-cyan-200 hover:bg-cyan-300/10")}
               title={isSaved ? "Saved" : "Save to My Prompts"}
             >
               <Heart className={cn("w-3.5 h-3.5", isSaved && "fill-current")} />
@@ -165,7 +165,7 @@ function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
           </div>
           <button
             onClick={() => onUse(prompt)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold transition-all shadow-[0_0_12px_-4px_rgba(220,38,38,0.5)]"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-300 hover:bg-cyan-200 text-slate-950 text-xs font-semibold transition-all shadow-[0_0_16px_-5px_rgba(56,217,255,0.36)]"
           >
             <ArrowRight className="w-3.5 h-3.5" />
             Use this prompt
@@ -214,7 +214,7 @@ function NewPromptDialog({ onSave, onClose }: {
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="E.g. My code review template"
-              className="w-full bg-black/30 border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/30 transition-colors"
+              className="w-full bg-black/30 border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-200/30 transition-colors"
             />
           </div>
           <div>
@@ -224,7 +224,7 @@ function NewPromptDialog({ onSave, onClose }: {
               onChange={e => setText(e.target.value)}
               placeholder="Your prompt here. Use {placeholders} for variable parts."
               rows={5}
-              className="w-full bg-black/30 border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/30 transition-colors resize-none"
+              className="w-full bg-black/30 border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-200/30 transition-colors resize-none"
             />
           </div>
           <div>
@@ -232,7 +232,7 @@ function NewPromptDialog({ onSave, onClose }: {
             <select
               value={category}
               onChange={e => setCategory(e.target.value)}
-              className="w-full bg-black/30 border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-red-500/30 transition-colors"
+              className="w-full bg-black/30 border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-200/30 transition-colors"
             >
               {CATEGORIES.filter(c => c.id !== "all").map(c => (
                 <option key={c.id} value={c.id}>{c.label}</option>
@@ -244,7 +244,7 @@ function NewPromptDialog({ onSave, onClose }: {
           <button
             onClick={() => { if (title && text) { onSave({ title, text, category }); onClose(); } }}
             disabled={!title.trim() || !text.trim()}
-            className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all"
+            className="flex-1 py-2.5 rounded-xl bg-cyan-300 hover:bg-cyan-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 text-sm font-semibold transition-all"
           >
             Save Prompt
           </button>
@@ -300,7 +300,7 @@ export default function PromptsPage() {
       <div className="flex-shrink-0 border-b border-white/[0.05] px-6 py-4" style={{ background: "hsl(0 0% 5%)" }}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-600 to-pink-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-300 to-sky-600 flex items-center justify-center">
               <BookMarked className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -324,7 +324,7 @@ export default function PromptsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search prompts…"
-            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/20 transition-colors"
+            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-200/20 transition-colors"
           />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
@@ -349,13 +349,13 @@ export default function PromptsPage() {
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium whitespace-nowrap transition-all flex-shrink-0",
                   activeCategory === cat.id
-                    ? "bg-red-600/20 text-red-300 border border-red-500/20"
+                    ? "bg-cyan-300/15 text-cyan-100 border border-cyan-200/20"
                     : "text-white/35 hover:text-white/70 border border-white/[0.06] hover:border-white/[0.12]"
                 )}
               >
                 <cat.icon className="w-3 h-3" />
                 {cat.label}
-                <span className={cn("text-[9px] px-1 rounded", activeCategory === cat.id ? "text-red-400/70" : "text-white/20")}>{count}</span>
+                <span className={cn("text-[9px] px-1 rounded", activeCategory === cat.id ? "text-cyan-100/70" : "text-white/20")}>{count}</span>
               </button>
             );
           })}

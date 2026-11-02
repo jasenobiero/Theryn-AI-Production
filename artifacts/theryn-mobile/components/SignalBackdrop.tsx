@@ -52,7 +52,14 @@ export function SignalBackdrop() {
       <LinearGradient colors={[colors.background, colors.background, `${colors.primary}10`]} style={StyleSheet.absoluteFill} />
       <Animated.View style={[styles.orb, styles.cyanOrb, { backgroundColor: colors.primary }, cyanTransform]} />
       <Animated.View style={[styles.orb, styles.coralOrb, { backgroundColor: colors.accent }, coralTransform]} />
-      <View style={[styles.grid, { borderColor: `${colors.primary}12` }]} />
+       <View style={[styles.grid, { borderColor: `${colors.primary}12` }]}>
+         {Array.from({ length: 10 }, (_, index) => (
+           <View key={`h-${index}`} style={[styles.gridLineHorizontal, { bottom: index * 28, backgroundColor: `${colors.primary}12` }]} />
+         ))}
+         {Array.from({ length: 9 }, (_, index) => (
+           <View key={`v-${index}`} style={[styles.gridLineVertical, { left: `${index * 12.5}%`, backgroundColor: `${colors.primary}10` }]} />
+         ))}
+       </View>
       <View style={[styles.horizon, { backgroundColor: `${colors.primary}20` }]} />
     </View>
   );
@@ -72,5 +79,7 @@ const styles = StyleSheet.create({
     transform: [{ perspective: 600 }, { rotateX: "58deg" }],
     opacity: 0.7,
   },
+  gridLineHorizontal: { position: "absolute", left: 0, right: 0, height: 1 },
+  gridLineVertical: { position: "absolute", top: 0, bottom: 0, width: 1 },
   horizon: { position: "absolute", left: 0, right: 0, bottom: "29%", height: 1, opacity: 0.32 },
 });

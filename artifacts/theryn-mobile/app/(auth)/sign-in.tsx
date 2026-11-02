@@ -135,7 +135,7 @@ export default function SignInScreen() {
               testID="sign-in-submit"
               style={({ pressed }) => [styles.submitBtn, pressed && { opacity: 0.85 }, loading && { opacity: 0.6 }]}
             >
-              <LinearGradient colors={["#dc2626", "#b91c1c"]} style={styles.submitGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+              <LinearGradient colors={["#38d9ff", "#168ca8"]} style={styles.submitGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
                 {loading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
@@ -204,5 +204,5 @@ const styles = StyleSheet.create({
   submitText: { fontFamily: "Inter_700Bold", fontSize: 16, color: "#fff" },
   footer: { flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 24 },
   footerText: { fontFamily: "Inter_400Regular", fontSize: 14, color: "rgba(255,255,255,0.4)" },
-  footerLink: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#dc2626" },
+  footerLink: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#38d9ff" },
 });

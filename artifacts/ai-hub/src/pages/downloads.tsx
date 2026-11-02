@@ -23,7 +23,7 @@ const PLATFORMS = [
     label: "Web App",
     subtitle: "Install in any browser",
     badge: "Recommended",
-    badgeColor: "bg-red-600/20 text-red-300 border-red-500/20",
+    badgeColor: "bg-cyan-300/12 text-cyan-100 border-cyan-200/20",
     color: "red",
     description: "Install THERYN as a progressive web app — works on any device, updates automatically, and feels native.",
     steps: [
@@ -107,17 +107,17 @@ const PLATFORMS = [
 type PlatformId = (typeof PLATFORMS)[number]["id"];
 
 const accentMap: Record<string, string> = {
-  red:    "border-red-500/20 bg-red-600/[0.04] hover:bg-red-600/[0.07]",
+  red:    "border-cyan-200/20 bg-cyan-300/[0.04] hover:bg-cyan-300/[0.07]",
   blue:   "border-blue-500/20 bg-blue-600/[0.04] hover:bg-blue-600/[0.07]",
   white:  "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]",
   orange: "border-orange-500/20 bg-orange-600/[0.04] hover:bg-orange-600/[0.07]",
   green:  "border-green-500/20 bg-green-600/[0.04] hover:bg-green-600/[0.07]",
 };
 const dotMap: Record<string, string> = {
-  red: "bg-red-400", blue: "bg-blue-400", white: "bg-white/60", orange: "bg-orange-400", green: "bg-green-400",
+  red: "bg-cyan-300", blue: "bg-blue-400", white: "bg-white/60", orange: "bg-orange-400", green: "bg-green-400",
 };
 const iconMap: Record<string, string> = {
-  red: "text-red-400", blue: "text-blue-400", white: "text-white/60", orange: "text-orange-400", green: "text-green-400",
+  red: "text-cyan-200", blue: "text-blue-400", white: "text-white/60", orange: "text-orange-400", green: "text-green-400",
 };
 
 export default function DownloadsPage() {
@@ -154,8 +154,8 @@ export default function DownloadsPage() {
       {/* Header */}
       <div className="flex-shrink-0 border-b border-white/[0.06] px-8 py-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-red-600/15 flex items-center justify-center">
-            <Download className="w-4 h-4 text-red-400" />
+          <div className="w-8 h-8 rounded-lg bg-cyan-300/10 flex items-center justify-center">
+            <Download className="w-4 h-4 text-cyan-200" />
           </div>
           <h1 className="text-xl font-bold text-white tracking-tight">Get THERYN</h1>
         </div>
@@ -168,10 +168,10 @@ export default function DownloadsPage() {
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 flex items-center gap-4 p-4 rounded-xl border border-red-500/25 bg-red-600/[0.06]"
+            className="mb-6 flex items-center gap-4 p-4 rounded-xl border border-cyan-200/20 bg-cyan-300/[0.05]"
           >
-            <div className="w-10 h-10 rounded-lg bg-red-600/20 flex items-center justify-center flex-shrink-0">
-              <Chrome className="w-5 h-5 text-red-400" />
+            <div className="w-10 h-10 rounded-lg bg-cyan-300/10 flex items-center justify-center flex-shrink-0">
+              <Chrome className="w-5 h-5 text-cyan-200" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-white">Install THERYN on this device</p>
@@ -179,7 +179,7 @@ export default function DownloadsPage() {
             </div>
             <button
               onClick={handleInstallClick}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition-colors flex-shrink-0"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-300 hover:bg-cyan-200 text-slate-950 text-sm font-semibold transition-colors flex-shrink-0"
             >
               <Download className="w-3.5 h-3.5" />
               Install Now
@@ -291,7 +291,7 @@ export default function DownloadsPage() {
               className={cn(
                 "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors",
                 platform.color === "red"
-                  ? "bg-red-600 hover:bg-red-500 text-white"
+                  ? "bg-cyan-300 hover:bg-cyan-200 text-slate-950"
                   : "bg-white/[0.08] hover:bg-white/[0.12] text-white"
               )}
             >

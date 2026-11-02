@@ -9,7 +9,7 @@
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/icon.png",
+      "image": "./assets/images/brand-mark.png",
       "resizeMode": "contain",
       "backgroundColor": "#070b11"
     },
@@ -20,7 +20,7 @@
     "android": {
       "package": "com.theryn.mobile",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+          "foregroundImage": "./assets/images/brand-mark.png",
           "backgroundColor": "#070b11"
       }
     },

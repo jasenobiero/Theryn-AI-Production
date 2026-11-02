@@ -130,7 +130,7 @@ function TemplateGallery({ onUse, onClose }: { onUse: (prompt: string) => void; 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.05] flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-300 to-sky-700 flex items-center justify-center">
               <LayoutGrid className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
@@ -145,7 +145,7 @@ function TemplateGallery({ onUse, onClose }: { onUse: (prompt: string) => void; 
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search templates…"
-                className="bg-white/[0.05] border border-white/[0.07] rounded-xl pl-7 pr-3 py-1.5 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/30 w-44 transition-colors"
+                className="bg-white/[0.05] border border-white/[0.07] rounded-xl pl-7 pr-3 py-1.5 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-200/30 w-44 transition-colors"
               />
             </div>
             <button onClick={onClose} className="text-white/25 hover:text-white/70 transition-colors">
@@ -163,13 +163,13 @@ function TemplateGallery({ onUse, onClose }: { onUse: (prompt: string) => void; 
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium whitespace-nowrap transition-all flex-shrink-0",
                 cat === c.id
-                  ? "bg-red-600/20 text-red-300 border border-red-500/20"
+                  ? "bg-cyan-300/15 text-cyan-100 border border-cyan-200/20"
                   : "text-white/35 hover:text-white/70 hover:bg-white/[0.04]"
               )}
             >
               <c.icon className="w-3 h-3" />
               {c.label}
-              <span className={cn("text-[9px]", cat === c.id ? "text-red-400/60" : "text-white/20")}>{c.count}</span>
+              <span className={cn("text-[9px]", cat === c.id ? "text-cyan-100/70" : "text-white/20")}>{c.count}</span>
             </button>
           ))}
         </div>
@@ -184,7 +184,7 @@ function TemplateGallery({ onUse, onClose }: { onUse: (prompt: string) => void; 
                 <button
                   key={t.id}
                   onClick={() => { onUse(t.prompt); onClose(); }}
-                  className="flex flex-col items-start gap-2 p-3.5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.06] hover:border-red-500/20 text-left transition-all group"
+                  className="flex flex-col items-start gap-2 p-3.5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.06] hover:border-cyan-200/20 text-left transition-all group"
                 >
                   <span className="text-2xl">{t.icon}</span>
                   <div>
@@ -351,7 +351,7 @@ function ProjectsPanel({ open, onClose, onLoad, currentProjectId }: {
                 projects.map(p => (
                   <button key={p.id} onClick={() => { onLoad(p.id); onClose(); }}
                     className={cn("w-full flex items-start gap-3 px-4 py-3 hover:bg-white/[0.04] transition-all group text-left",
-                      currentProjectId === p.id && "bg-red-600/[0.07] border-l-2 border-red-500/40")}>
+                      currentProjectId === p.id && "bg-cyan-300/[0.07] border-l-2 border-cyan-200/40")}>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-white/70 truncate group-hover:text-white/90 transition-colors">{p.title}</p>
                       {p.artifactTitle && <p className="text-[10px] text-white/25 truncate mt-0.5">{p.artifactTitle}</p>}
@@ -363,7 +363,7 @@ function ProjectsPanel({ open, onClose, onLoad, currentProjectId }: {
                       </div>
                     </div>
                     <button onClick={e => deleteProject(p.id, e)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-red-500/10 text-white/20 hover:text-red-400 flex-shrink-0 mt-0.5">
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-rose-400/10 text-white/20 hover:text-rose-200 flex-shrink-0 mt-0.5">
                       {deleting === p.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                     </button>
                   </button>
@@ -648,13 +648,13 @@ export default function StudioPage() {
               <FolderOpen className="w-4 h-4" />
             </button>
 
-            <TherynIcon size={18} className="drop-shadow-[0_0_6px_rgba(220,38,38,0.4)] flex-shrink-0" />
+            <TherynIcon size={18} className="drop-shadow-[0_0_10px_rgba(56,217,255,0.32)] flex-shrink-0" />
 
             {editingTitle ? (
               <input ref={titleInputRef} value={titleDraft} onChange={e => setTitleDraft(e.target.value)}
                 onBlur={commitTitle}
                 onKeyDown={e => { if (e.key === "Enter") commitTitle(); if (e.key === "Escape") setEditingTitle(false); }}
-                className="text-sm font-bold text-white bg-transparent border-b border-red-500/40 focus:outline-none min-w-0 max-w-[160px]" />
+                className="text-sm font-bold text-white bg-transparent border-b border-cyan-200/40 focus:outline-none min-w-0 max-w-[160px]" />
             ) : (
               <button onClick={() => { setTitleDraft(projectTitle); setEditingTitle(true); }}
                 className="text-sm font-bold text-white/80 hover:text-white transition-colors truncate max-w-[160px] text-left" title="Click to rename">
@@ -712,7 +712,7 @@ export default function StudioPage() {
                     {PROVIDERS.map(p => (
                       <button key={p.value} onClick={() => { setProvider(p.value); setShowProviderPicker(false); }}
                         className={cn("flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs transition-colors",
-                          provider === p.value ? "bg-red-600/15 text-white" : "text-white/40 hover:text-white hover:bg-white/[0.05]")}>
+                          provider === p.value ? "bg-cyan-300/15 text-cyan-50" : "text-white/40 hover:text-white hover:bg-white/[0.05]")}>
                         <span className={cn("w-1.5 h-1.5 rounded-full", p.dot)} />
                         {p.label}
                       </button>
@@ -730,8 +730,8 @@ export default function StudioPage() {
             /* Empty state */
             <div className="flex flex-col items-center justify-center h-full px-6 py-8 gap-6">
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600/20 to-red-800/10 border border-red-500/15 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-red-400" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-300/15 to-sky-800/10 border border-cyan-200/15 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-cyan-200" />
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-white/80">Build anything</h2>
@@ -770,14 +770,14 @@ export default function StudioPage() {
               {messages.map(m => (
                 <div key={m.id} className={cn("flex gap-3", m.role === "user" && "flex-row-reverse")}>
                   {m.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-600/30 to-red-800/20 border border-red-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-300/25 to-sky-800/20 border border-cyan-200/15 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <TherynIcon size={12} />
                     </div>
                   )}
                   <div className={cn(
                     "rounded-2xl px-3.5 py-2.5 text-sm max-w-[85%]",
                     m.role === "user"
-                      ? "bg-red-600/15 border border-red-500/15 text-white/90 ml-auto"
+                      ? "bg-cyan-300/12 border border-cyan-200/15 text-white/90 ml-auto"
                       : "text-white/80"
                   )}>
                     {m.role === "assistant" ? (
@@ -797,20 +797,20 @@ export default function StudioPage() {
               {/* Streaming */}
               {isStreaming && (
                 <div className="flex gap-3">
-                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-600/30 to-red-800/20 border border-red-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-300/25 to-sky-800/20 border border-cyan-200/15 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <TherynIcon size={12} />
                   </div>
                   <div className="text-sm text-white/70 max-w-[85%]">
                     {streamingVisible ? (
                       <div className="prose prose-invert prose-sm max-w-none">
                         <Markdown content={streamingVisible} />
-                        <span className="inline-block w-2 h-4 bg-red-400/60 rounded-sm animate-pulse ml-0.5 align-middle" />
+                        <span className="inline-block w-2 h-4 bg-cyan-200/70 rounded-sm animate-pulse ml-0.5 align-middle" />
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 text-white/25 py-1">
                         <div className="flex gap-0.5">
                           {[0,1,2].map(i => (
-                            <div key={i} className="w-1 h-1 rounded-full bg-red-500/60 animate-bounce" style={{ animationDelay: `${i*0.12}s` }} />
+                            <div key={i} className="w-1 h-1 rounded-full bg-cyan-300/60 animate-bounce" style={{ animationDelay: `${i*0.12}s` }} />
                           ))}
                         </div>
                         <span className="text-xs">Building…</span>
@@ -840,7 +840,7 @@ export default function StudioPage() {
           <div className={cn(
             "rounded-2xl border transition-all",
             input ? "border-white/[0.10] bg-white/[0.03]" : "border-white/[0.07] bg-white/[0.02]",
-            "focus-within:border-red-500/25 focus-within:shadow-[0_0_20px_-8px_rgba(220,38,38,0.2)]"
+            "focus-within:border-cyan-200/25 focus-within:shadow-[0_0_20px_-8px_rgba(56,217,255,0.18)]"
           )}>
             <textarea
               ref={textareaRef}
@@ -858,12 +858,12 @@ export default function StudioPage() {
               <div className="flex items-center gap-1.5">
                 {isStreaming ? (
                   <button onClick={stop}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600/15 text-red-400 hover:bg-red-600/25 transition-all text-xs">
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-400/10 text-rose-200 hover:bg-rose-400/20 transition-all text-xs">
                     <StopCircle className="w-3.5 h-3.5" />Stop
                   </button>
                 ) : (
                   <button onClick={() => sendMessage(input)} disabled={!input.trim()}
-                    className="w-8 h-8 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_12px_-2px_rgba(220,38,38,0.4)]">
+                    className="w-8 h-8 rounded-xl bg-cyan-300 hover:bg-cyan-200 text-slate-950 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all shadow-[0_0_18px_-4px_rgba(56,217,255,0.32)]">
                     <Send className="w-3.5 h-3.5 text-white" />
                   </button>
                 )}
@@ -877,13 +877,13 @@ export default function StudioPage() {
       {showSplitPane && (
         <div
           onMouseDown={onDragStart}
-          className="w-1 flex-shrink-0 cursor-col-resize relative group hover:bg-red-500/30 transition-colors"
+          className="w-1 flex-shrink-0 cursor-col-resize relative group hover:bg-cyan-300/30 transition-colors"
           style={{ background: "rgba(255,255,255,0.04)" }}
         >
-          <div className="absolute inset-y-0 -left-1.5 -right-1.5 group-hover:bg-red-500/5 transition-colors" />
+          <div className="absolute inset-y-0 -left-1.5 -right-1.5 group-hover:bg-cyan-300/5 transition-colors" />
           {/* Drag indicator dots */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {[0,1,2].map(i => <div key={i} className="w-0.5 h-0.5 rounded-full bg-red-400/60" />)}
+            {[0,1,2].map(i => <div key={i} className="w-0.5 h-0.5 rounded-full bg-cyan-200/70" />)}
           </div>
         </div>
       )}

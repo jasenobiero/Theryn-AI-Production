@@ -37,11 +37,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden" style={{ background: "hsl(0 0% 4%)" }}>
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-background">
       {/* BG glows */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full blur-[140px]" style={{ background: "rgba(220,38,38,0.06)" }} />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full blur-[120px]" style={{ background: "rgba(220,38,38,0.04)" }} />
+        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full blur-[140px]" style={{ background: "rgba(56,217,255,0.07)" }} />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full blur-[120px]" style={{ background: "rgba(255,107,138,0.04)" }} />
       </div>
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 py-12 flex flex-col lg:flex-row items-center gap-14">
@@ -54,17 +54,17 @@ export default function LoginPage() {
           className="flex-1 space-y-10 hidden lg:block"
         >
           <div className="flex items-center gap-3">
-            <TherynIcon size={44} className="drop-shadow-[0_0_16px_rgba(220,38,38,0.6)]" />
+            <TherynIcon size={44} className="drop-shadow-[0_0_16px_rgba(56,217,255,0.5)]" />
             <div>
               <h1 className="text-3xl font-display font-black tracking-widest text-white">THERYN</h1>
-              <p className="text-[11px] text-red-400/80 font-mono uppercase tracking-[0.2em]">AI Command Center</p>
+              <p className="text-[11px] text-cyan-100/80 font-mono uppercase tracking-[0.2em]">AI Command Center</p>
             </div>
           </div>
 
           <div>
             <h2 className="text-3xl font-display font-bold text-white leading-tight mb-3">
               The next generation<br />
-              <span className="text-red-400">AI interface</span>
+              <span className="text-cyan-200">AI interface</span>
             </h2>
             <p className="text-sm text-white/40 leading-relaxed max-w-sm">
               Multiple AI engines, custom agents, image generation, and voice synthesis — all in one command center.
@@ -80,8 +80,8 @@ export default function LoginPage() {
                 transition={{ delay: 0.2 + i * 0.08 }}
                 className="flex items-start gap-3 p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02]"
               >
-                <div className="w-7 h-7 rounded-lg bg-red-600/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <f.icon className="w-3.5 h-3.5 text-red-400" />
+                <div className="w-7 h-7 rounded-lg bg-cyan-300/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <f.icon className="w-3.5 h-3.5 text-cyan-200" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-white/80">{f.label}</p>
@@ -99,12 +99,12 @@ export default function LoginPage() {
           transition={{ duration: 0.6, delay: 0.08 }}
           className="w-full max-w-[360px]"
         >
-          <div className="rounded-2xl border border-white/[0.08] p-7 shadow-[0_0_60px_-15px_rgba(220,38,38,0.15)]" style={{ background: "hsl(0 0% 7%)" }}>
+          <div className="rounded-2xl border border-white/[0.08] p-7 shadow-[0_0_60px_-15px_rgba(56,217,255,0.12)]" style={{ background: "hsl(210 25% 8%)" }}>
 
             {/* Header */}
             <div className="text-center mb-6">
               <div className="flex justify-center mb-3">
-                <TherynIcon size={40} className="drop-shadow-[0_0_12px_rgba(220,38,38,0.5)]" />
+                <TherynIcon size={40} className="drop-shadow-[0_0_12px_rgba(56,217,255,0.4)]" />
               </div>
               <h3 className="text-lg font-display font-bold text-white">
                 {view === "home" ? "Welcome to THERYN" : view === "email" ? "Continue with Email" : "Continue with Phone"}
@@ -170,7 +170,7 @@ export default function LoginPage() {
 
                   <p className="text-center text-[11px] text-white/25 pt-1">
                     New here?{" "}
-                    <button onClick={login} className="text-red-400 hover:text-red-300 transition-colors underline underline-offset-2">
+                    <button onClick={login} className="text-cyan-200 hover:text-cyan-100 transition-colors underline underline-offset-2">
                       Create a free account
                     </button>
                   </p>
@@ -190,7 +190,7 @@ export default function LoginPage() {
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         placeholder="name@example.com"
-                        className="w-full border border-white/[0.08] focus:border-red-500/40 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none transition-colors"
+                        className="w-full border border-white/[0.08] focus:border-cyan-200/35 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none transition-colors"
                         style={{ background: "hsl(0 0% 10%)" }}
                       />
                     </div>
@@ -203,7 +203,7 @@ export default function LoginPage() {
                           required
                           autoFocus
                           placeholder="Password"
-                          className="w-full border border-white/[0.08] focus:border-red-500/40 rounded-xl pl-10 pr-10 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none transition-colors"
+                          className="w-full border border-white/[0.08] focus:border-cyan-200/35 rounded-xl pl-10 pr-10 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none transition-colors"
                           style={{ background: "hsl(0 0% 10%)" }}
                         />
                         <button type="button" onClick={() => setShowPass(v => !v)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60 transition-colors">
@@ -214,13 +214,13 @@ export default function LoginPage() {
 
                     {emailStep === "password" && (
                       <div className="flex justify-end">
-                        <button type="button" onClick={login} className="text-[11px] text-red-400/70 hover:text-red-400 transition-colors">
+                        <button type="button" onClick={login} className="text-[11px] text-cyan-200/70 hover:text-cyan-100 transition-colors">
                           Forgot password?
                         </button>
                       </div>
                     )}
 
-                    <button type="submit" className="w-full py-3 rounded-xl font-semibold text-sm text-white bg-red-600 hover:bg-red-500 active:bg-red-700 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_-6px_rgba(220,38,38,0.5)]">
+                    <button type="submit" className="w-full py-3 rounded-xl font-semibold text-sm text-slate-950 bg-cyan-300 hover:bg-cyan-200 active:bg-cyan-400 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_-6px_rgba(56,217,255,0.32)]">
                       {emailStep === "email" ? "Continue" : "Sign In"}
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -250,7 +250,7 @@ export default function LoginPage() {
                       <select
                         value={countryCode}
                         onChange={e => setCountryCode(e.target.value)}
-                        className="border border-white/[0.08] rounded-xl px-3 py-3 text-sm text-white/70 focus:outline-none focus:border-red-500/40 transition-colors appearance-none cursor-pointer"
+                        className="border border-white/[0.08] rounded-xl px-3 py-3 text-sm text-white/70 focus:outline-none focus:border-cyan-200/35 transition-colors appearance-none cursor-pointer"
                         style={{ background: "hsl(0 0% 10%)" }}
                       >
                         {[["🇺🇸","+1"],["🇬🇧","+44"],["🇮🇳","+91"],["🇳🇬","+234"],["🇿🇦","+27"],["🇩🇪","+49"],["🇫🇷","+33"],["🇧🇷","+55"]].map(([flag, code]) => (
@@ -266,13 +266,13 @@ export default function LoginPage() {
                           value={phone}
                           onChange={e => setPhone(e.target.value)}
                           placeholder="Phone number"
-                          className="w-full border border-white/[0.08] focus:border-red-500/40 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none transition-colors"
+                          className="w-full border border-white/[0.08] focus:border-cyan-200/35 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none transition-colors"
                           style={{ background: "hsl(0 0% 10%)" }}
                         />
                       </div>
                     </div>
                     <p className="text-[10px] text-white/25">We'll send a verification code to this number.</p>
-                    <button type="submit" className="w-full py-3 rounded-xl font-semibold text-sm text-white bg-red-600 hover:bg-red-500 active:bg-red-700 transition-all flex items-center justify-center gap-2">
+                    <button type="submit" className="w-full py-3 rounded-xl font-semibold text-sm text-slate-950 bg-cyan-300 hover:bg-cyan-200 active:bg-cyan-400 transition-all flex items-center justify-center gap-2">
                       Send Code <ArrowRight className="w-4 h-4" />
                     </button>
                   </form>

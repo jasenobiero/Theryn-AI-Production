@@ -194,7 +194,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
           <div className="rounded-[22px] border border-white/[0.06] bg-[hsl(0_0%_6%)] px-1 py-2">
             <div className="px-6 pt-3 pb-1 flex items-center gap-2">
                <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(56,217,255,.8)]" />
-               <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30">Encrypted workspace access</span>
+               <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30">Private workspace access</span>
             </div>
             {children}
           </div>
@@ -267,7 +267,7 @@ function AppRoutes() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "hsl(0 0% 4%)" }}>
+      <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "hsl(210 31% 5%)" }}>
         <div className="flex flex-col items-center gap-4">
            <TherynIcon size={48} className="drop-shadow-[0_0_18px_rgba(56,217,255,0.5)] animate-pulse" />
           <p className="text-white/30 text-xs font-mono tracking-[0.2em] uppercase">Initializing...</p>

@@ -180,18 +180,16 @@
     linear-gradient(180deg, hsl(210 31% 5% / .94), hsl(210 31% 5% / .98));
 }
 .signal-backdrop-compact { opacity: .72; }
-.signal-app > aside,
-.signal-app > main {
-  position: relative;
-  z-index: 1;
-}
 .signal-app > aside {
+  z-index: 40;
   background: hsl(210 30% 7% / .82) !important;
   backdrop-filter: blur(22px);
 }
-.signal-app > main { background: transparent !important; }
-.signal-app > main > div:first-child { scrollbar-gutter: stable; }
-.signal-app > main > div:first-child > div { position: relative; }
+.signal-app > main {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
 .signal-grid {
   position: absolute;
   inset: -25%;

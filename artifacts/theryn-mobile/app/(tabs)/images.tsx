@@ -17,6 +17,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { SignalBackdrop } from "@/components/SignalBackdrop";
+import { useTabScreenTransition } from "@/hooks/useTabScreenTransition";
 
 interface GeneratedImage {
   id: string;
@@ -38,6 +39,7 @@ const SUGGESTIONS = [
 ];
 
 export default function ImagesScreen() {
+  const transitionStyle = useTabScreenTransition();
   const insets = useSafeAreaInsets();
   const colors = useColors();
   const [prompt, setPrompt] = useState("");
@@ -72,7 +74,7 @@ export default function ImagesScreen() {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <Animated.View style={[styles.root, { backgroundColor: colors.background }, transitionStyle]}>
       <SignalBackdrop />
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 12) }]}>
@@ -123,7 +125,7 @@ export default function ImagesScreen() {
               ]}
             >
               <LinearGradient
-                colors={["#dc2626", "#b91c1c"]}
+                colors={["#38d9ff", "#168ca8"]}
                 style={styles.genBtnGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               >
@@ -152,7 +154,7 @@ export default function ImagesScreen() {
                 onPress={() => { setPrompt(s); Haptics.selectionAsync(); }}
                 style={({ pressed }) => [styles.suggestion, pressed && { opacity: 0.7 }]}
               >
-                <Feather name="chevron-right" size={13} color="rgba(220,38,38,0.7)" />
+                <Feather name="chevron-right" size={13} color="rgba(56,217,255,0.8)" />
                 <Text style={styles.suggestionText}>{s}</Text>
               </Pressable>
             ))}
@@ -182,7 +184,7 @@ export default function ImagesScreen() {
           </>
         )}
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -199,13 +201,13 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
   title: { fontFamily: "Inter_700Bold", fontSize: 20, color: "#fff" },
-  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(224,59,59,0.8)", letterSpacing: 1.6, marginBottom: 3 },
+  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(154,239,255,0.8)", letterSpacing: 1.6, marginBottom: 3 },
   badge: {
     paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 8, backgroundColor: "rgba(220,38,38,0.15)",
-    borderWidth: 1, borderColor: "rgba(220,38,38,0.2)",
+    borderRadius: 8, backgroundColor: "rgba(56,217,255,0.12)",
+    borderWidth: 1, borderColor: "rgba(56,217,255,0.24)",
   },
-  badgeText: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#dc2626", letterSpacing: 1 },
+  badgeText: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#9aefff", letterSpacing: 1 },
   headerSub: { fontFamily: "Inter_400Regular", fontSize: 11, color: "rgba(255,255,255,0.25)" },
   scroll: { padding: 16, gap: 12 },
   promptCard: {

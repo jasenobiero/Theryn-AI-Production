@@ -116,7 +116,7 @@ const PLATFORMS: Platform[] = [
 ];
 
 const COMMANDS = [
-  { cmd: "!theryn <message>",  alias: "!t",   desc: "Chat with Theryn (GPT-4o)",         icon: <Zap className="w-3.5 h-3.5 text-red-400" /> },
+  { cmd: "!theryn <message>",  alias: "!t",   desc: "Chat with Theryn (GPT-4o)",         icon: <Zap className="w-3.5 h-3.5 text-cyan-200" /> },
   { cmd: "!vesper <message>",  alias: "!v",   desc: "Chat with Vesper (Claude)",          icon: <Zap className="w-3.5 h-3.5 text-purple-400" /> },
   { cmd: "!prism <message>",   alias: "!p",   desc: "Chat with Prism (Grok)",             icon: <Zap className="w-3.5 h-3.5 text-blue-400" /> },
   { cmd: "!ai <message>",      alias: null,   desc: "Quick chat (defaults to Theryn)",    icon: <Bot className="w-3.5 h-3.5 text-white/40" /> },
@@ -201,7 +201,7 @@ function PlatformCard({ platform }: { platform: Platform }) {
                       href={step.link.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 mt-1 text-xs text-red-400 hover:text-red-300 transition-colors"
+                      className="inline-flex items-center gap-1 mt-1 text-xs text-cyan-200 hover:text-cyan-100 transition-colors"
                     >
                       <ExternalLink className="w-3 h-3" />
                       {step.link.label}
@@ -219,7 +219,7 @@ function PlatformCard({ platform }: { platform: Platform }) {
                 <button
                   key={v}
                   onClick={() => copySecret(v)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600/10 border border-red-500/20 text-xs font-mono text-red-300 hover:bg-red-600/20 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-300/10 border border-cyan-200/20 text-xs font-mono text-cyan-100 hover:bg-cyan-300/15 transition-all"
                 >
                   <Copy className="w-3 h-3" />
                   {v}
@@ -235,11 +235,11 @@ function PlatformCard({ platform }: { platform: Platform }) {
 
 export default function BotHubPage() {
   return (
-    <div className="flex-1 overflow-y-auto p-8" style={{ background: "hsl(0 0% 5%)" }}>
+    <div className="flex-1 overflow-y-auto p-8" style={{ background: "hsl(210 31% 5% / .48)" }}>
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <Bot className="w-6 h-6 text-red-400" />
+          <Bot className="w-6 h-6 text-cyan-200" />
           <h1 className="text-2xl font-bold text-white tracking-tight">Bot Hub</h1>
         </div>
         <p className="text-sm text-white/35 max-w-xl">
@@ -249,7 +249,7 @@ export default function BotHubPage() {
 
       <div className="grid grid-cols-3 gap-4 mb-10">
         {[
-          { icon: <Zap className="w-5 h-5 text-red-400" />, label: "3 AI engines", sub: "Theryn · Vesper · Prism" },
+          { icon: <Zap className="w-5 h-5 text-cyan-200" />, label: "3 AI engines", sub: "Theryn · Vesper · Prism" },
           { icon: <ImageIcon className="w-5 h-5 text-orange-400" />, label: "Image Gen", sub: "DALL-E via !image" },
           { icon: <Mic className="w-5 h-5 text-green-400" />, label: "Voice TTS", sub: "ElevenLabs via !voice" },
         ].map((f, i) => (

@@ -1,0 +1,25 @@
+<svg width="1024" height="1024" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="signal" x1="16" y1="12" x2="84" y2="88" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b7fbff"/>
+      <stop offset=".48" stop-color="#38d9ff"/>
+      <stop offset="1" stop-color="#ff6b8a"/>
+    </linearGradient>
+    <radialGradient id="field" cx="28%" cy="12%" r="100%">
+      <stop stop-color="#15313b"/>
+      <stop offset=".55" stop-color="#0b1720"/>
+      <stop offset="1" stop-color="#060a10"/>
+    </radialGradient>
+  </defs>
+  <rect width="100" height="100" rx="30" fill="url(#field)"/>
+  <rect x="1.5" y="1.5" width="97" height="97" rx="29" stroke="url(#signal)" stroke-opacity=".6"/>
+  <circle cx="50" cy="50" r="30" stroke="#38d9ff" stroke-opacity=".13"/>
+  <path d="M30 31v38m0-38 14 13m-14 24 14-13m12-6h15m-15-6 14-13m-14 25 14 13m0-38v12m0 10v16" stroke="url(#signal)" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="30" cy="31" r="4.2" fill="#b7fbff"/>
+  <circle cx="30" cy="69" r="4.2" fill="#b7fbff"/>
+  <circle cx="70" cy="31" r="4.2" fill="#ff6b8a"/>
+  <circle cx="70" cy="50" r="4.2" fill="#38d9ff"/>
+  <circle cx="70" cy="69" r="4.2" fill="#ff6b8a"/>
+  <circle cx="50" cy="50" r="10" fill="#b7fbff" fill-opacity=".22"/>
+  <circle cx="50" cy="50" r="3.4" fill="#fff"/>
+</svg>

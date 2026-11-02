@@ -38,7 +38,7 @@ export default function VoicePage() {
     <div className="min-h-full p-6 lg:p-12 relative">
       <div className="max-w-4xl mx-auto space-y-12">
         <div className="flex items-center gap-4 border-b border-white/10 pb-8">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg box-glow">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-300 to-sky-700 flex items-center justify-center shadow-lg box-glow">
             <Mic className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -69,7 +69,7 @@ export default function VoicePage() {
             <button
               onClick={handleGenerate}
               disabled={generate.isPending || !text}
-              className="w-full sm:w-auto px-8 h-14 rounded-full font-bold text-white bg-gradient-to-r from-orange-500 to-red-600 hover:opacity-90 flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_-5px_rgba(249,115,22,0.4)]"
+              className="w-full sm:w-auto px-8 h-14 rounded-full font-bold text-slate-950 bg-gradient-to-r from-cyan-300 to-sky-600 hover:brightness-110 flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_-5px_rgba(56,217,255,0.28)]"
             >
               {generate.isPending ? (
                 <>
