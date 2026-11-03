@@ -1,30 +1,16 @@
-import React, { useId } from "react";
-import Svg, { Circle, Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
-
-import { useColors } from "@/hooks/useColors";
+import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 export function SignalMark({ size = 64 }: { size?: number }) {
-  const colors = useColors();
-  const gradientId = `signal-mark-${useId().replace(/:/g, "")}`;
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" fill="none">
-      <Defs>
-        <LinearGradient id={gradientId} x1="14" y1="10" x2="88" y2="90" gradientUnits="userSpaceOnUse">
-          <Stop offset="0" stopColor={colors.primary} />
-          <Stop offset="1" stopColor={colors.accent} />
-        </LinearGradient>
-      </Defs>
-      <Rect x="2" y="2" width="96" height="96" rx="29" fill={colors.card} />
-      <Rect x="3" y="3" width="94" height="94" rx="28" stroke={`url(#${gradientId})`} strokeWidth="1.4" opacity="0.78" />
-      <Circle cx="50" cy="50" r="30" stroke={colors.primary} strokeOpacity="0.15" />
-      <Path d="M30 31v38m0-38 14 13m-14 24 14-13m12-6h15m-15-6 14-13m-14 25 14 13m0-38v12m0 10v16" stroke={`url(#${gradientId})`} strokeWidth="3.8" strokeLinecap="round" strokeLinejoin="round" />
-      <Circle cx="30" cy="31" r="4.2" fill={colors.primary} />
-      <Circle cx="30" cy="69" r="4.2" fill={colors.primary} />
-      <Circle cx="70" cy="31" r="4.2" fill={colors.accent} />
-      <Circle cx="70" cy="50" r="4.2" fill={colors.primary} />
-      <Circle cx="70" cy="69" r="4.2" fill={colors.accent} />
-      <Circle cx="50" cy="50" r="10" fill={colors.primary} fillOpacity="0.22" />
-      <Circle cx="50" cy="50" r="3.4" fill="#ffffff" />
+      <Rect width="100" height="100" fill="#ffffff" />
+      <Path d="M30 30L50 48 71 28M30 30V68L50 48M30 68L50 48M50 48H73M71 28L73 48 71 70M73 48L50 48M71 70L50 48" stroke="#000000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Circle cx="30" cy="30" r="5.7" fill="#000000" />
+      <Circle cx="30" cy="68" r="5.7" fill="#000000" />
+      <Circle cx="71" cy="28" r="5.7" fill="#000000" />
+      <Circle cx="73" cy="48" r="5.7" fill="#000000" />
+      <Circle cx="71" cy="70" r="5.7" fill="#000000" />
+      <Circle cx="50" cy="48" r="9.6" fill="#000000" />
     </Svg>
   );
 }

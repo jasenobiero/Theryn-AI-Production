@@ -141,7 +141,7 @@ export default function AgentsPage() {
           </div>
           <button
             onClick={openBlank}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 transition-all shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-neutral-600 to-neutral-800 hover:opacity-90 transition-all shadow-[0_0_18px_-8px_rgba(255,255,255,0.16)]"
           >
             <Plus className="w-4 h-4" />
             Build from Scratch

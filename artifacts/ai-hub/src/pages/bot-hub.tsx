@@ -176,8 +176,8 @@ function PlatformCard({ platform }: { platform: Platform }) {
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-[10px] px-2 py-1 rounded-full font-semibold border" style={{
             color: "#a3a3a3",
-            background: "rgba(249,115,22,0.1)",
-            borderColor: "rgba(249,115,22,0.2)",
+            background: "rgba(255,255,255,0.07)",
+            borderColor: "rgba(255,255,255,0.14)",
           }}>
             Setup required
           </span>

@@ -269,7 +269,7 @@ export default function ArenaPage() {
       {/* Header */}
       <div className="flex-shrink-0 flex items-center justify-between px-6 py-3 border-b border-white/[0.05]" style={{ background: "hsl(0 0% 5%)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center shadow-[0_0_16px_-4px_rgba(220,38,38,0.5)]">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-neutral-600 to-neutral-800 flex items-center justify-center shadow-[0_0_14px_-6px_rgba(255,255,255,0.16)]">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>

@@ -144,7 +144,7 @@ export default function WelcomeScreen() {
                 end={{ x: 1, y: 0 }}
               >
                 <Text style={styles.primaryBtnText}>Get Started</Text>
-                <Feather name="arrow-right" size={18} color="#fff" />
+                <Feather name="arrow-right" size={18} color="#000000" />
               </LinearGradient>
             </Pressable>
           </Link>
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   logoLetter: {
     fontFamily: "Inter_700Bold",
     fontSize: 38,
-    color: "#fff",
+    color: "#000000",
     letterSpacing: 2,
   },
   logoText: { alignItems: "center", gap: 10, paddingHorizontal: 26 },

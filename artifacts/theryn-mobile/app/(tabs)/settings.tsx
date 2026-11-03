@@ -48,10 +48,10 @@ type KeyField = {
 const API_BASE = process.env.EXPO_PUBLIC_DOMAIN ? `https://${process.env.EXPO_PUBLIC_DOMAIN}` : "";
 const TAB_HEIGHT = Platform.OS === "web" ? 84 : 83;
 const KEY_FIELDS: KeyField[] = [
-  { key: "openaiApiKey", label: "Theryn", detail: "OpenAI engine", placeholder: "sk-••••••••", icon: "cpu", color: "#ee8c8c" },
-  { key: "anthropicApiKey", label: "Vesper", detail: "Anthropic engine", placeholder: "sk-ant-••••", icon: "zap", color: "#f59e6d" },
-  { key: "openrouterApiKey", label: "Prism", detail: "OpenRouter engine", placeholder: "sk-or-v1-••••", icon: "layers", color: "#b49bff" },
-  { key: "elevenlabsApiKey", label: "Voice", detail: "ElevenLabs synthesis", placeholder: "el_••••••••", icon: "mic", color: "#e9b46b" },
+  { key: "openaiApiKey", label: "Theryn", detail: "OpenAI engine", placeholder: "sk-••••••••", icon: "cpu", color: "#e5e5e5" },
+  { key: "anthropicApiKey", label: "Vesper", detail: "Anthropic engine", placeholder: "sk-ant-••••", icon: "zap", color: "#c4c4c4" },
+  { key: "openrouterApiKey", label: "Prism", detail: "OpenRouter engine", placeholder: "sk-or-v1-••••", icon: "layers", color: "#a3a3a3" },
+  { key: "elevenlabsApiKey", label: "Voice", detail: "ElevenLabs synthesis", placeholder: "el_••••••••", icon: "mic", color: "#808080" },
 ];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -226,7 +226,7 @@ export default function SettingsScreen() {
         bottomOffset={24}
         showsVerticalScrollIndicator={false}
       >
-        <LinearGradient colors={["#2a0f10", "#171313"]} style={styles.profileCard}>
+        <LinearGradient colors={["#171717", "#080808"]} style={styles.profileCard}>
           <View style={styles.avatar}><Text style={styles.avatarText}>{initials.toUpperCase()}</Text><View style={styles.online} /></View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName} numberOfLines={1}>{displayName}</Text>
@@ -286,7 +286,7 @@ export default function SettingsScreen() {
                     <View style={styles.keyValueRow}>
                       <Text style={styles.keyValue} numberOfLines={1}>{current ?? "Not connected"}</Text>
                       <Pressable onPress={() => setKeyEditor(field.key)} style={styles.smallButton} testID={`settings-key-edit-${field.key}`}><Feather name={current ? "edit-2" : "plus"} size={13} color="rgba(255,255,255,0.65)" /><Text style={styles.smallButtonText}>{current ? "Update" : "Connect"}</Text></Pressable>
-                      {current ? <Pressable onPress={() => removeKey(field)} style={styles.removeButton} testID={`settings-key-remove-${field.key}`}><Feather name="trash-2" size={13} color="#ef7777" /></Pressable> : null}
+                      {current ? <Pressable onPress={() => removeKey(field)} style={styles.removeButton} testID={`settings-key-remove-${field.key}`}><Feather name="trash-2" size={13} color="#d4d4d4" /></Pressable> : null}
                     </View>
                   )}
                 </View>
@@ -295,14 +295,14 @@ export default function SettingsScreen() {
           )}
         </Section>
 
-        {feedback ? <View style={[styles.feedback, feedback.error && styles.feedbackError]}><Feather name={feedback.error ? "alert-circle" : "check-circle"} size={15} color={feedback.error ? "#f58c8c" : "#76d49e"} /><Text style={styles.feedbackText}>{feedback.text}</Text></View> : null}
+        {feedback ? <View style={[styles.feedback, feedback.error && styles.feedbackError]}><Feather name={feedback.error ? "alert-circle" : "check-circle"} size={15} color={feedback.error ? "#d4d4d4" : "#a3a3a3"} /><Text style={styles.feedbackText}>{feedback.text}</Text></View> : null}
 
         <Section title="AI ENGINES">
-          <Row icon="cpu" label="Theryn" value="GPT-5" color="#ee8c8c" />
+          <Row icon="cpu" label="Theryn" value="GPT-5" color="#e5e5e5" />
           <View style={styles.divider} />
-          <Row icon="zap" label="Vesper" value="Claude" color="#f59e6d" />
+          <Row icon="zap" label="Vesper" value="Claude" color="#c4c4c4" />
           <View style={styles.divider} />
-          <Row icon="layers" label="Prism" value="Grok 4.3" color="#b49bff" />
+          <Row icon="layers" label="Prism" value="Grok 4.3" color="#a3a3a3" />
         </Section>
 
         <Section title="RESOURCES">
@@ -314,13 +314,13 @@ export default function SettingsScreen() {
         <Section title="APP">
           <Row icon="info" label="Version" value="1.0.0" />
           <View style={styles.divider} />
-          <Row icon="server" label="API server" value="Connected" color="#76d49e" />
+          <Row icon="server" label="API server" value="Connected" color="#d4d4d4" />
           <View style={styles.divider} />
-          <Row icon="shield" label="Authentication" value="Clerk" color="#a9a0ff" />
+          <Row icon="shield" label="Authentication" value="Clerk" color="#a3a3a3" />
         </Section>
 
         <Pressable onPress={() => void handleSignOut()} disabled={signingOut} style={({ pressed }) => [styles.signOut, pressed && styles.pressed]} testID="settings-sign-out">
-          {signingOut ? <ActivityIndicator size="small" color="#f58c8c" /> : <><Feather name="log-out" size={16} color="#f58c8c" /><Text style={styles.signOutText}>Sign out</Text></>}
+          {signingOut ? <ActivityIndicator size="small" color="#d4d4d4" /> : <><Feather name="log-out" size={16} color="#d4d4d4" /><Text style={styles.signOutText}>Sign out</Text></>}
         </Pressable>
       </KeyboardAwareScrollViewCompat>
     </Animated.View>
@@ -335,20 +335,20 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   scroll: { flex: 1 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.07)" },
-  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#9aefff", letterSpacing: 1.7, marginBottom: 3 },
+  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#d4d4d4", letterSpacing: 1.7, marginBottom: 3 },
   title: { fontFamily: "Inter_700Bold", fontSize: 22, color: "#f0eeee", letterSpacing: -0.3 },
-  headerMark: { width: 34, height: 34, borderRadius: 11, backgroundColor: "#102c36", alignItems: "center", justifyContent: "center" },
+  headerMark: { width: 34, height: 34, borderRadius: 11, backgroundColor: "#171717", alignItems: "center", justifyContent: "center" },
   headerMarkText: { fontFamily: "Inter_700Bold", fontSize: 17, color: "#fff" },
-  profileCard: { flexDirection: "row", alignItems: "center", padding: 18, borderRadius: 18, borderWidth: 1, borderColor: "rgba(154,229,245,0.14)", gap: 14 },
+  profileCard: { flexDirection: "row", alignItems: "center", padding: 18, borderRadius: 18, borderWidth: 1, borderColor: "rgba(255,255,255,0.14)", gap: 14 },
   avatar: { width: 55, height: 55, borderRadius: 18, backgroundColor: "#303030", alignItems: "center", justifyContent: "center", position: "relative" },
   avatarText: { fontFamily: "Inter_700Bold", fontSize: 20, color: "#fff" },
-  online: { width: 11, height: 11, borderRadius: 6, backgroundColor: "#76d49e", borderWidth: 2, borderColor: "#2a0f10", position: "absolute", right: -1, bottom: -1 },
+  online: { width: 11, height: 11, borderRadius: 6, backgroundColor: "#e5e5e5", borderWidth: 2, borderColor: "#111111", position: "absolute", right: -1, bottom: -1 },
   profileInfo: { flex: 1, gap: 3 },
   profileName: { fontFamily: "Inter_700Bold", fontSize: 16, color: "#fff" },
   profileEmail: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.43)" },
   activePill: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 4 },
-  activeDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#76d49e" },
-  activeText: { fontFamily: "Inter_600SemiBold", fontSize: 8, letterSpacing: 1.1, color: "#76d49e" },
+  activeDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#d4d4d4" },
+  activeText: { fontFamily: "Inter_600SemiBold", fontSize: 8, letterSpacing: 1.1, color: "#d4d4d4" },
   section: { gap: 8 },
   sectionLabel: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(255,255,255,0.3)", letterSpacing: 1.6, marginLeft: 4 },
   card: { backgroundColor: "#161414", borderRadius: 16, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", overflow: "hidden" },
@@ -366,14 +366,14 @@ const styles = StyleSheet.create({
   keyCopy: { flex: 1, gap: 2 },
   keyLabel: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: "rgba(255,255,255,0.86)" },
   keyDetail: { fontFamily: "Inter_400Regular", fontSize: 10, color: "rgba(255,255,255,0.32)" },
-  connected: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 7, paddingVertical: 4, borderRadius: 8, backgroundColor: "rgba(118,212,158,0.1)" },
-  connectedDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#76d49e" },
-  connectedText: { fontFamily: "Inter_600SemiBold", fontSize: 8, letterSpacing: 0.8, color: "#76d49e" },
+  connected: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 7, paddingVertical: 4, borderRadius: 8, backgroundColor: "rgba(255,255,255,0.08)" },
+  connectedDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#d4d4d4" },
+  connectedText: { fontFamily: "Inter_600SemiBold", fontSize: 8, letterSpacing: 0.8, color: "#d4d4d4" },
   keyValueRow: { flexDirection: "row", alignItems: "center", gap: 7, paddingHorizontal: 14, paddingTop: 10, paddingBottom: 14 },
   keyValue: { flex: 1, fontFamily: "SpaceMono", fontSize: 11, color: "rgba(255,255,255,0.38)" },
   smallButton: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 9, paddingVertical: 7, borderRadius: 9, backgroundColor: "rgba(255,255,255,0.06)", borderWidth: 1, borderColor: "rgba(255,255,255,0.09)" },
   smallButtonText: { fontFamily: "Inter_500Medium", fontSize: 10, color: "rgba(255,255,255,0.65)" },
-  removeButton: { width: 31, height: 31, borderRadius: 9, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(239,119,119,0.09)" },
+  removeButton: { width: 31, height: 31, borderRadius: 9, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.07)" },
   editor: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 14, gap: 9 },
   secretInputWrap: { flexDirection: "row", alignItems: "center", backgroundColor: "#101010", borderWidth: 1, borderColor: "rgba(255,255,255,0.24)", borderRadius: 11, paddingLeft: 12 },
   secretInput: { flex: 1, minHeight: 42, fontFamily: "Inter_400Regular", fontSize: 13, color: "#fff" },
@@ -383,13 +383,13 @@ const styles = StyleSheet.create({
   saveButtonText: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: "#fff" },
   cancelButton: { justifyContent: "center", paddingHorizontal: 12, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.06)" },
   cancelText: { fontFamily: "Inter_500Medium", fontSize: 12, color: "rgba(255,255,255,0.55)" },
-  feedback: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: -8, padding: 12, borderRadius: 11, backgroundColor: "rgba(118,212,158,0.09)", borderWidth: 1, borderColor: "rgba(118,212,158,0.18)" },
-  feedbackError: { backgroundColor: "rgba(239,119,119,0.09)", borderColor: "rgba(239,119,119,0.18)" },
+  feedback: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: -8, padding: 12, borderRadius: 11, backgroundColor: "rgba(255,255,255,0.07)", borderWidth: 1, borderColor: "rgba(255,255,255,0.14)" },
+  feedbackError: { backgroundColor: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.14)" },
   feedbackText: { flex: 1, fontFamily: "Inter_500Medium", fontSize: 12, color: "rgba(255,255,255,0.7)" },
   loadingRow: { gap: 10, padding: 16 },
   skeletonWide: { height: 44, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.06)" },
   skeletonShort: { height: 12, width: "45%", borderRadius: 6, backgroundColor: "rgba(255,255,255,0.04)" },
-  signOut: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 15, borderRadius: 14, backgroundColor: "rgba(239,119,119,0.08)", borderWidth: 1, borderColor: "rgba(239,119,119,0.18)" },
-  signOutText: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#f58c8c" },
+  signOut: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 15, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.05)", borderWidth: 1, borderColor: "rgba(255,255,255,0.14)" },
+  signOutText: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: "#d4d4d4" },
   pressed: { opacity: 0.68 },
 });

@@ -169,8 +169,8 @@ export default function VoiceScreen() {
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
                 {loading
-                  ? <ActivityIndicator size="large" color="#fff" />
-                  : <Feather name={playing ? "square" : "play"} size={26} color="#fff" />}
+                  ? <ActivityIndicator size="large" color={playing ? "#ffffff" : "#000000"} />
+                  : <Feather name={playing ? "square" : "play"} size={26} color={playing ? "#ffffff" : "#000000"} />}
               </LinearGradient>
             </Pressable>
           </Animated.View>
@@ -180,7 +180,7 @@ export default function VoiceScreen() {
 
         {error && (
           <View style={styles.errorBox}>
-            <Feather name="alert-circle" size={14} color="#f87171" />
+            <Feather name="alert-circle" size={14} color="#d4d4d4" />
             <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
@@ -225,7 +225,7 @@ export default function VoiceScreen() {
             ]}
           >
             <LinearGradient colors={["#ffffff", "#777777"]} style={styles.synthBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-              <Feather name="volume-2" size={14} color="#fff" />
+              <Feather name="volume-2" size={14} color="#000000" />
               <Text style={styles.synthBtnText}>Speak</Text>
             </LinearGradient>
           </Pressable>
@@ -258,13 +258,13 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", gap: 10,
   },
   title: { fontFamily: "Inter_700Bold", fontSize: 20, color: "#fff" },
-  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(154,239,255,0.8)", letterSpacing: 1.6, marginBottom: 3 },
+  kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(255,255,255,0.78)", letterSpacing: 1.6, marginBottom: 3 },
   headerBadge: {
     paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 8, backgroundColor: "rgba(168,85,247,0.15)",
-    borderWidth: 1, borderColor: "rgba(168,85,247,0.2)",
+    borderRadius: 8, backgroundColor: "rgba(255,255,255,0.07)",
+    borderWidth: 1, borderColor: "rgba(255,255,255,0.14)",
   },
-  headerBadgeText: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#a855f7", letterSpacing: 1 },
+  headerBadgeText: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#d4d4d4", letterSpacing: 1 },
   scroll: { padding: 16, gap: 12 },
   visualizerCard: {
     backgroundColor: "#111",
@@ -283,8 +283,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4, shadowRadius: 16, elevation: 12,
   },
   vizLabel: { fontFamily: "Inter_400Regular", fontSize: 12, color: "rgba(255,255,255,0.3)" },
-  errorBox: { flexDirection: "row", alignItems: "flex-start", gap: 8, padding: 12, borderRadius: 12, backgroundColor: "rgba(239,68,68,0.08)", borderWidth: 1, borderColor: "rgba(239,68,68,0.2)" },
-  errorText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#f87171", flex: 1, lineHeight: 17 },
+  errorBox: { flexDirection: "row", alignItems: "flex-start", gap: 8, padding: 12, borderRadius: 12, backgroundColor: "rgba(255,255,255,0.05)", borderWidth: 1, borderColor: "rgba(255,255,255,0.14)" },
+  errorText: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#d4d4d4", flex: 1, lineHeight: 17 },
   sectionLabel: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "rgba(255,255,255,0.2)", letterSpacing: 1.5, marginTop: 4 },
   voiceRow: { flexDirection: "row", gap: 8 },
   voiceChip: {

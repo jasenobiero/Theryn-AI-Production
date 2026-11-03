@@ -130,8 +130,8 @@ export default function ImagesScreen() {
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               >
                 {loading
-                  ? <ActivityIndicator size="small" color="#fff" />
-                  : <><Feather name="zap" size={14} color="#fff" /><Text style={styles.genBtnText}>Generate</Text></>}
+                  ? <ActivityIndicator size="small" color="#000000" />
+                  : <><Feather name="zap" size={14} color="#000000" /><Text style={styles.genBtnText}>Generate</Text></>}
               </LinearGradient>
             </Pressable>
           </View>
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", gap: 6,
     paddingHorizontal: 16, paddingVertical: 10,
   },
-  genBtnText: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: "#fff" },
+  genBtnText: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: "#000000" },
   errorBox: {
     flexDirection: "row", alignItems: "center", gap: 8,
     padding: 12, borderRadius: 12,

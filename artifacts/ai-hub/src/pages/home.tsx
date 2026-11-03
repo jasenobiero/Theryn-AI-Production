@@ -55,7 +55,7 @@ export default function Home() {
     <div className="min-h-full flex flex-col items-center justify-between px-4 sm:px-6 py-5 sm:py-10 relative" data-testid="page-home">
       <div className="w-full max-w-6xl flex items-center justify-between mb-8 animate-theryn-rise">
         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.45)]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-white/70 shadow-[0_0_8px_rgba(255,255,255,0.18)]" />
           All systems operational
         </div>
         <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.14em] text-white/20">
