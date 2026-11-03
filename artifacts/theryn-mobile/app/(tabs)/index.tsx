@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   menuBtn: { width: 38, height: 38, borderRadius: 13, backgroundColor: "rgba(255,255,255,0.06)", alignItems: "center", justifyContent: "center", marginRight: 10 },
   brandGroup: { flex: 1, flexDirection: "row", alignItems: "center", gap: 9 },
-  headerMark: { width: 30, height: 30, borderRadius: 10, backgroundColor: "#171717", alignItems: "center", justifyContent: "center" },
+  headerMark: { width: 30, height: 30, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   headerMarkText: { fontFamily: "Inter_700Bold", fontSize: 16, color: "#fff" },
   greetingWrap: { flex: 1 },
   kicker: { fontFamily: "Inter_700Bold", fontSize: 11, color: "#fff", letterSpacing: 1.8 },

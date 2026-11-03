@@ -39,6 +39,7 @@
 
 :root {
   /* THERYN / monochrome signal field */
+  color-scheme: dark;
   --background: 0 0% 4%;
   --foreground: 0 0% 96%;
 

@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.07)" },
   kicker: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: "#d4d4d4", letterSpacing: 1.7, marginBottom: 3 },
   title: { fontFamily: "Inter_700Bold", fontSize: 22, color: "#f0eeee", letterSpacing: -0.3 },
-  headerMark: { width: 34, height: 34, borderRadius: 11, backgroundColor: "#171717", alignItems: "center", justifyContent: "center" },
+  headerMark: { width: 34, height: 34, borderRadius: 11, alignItems: "center", justifyContent: "center" },
   headerMarkText: { fontFamily: "Inter_700Bold", fontSize: 17, color: "#fff" },
   profileCard: { flexDirection: "row", alignItems: "center", padding: 18, borderRadius: 18, borderWidth: 1, borderColor: "rgba(255,255,255,0.14)", gap: 14 },
   avatar: { width: 55, height: 55, borderRadius: 18, backgroundColor: "#303030", alignItems: "center", justifyContent: "center", position: "relative" },

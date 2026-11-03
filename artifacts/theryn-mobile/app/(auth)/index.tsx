@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1 },
   topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 24 },
   topBrand: { flexDirection: "row", alignItems: "center", gap: 9 },
-  topBrandMark: { width: 26, height: 26, borderRadius: 8, backgroundColor: "#171717", alignItems: "center", justifyContent: "center" },
+  topBrandMark: { width: 26, height: 26, borderRadius: 8, alignItems: "center", justifyContent: "center" },
   topBrandLetter: { fontFamily: "Inter_700Bold", fontSize: 14, color: "#fff" },
   topBrandName: { fontFamily: "Inter_700Bold", fontSize: 13, color: "#fff", letterSpacing: 2.4 },
   livePill: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 9, paddingVertical: 6, borderRadius: 12, backgroundColor: "rgba(255,255,255,0.05)", borderWidth: 1, borderColor: "rgba(255,255,255,0.08)" },
