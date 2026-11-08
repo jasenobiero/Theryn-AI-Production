@@ -52,13 +52,11 @@ if (!clerkPubKey) {
   throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Add your Clerk publishable key to artifacts/ai-hub/.env.local, then restart Vite.");
 }
 
-// Keep Clerk's session cookie first-party on the custom domain. This fallback
-// matters for production builds where VITE_CLERK_PROXY_URL is not injected;
-// without it Clerk can authenticate the UI while same-origin API requests
-// arrive without a session and every protected endpoint returns 401.
-const clerkProxyUrl = import.meta.env.PROD
-  ? (import.meta.env.VITE_CLERK_PROXY_URL || `${window.location.origin}/api/__clerk`)
-  : undefined;
+// The web app uses direct Clerk authentication and sends the session token to
+// our same-origin API requests through ClerkApiAuthBridge below. Keeping the
+// proxy opt-in avoids a broken custom-domain handshake when Clerk has not been
+// configured with a custom frontend API domain.
+const clerkProxyUrl = import.meta.env.PROD ? import.meta.env.VITE_CLERK_PROXY_URL || undefined : undefined;
 
 function stripBase(path: string): string {
   return basePath && path.startsWith(basePath)
@@ -249,6 +247,43 @@ function ClerkQueryClientCacheInvalidator() {
   return null;
 }
 
+function ClerkApiAuthBridge() {
+  const { getToken } = useAuth();
+
+  useEffect(() => {
+    const originalFetch = window.fetch.bind(window);
+
+    window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+      const requestUrl = typeof input === "string"
+        ? new URL(input, window.location.origin)
+        : input instanceof URL
+          ? input
+          : new URL(input.url);
+      const isSameOriginApi = requestUrl.origin === window.location.origin &&
+        (requestUrl.pathname === "/api" || requestUrl.pathname.startsWith("/api/"));
+
+      if (!isSameOriginApi) return originalFetch(input, init);
+
+      const headers = new Headers(input instanceof Request ? input.headers : undefined);
+      if (init?.headers) {
+        new Headers(init.headers).forEach((value, key) => headers.set(key, value));
+      }
+      if (!headers.has("authorization")) {
+        const token = await getToken();
+        if (token) headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return originalFetch(input, { ...init, headers });
+    };
+
+    return () => {
+      window.fetch = originalFetch;
+    };
+  }, [getToken]);
+
+  return null;
+}
+
 function AuthedRouter() {
   return (
     <Layout>
@@ -330,6 +365,7 @@ function ClerkProviderWithRoutes() {
     >
       <QueryClientProvider client={queryClient}>
         <ClerkQueryClientCacheInvalidator />
+        <ClerkApiAuthBridge />
         <TooltipProvider>
           <AppRoutes />
           <PWAInstallPrompt />
