@@ -7,22 +7,22 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function ImagesPage() {
   const [prompt, setPrompt] = useState("");
-  const [size, setSize] = useState<"1024x1024" | "512x512" | "256x256">("1024x1024");
+  const [size, setSize] = useState<"1024x1024" | "1536x1024" | "1024x1536">("1024x1024");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   
   const generate = useGenerateOpenaiImage();
   const { toast } = useToast();
 
   const handleGenerate = async () => {
-    if (!prompt) return;
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt) return;
     try {
-      setImageUrl(null);
-      const res = await generate.mutateAsync({ data: { prompt, size } });
+      const res = await generate.mutateAsync({ data: { prompt: trimmedPrompt, size } });
       setImageUrl(`data:image/png;base64,${res.b64_json}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Generation Failed",
-        description: err.message || "Something went wrong",
+        description: err instanceof Error ? err.message : "Something went wrong",
         variant: "destructive"
       });
     }
@@ -37,7 +37,7 @@ export default function ImagesPage() {
           </div>
           <div>
             <h1 className="text-3xl font-display font-bold text-white">Neural Image Synthesis</h1>
-            <p className="text-muted-foreground mt-1">Powered by DALL-E 3 architecture</p>
+            <p className="text-muted-foreground mt-1">Powered by OpenAI image generation</p>
           </div>
         </div>
 
@@ -62,15 +62,15 @@ export default function ImagesPage() {
                   </SelectTrigger>
                   <SelectContent className="bg-secondary border-white/10">
                     <SelectItem value="1024x1024">1024 x 1024 (HD)</SelectItem>
-                    <SelectItem value="512x512">512 x 512 (Standard)</SelectItem>
-                    <SelectItem value="256x256">256 x 256 (Fast)</SelectItem>
+                    <SelectItem value="1536x1024">1536 x 1024 (Landscape)</SelectItem>
+                    <SelectItem value="1024x1536">1024 x 1536 (Portrait)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <button
                 onClick={handleGenerate}
-                disabled={generate.isPending || !prompt}
+                disabled={generate.isPending || !prompt.trim()}
                 className="w-full h-14 rounded-xl font-bold text-white bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed box-glow"
               >
                 {generate.isPending ? (

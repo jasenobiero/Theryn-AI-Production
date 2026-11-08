@@ -9,10 +9,12 @@
   "dependencies": {
     "@workspace/api-client-react": "workspace:*"
   },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "vite": "catalog:"
+  },
   "peerDependencies": {
     "react": ">=18"
-  },
-  "devDependencies": {
-    "@types/react": "catalog:"
   }
 }

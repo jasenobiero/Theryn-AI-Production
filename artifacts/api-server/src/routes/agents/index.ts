@@ -5,7 +5,10 @@ import {
   UpdateAgentBody,
   ChatWithAgentBody,
 } from "@workspace/api-zod";
-import { eq, asc } from "drizzle-orm";
+import { and, eq, asc, desc } from "drizzle-orm";
+import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
+import { requireFeatureAccess } from "../../subscriptions/entitlements";
+import { recordUsage } from "../../subscriptions/usage";
 import {
   getAnthropicClientForRequest,
   getOpenAIClientForRequest,
@@ -13,15 +16,19 @@ import {
 } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
+router.use(clerkRequireAuth);
 
-router.get("/", async (_req, res) => {
-  const rows = await db.select().from(agents).orderBy(asc(agents.createdAt));
+router.get("/", async (req, res) => {
+  const rows = await db.select().from(agents)
+    .where(eq(agents.userId, (req as any).userId))
+    .orderBy(asc(agents.createdAt));
   res.json(rows);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireFeatureAccess("agentStudio"), async (req, res) => {
   const body = CreateAgentBody.parse(req.body);
   const [agent] = await db.insert(agents).values({
+    userId: (req as any).userId,
     name: body.name,
     description: body.description,
     systemPrompt: body.systemPrompt,
@@ -34,7 +41,10 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const [agent] = await db.select().from(agents).where(eq(agents.id, id));
+  const [agent] = await db.select().from(agents).where(and(
+    eq(agents.id, id),
+    eq(agents.userId, (req as any).userId),
+  ));
   if (!agent) {
     res.status(404).json({ error: "Agent not found" });
     return;
@@ -53,7 +63,10 @@ router.put("/:id", async (req, res) => {
     provider: body.provider,
     emoji: body.emoji,
     updatedAt: new Date(),
-  }).where(eq(agents.id, id)).returning();
+  }).where(and(
+    eq(agents.id, id),
+    eq(agents.userId, (req as any).userId),
+  )).returning();
   if (!agent) {
     res.status(404).json({ error: "Agent not found" });
     return;
@@ -63,26 +76,72 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const [agent] = await db.select().from(agents).where(eq(agents.id, id));
+  const [agent] = await db.select().from(agents).where(and(
+    eq(agents.id, id),
+    eq(agents.userId, (req as any).userId),
+  ));
   if (!agent) {
     res.status(404).json({ error: "Agent not found" });
     return;
   }
-  await db.delete(agents).where(eq(agents.id, id));
+  await db.delete(agents).where(and(
+    eq(agents.id, id),
+    eq(agents.userId, (req as any).userId),
+  ));
   res.status(204).send();
 });
 
 router.get("/:id/conversations", async (req, res) => {
   const id = Number(req.params.id);
-  const convs = await db.select().from(agentConversations).where(eq(agentConversations.agentId, id)).orderBy(asc(agentConversations.createdAt));
+  const [agent] = await db.select({ id: agents.id }).from(agents).where(and(
+    eq(agents.id, id),
+    eq(agents.userId, (req as any).userId),
+  ));
+  if (!agent) {
+    res.status(404).json({ error: "Agent not found" });
+    return;
+  }
+  const convs = await db.select().from(agentConversations).where(eq(agentConversations.agentId, id)).orderBy(desc(agentConversations.createdAt));
   res.json(convs);
 });
 
-router.post("/:id/chat", async (req, res) => {
+router.get("/:id/conversations/:conversationId", async (req, res) => {
+  const agentId = Number(req.params.id);
+  const conversationId = Number(req.params.conversationId);
+  if (!Number.isSafeInteger(agentId) || agentId < 1 || !Number.isSafeInteger(conversationId) || conversationId < 1) {
+    res.status(400).json({ error: "Invalid agent or conversation ID" });
+    return;
+  }
+  const [agent] = await db.select({ id: agents.id }).from(agents).where(and(
+    eq(agents.id, agentId),
+    eq(agents.userId, (req as any).userId),
+  ));
+  if (!agent) {
+    res.status(404).json({ error: "Agent not found" });
+    return;
+  }
+  const [conversation] = await db.select().from(agentConversations).where(and(
+    eq(agentConversations.id, conversationId),
+    eq(agentConversations.agentId, agentId),
+  ));
+  if (!conversation) {
+    res.status(404).json({ error: "Agent conversation not found" });
+    return;
+  }
+  const conversationHistory = await db.select().from(agentMessages)
+    .where(eq(agentMessages.conversationId, conversationId))
+    .orderBy(asc(agentMessages.createdAt));
+  res.json({ ...conversation, messages: conversationHistory });
+});
+
+router.post("/:id/chat", requireFeatureAccess("agentStudio"), async (req, res) => {
   const id = Number(req.params.id);
   const body = ChatWithAgentBody.parse(req.body);
 
-  const [agent] = await db.select().from(agents).where(eq(agents.id, id));
+  const [agent] = await db.select().from(agents).where(and(
+    eq(agents.id, id),
+    eq(agents.userId, (req as any).userId),
+  ));
   if (!agent) {
     res.status(404).json({ error: "Agent not found" });
     return;
@@ -95,6 +154,17 @@ router.post("/:id/chat", async (req, res) => {
       title: body.content.slice(0, 60),
     }).returning();
     convId = conv.id;
+  } else {
+    const [conversation] = await db.select({ id: agentConversations.id })
+      .from(agentConversations)
+      .where(and(
+        eq(agentConversations.id, convId),
+        eq(agentConversations.agentId, id),
+      ));
+    if (!conversation) {
+      res.status(404).json({ error: "Agent conversation not found" });
+      return;
+    }
   }
 
   await db.insert(agentMessages).values({ conversationId: convId, role: "user", content: body.content });
@@ -160,6 +230,7 @@ router.post("/:id/chat", async (req, res) => {
     }
   }
 
+  await recordUsage(req, "agentStudio", { provider: agent.provider, operation: "agent-chat" });
   await db.insert(agentMessages).values({ conversationId: convId, role: "assistant", content: fullResponse });
   res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
   res.end();

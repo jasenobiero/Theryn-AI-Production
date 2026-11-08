@@ -1,5 +1,11 @@
 # See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+# environment secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+
 # compiled output
 dist
 tmp
@@ -10,6 +16,17 @@ out-tsc
 
 # dependencies
 node_modules
+
+# generated media / exports
+attached_assets/*.zip
+attached_assets/*.png
+attached_assets/*.jpg
+attached_assets/*.jpeg
+attached_assets/*.webp
+attached_assets/*.gif
+screenshots/
+coverage/
+*.log
 
 # IDEs and editors
 /.idea
@@ -30,7 +47,6 @@ node_modules
 # misc
 /.sass-cache
 /connect.lock
-/coverage
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log

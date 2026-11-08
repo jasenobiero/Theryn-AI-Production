@@ -673,6 +673,35 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AgentConversation"
+  /agents/{id}/conversations/{conversationId}:
+    get:
+      operationId: getAgentConversation
+      tags: [agents]
+      summary: Get an agent conversation and its messages
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Agent conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentConversationWithMessages"
+        "404":
+          description: Agent or conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentError"
 
   # ─── ElevenLabs ───────────────────────────────────────────
   /elevenlabs/tts:
@@ -699,10 +728,10 @@ paths:
     get:
       tags: [shield]
       operationId: listShieldAccounts
-      summary: List connected social accounts
+      summary: List saved social handles
       responses:
         "200":
-          description: List of social accounts
+          description: Saved handles; no platform accounts are connected
           content:
             application/json:
               schema:
@@ -712,7 +741,7 @@ paths:
     post:
       tags: [shield]
       operationId: addShieldAccount
-      summary: Add a social account to shield
+      summary: Save a social handle for general guidance
       requestBody:
         required: true
         content:
@@ -721,11 +750,15 @@ paths:
               $ref: "#/components/schemas/AddShieldAccountBody"
       responses:
         "201":
-          description: Account added
+          description: Handle saved; no account connection is made
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/SocialAccount"
+        "400":
+          description: Invalid platform, handle, or display name
+        "409":
+          description: Handle is already saved
   /shield/accounts/{id}:
     delete:
       tags: [shield]
@@ -740,11 +773,15 @@ paths:
       responses:
         "204":
           description: Account removed
+        "400":
+          description: Invalid account ID
+        "404":
+          description: Saved handle not found
   /shield/accounts/{id}/scan:
     post:
       tags: [shield]
       operationId: scanShieldAccount
-      summary: Run an AI security scan on an account
+      summary: Generate unverified platform guidance; does not inspect the profile
       parameters:
         - name: id
           in: path
@@ -753,19 +790,25 @@ paths:
             type: integer
       responses:
         "200":
-          description: Scan result
+          description: General platform guidance, not a profile scan or live monitoring result
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ShieldScanResult"
+        "400":
+          description: Invalid account ID
+        "404":
+          description: Saved handle not found
+        "502":
+          description: AI guidance could not be generated or validated
   /shield/alerts:
     get:
       tags: [shield]
       operationId: listShieldAlerts
-      summary: List security alerts
+      summary: List saved AI review summaries
       responses:
         "200":
-          description: List of alerts
+          description: Unverified guidance summaries, not detected security incidents
           content:
             application/json:
               schema:
@@ -776,7 +819,7 @@ paths:
     patch:
       tags: [shield]
       operationId: markShieldAlertRead
-      summary: Mark an alert as read
+      summary: Mark a review summary as read
       parameters:
         - name: id
           in: path
@@ -794,6 +837,10 @@ paths:
                   ok:
                     type: boolean
                 required: [ok]
+        "400":
+          description: Invalid review ID
+        "404":
+          description: Review summary not found
 
 components:
   parameters:
@@ -967,7 +1014,7 @@ components:
           type: string
         size:
           type: string
-          enum: ["1024x1024", "512x512", "256x256"]
+          enum: ["1024x1024", "1536x1024", "1024x1536"]
       required:
         - prompt
     GenerateOpenaiImageResponse:
@@ -1232,6 +1279,49 @@ components:
         - agentId
         - title
         - createdAt
+    AgentConversationMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - role
+        - content
+        - createdAt
+    AgentConversationWithMessages:
+      type: object
+      properties:
+        id:
+          type: integer
+        agentId:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentConversationMessage"
+      required:
+        - id
+        - agentId
+        - title
+        - createdAt
+        - messages
     AgentError:
       type: object
       properties:
@@ -1270,10 +1360,13 @@ components:
           type: string
         platform:
           type: string
+          description: Supported platform identifier; saving a handle does not connect an account
         handle:
           type: string
+          maxLength: 200
         displayName:
           type: string
+          maxLength: 100
           nullable: true
         riskScore:
           type: integer
@@ -1292,10 +1385,28 @@ components:
       properties:
         platform:
           type: string
+          enum:
+            - tiktok
+            - instagram
+            - youtube
+            - twitter
+            - discord
+            - discord_server
+            - reddit
+            - facebook
+            - linkedin
+            - twitch
+            - snapchat
+            - github
+            - telegram
+            - spotify
         handle:
           type: string
+          minLength: 1
+          maxLength: 200
         displayName:
           type: string
+          maxLength: 100
       required: [platform, handle]
     SecurityAlert:
       type: object
@@ -1330,33 +1441,48 @@ components:
       properties:
         type:
           type: string
+          maxLength: 80
         severity:
           type: string
+          enum: [info, low, medium, high, critical]
         title:
           type: string
+          minLength: 1
+          maxLength: 160
         description:
           type: string
+          minLength: 1
+          maxLength: 1000
       required: [type, severity, title, description]
     ShieldAnalysis:
+      description: AI-generated general platform guidance; no individual profile is inspected.
       type: object
       properties:
         riskScore:
           type: integer
+          minimum: 0
+          maximum: 100
+          description: Subjective estimate of general platform risks, not an account finding
         riskLevel:
           type: string
+          enum: [safe, low, medium, high, critical]
         summary:
           type: string
+          minLength: 1
+          maxLength: 2000
         threats:
           type: array
+          maxItems: 20
           items:
             $ref: "#/components/schemas/ShieldThreat"
         recommendations:
           type: array
+          maxItems: 20
           items:
             type: string
-        shieldStatus:
-          type: string
-      required: [riskScore, riskLevel, summary, threats, recommendations, shieldStatus]
+            minLength: 1
+            maxLength: 500
+      required: [riskScore, riskLevel, summary, threats, recommendations]
     ShieldScanResult:
       type: object
       properties:

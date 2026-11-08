@@ -153,9 +153,9 @@ export function startDiscord(token: string) {
         "**⚡ THERYN Bot — Commands**",
         "",
         "**Chat**",
-        "`!theryn <msg>` or `!t` — Theryn (GPT-4o)",
-        "`!vesper <msg>` or `!v` — Vesper (Claude)",
-        "`!prism <msg>` or `!p` — Prism (Grok)",
+        "`!theryn <msg>` or `!t` — Theryn (OpenAI)",
+        "`!vesper <msg>` or `!v` — Vesper (Anthropic)",
+        "`!prism <msg>` or `!p` — Prism (OpenRouter)",
         "`!ai <msg>` — Quick Theryn chat",
         "",
         "**Create**",
@@ -163,13 +163,13 @@ export function startDiscord(token: string) {
         "`!voice <text>` — Text-to-speech audio",
         "",
         "**Shield**",
-        "`!scan <platform> <handle>` — AI security scan",
+        "`!scan <platform> <handle>` — General safety guidance, not a profile scan",
         "",
         "**Broadcast** *(Admin only)*",
         "`/broadcast message:<text>` — DM all server members",
         "",
         "**Session**",
-        "`!new` — Clear conversation history",
+        "`!new` — Start a new conversation (previous chats remain saved)",
         "",
         "*Example: `!theryn explain quantum computing`*",
       ].join("\n"));
@@ -179,7 +179,7 @@ export function startDiscord(token: string) {
     // ── New session ──
     if (cmd === "new") {
       resetAll(platform, uid);
-      await msg.reply("🗑️ Conversation cleared. Starting fresh!");
+      await msg.reply("Started a new conversation. Earlier chats remain saved in THERYN.");
       return;
     }
 
@@ -188,7 +188,7 @@ export function startDiscord(token: string) {
       if (!rest) { await msg.reply("❌ Provide a prompt: `!image a red dragon in space`"); return; }
       const thinking = await msg.reply("🎨 Generating image...");
       try {
-        const buf = await generateImage(rest);
+        const buf = await generateImage(rest, platform, uid);
         const att = new AttachmentBuilder(buf, { name: "theryn-image.png" });
         await thinking.edit({ content: `🎨 **Generated:** ${rest}`, files: [att] });
       } catch (e) {
@@ -202,7 +202,7 @@ export function startDiscord(token: string) {
       if (!rest) { await msg.reply("❌ Provide text: `!voice Hello world`"); return; }
       const thinking = await msg.reply("🎙️ Generating voice...");
       try {
-        const buf = await tts(rest);
+        const buf = await tts(rest, platform, uid);
         if (!buf) { await thinking.edit("❌ Voice failed — ElevenLabs key not configured."); return; }
         const att = new AttachmentBuilder(buf, { name: "theryn-voice.mp3" });
         await thinking.edit({ content: "🎙️ **Voice:**", files: [att] });
@@ -219,12 +219,12 @@ export function startDiscord(token: string) {
         await msg.reply("❌ Usage: `!scan <platform> <handle>` — e.g. `!scan instagram myuser`");
         return;
       }
-      const thinking = await msg.reply(`🔍 Scanning **${plat}** @${handle}...`);
+      const thinking = await msg.reply(`📝 Preparing general safety guidance for **${plat}** @${handle} (no profile scan)...`);
       try {
-        const result = await scanAccount(plat, handle);
-        await thinking.edit(`🛡️ **Shield Scan — ${plat} @${handle}**\n\n${result}`);
-      } catch {
-        await thinking.edit("❌ Scan failed.");
+        const result = await scanAccount(plat, handle, platform, uid);
+        await thinking.edit(`🛡️ **General guidance — ${plat} @${handle}**\n\n${result}`);
+      } catch (error) {
+        await thinking.edit(`❌ Could not generate guidance: ${error instanceof Error ? error.message : "unknown error"}`);
       }
       return;
     }

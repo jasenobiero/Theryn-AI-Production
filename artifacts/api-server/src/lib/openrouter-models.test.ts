@@ -1,0 +1,19 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import { OPENROUTER_MODELS, normalizeOpenRouterModel } from "./openrouter-models.js";
+
+test("normalizes deprecated OpenRouter model IDs", () => {
+  assert.equal(normalizeOpenRouterModel("meta-llama/llama-3-70b-instruct"), "meta-llama/llama-3.3-70b-instruct");
+  assert.equal(normalizeOpenRouterModel("google/gemini-2.5-pro"), "google/gemini-2.5-pro");
+  assert.equal(normalizeOpenRouterModel("x-ai/grok-4.3"), "x-ai/grok-4.3");
+});
+
+test("keeps the supported six-model catalog in sync", () => {
+  assert.deepEqual(OPENROUTER_MODELS, [
+    "x-ai/grok-4.3",
+    "google/gemini-2.5-pro",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-coder",
+  ]);
+});

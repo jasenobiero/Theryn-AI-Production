@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useListAgents, useCreateAgent, useDeleteAgent } from "@workspace/api-client-react";
-import { Bot, Plus, Trash2, Sparkles, ChevronRight, X } from "lucide-react";
+import { useListAgents, useCreateAgent, useUpdateAgent, useDeleteAgent } from "@workspace/api-client-react";
+import {
+  Bot, Plus, Pencil, Trash2, Sparkles, ChevronRight, X, Code2, PenTool,
+  FlaskConical, BarChart3, Languages, BriefcaseBusiness,
+} from "lucide-react";
 import { TherynIcon } from "@/components/nexus-icon";
 import { motion, AnimatePresence } from "framer-motion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -79,23 +82,56 @@ const DEFAULT_FORM = {
   emoji: "AGENT",
 };
 
+const AGENT_MARKS = {
+  CODE: Code2,
+  WRITE: PenTool,
+  LAB: FlaskConical,
+  DATA: BarChart3,
+  WORLD: Languages,
+  FOCUS: BriefcaseBusiness,
+  AGENT: Bot,
+};
+
+function AgentMark({ value, className }: { value: string; className: string }) {
+  const Mark = AGENT_MARKS[value as keyof typeof AGENT_MARKS];
+  return Mark ? <Mark className={className} aria-hidden="true" /> : <span className={className}>{value}</span>;
+}
+
 export default function AgentsPage() {
   const { data: agents, refetch } = useListAgents();
   const createMutation = useCreateAgent();
+  const updateMutation = useUpdateAgent();
   const deleteMutation = useDeleteAgent();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState(DEFAULT_FORM);
+  const [editingAgentId, setEditingAgentId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"templates" | "custom">("templates");
 
   const applyTemplate = (t: typeof AGENT_TEMPLATES[0]) => {
+    setEditingAgentId(null);
     setFormData({ name: t.name, description: t.description, systemPrompt: t.systemPrompt, provider: t.provider, model: t.model, emoji: t.emoji });
     setActiveTab("custom");
     setIsOpen(true);
   };
 
   const openBlank = () => {
+    setEditingAgentId(null);
     setFormData(DEFAULT_FORM);
+    setActiveTab("custom");
+    setIsOpen(true);
+  };
+
+  const openEdit = (agent: NonNullable<typeof agents>[number]) => {
+    setEditingAgentId(agent.id);
+    setFormData({
+      name: agent.name,
+      description: agent.description,
+      systemPrompt: agent.systemPrompt,
+      provider: agent.provider,
+      model: agent.model,
+      emoji: agent.emoji,
+    });
     setActiveTab("custom");
     setIsOpen(true);
   };
@@ -103,12 +139,21 @@ export default function AgentsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createMutation.mutateAsync({ data: formData });
+      if (editingAgentId === null) {
+        await createMutation.mutateAsync({ data: formData });
+      } else {
+        await updateMutation.mutateAsync({ id: editingAgentId, data: formData });
+      }
       setIsOpen(false);
-      refetch();
-      toast({ title: "Agent initialized successfully" });
-    } catch {
-      toast({ title: "Failed to create agent", variant: "destructive" });
+      setEditingAgentId(null);
+      await refetch();
+      toast({ title: editingAgentId === null ? "Agent initialized successfully" : "Agent updated successfully" });
+    } catch (error) {
+      toast({
+        title: editingAgentId === null ? "Failed to create agent" : "Failed to update agent",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -175,7 +220,7 @@ export default function AgentsPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center text-xl shadow-lg`}>
-                        {t.emoji}
+                        <AgentMark value={t.emoji} className="w-5 h-5 text-white" />
                       </div>
                       <div>
                         <p className="font-semibold text-white text-sm">{t.name}</p>
@@ -221,13 +266,16 @@ export default function AgentsPage() {
                   transition={{ delay: i * 0.05 }}
                   className="glass p-5 rounded-2xl border border-white/5 relative group hover:border-emerald-500/30 transition-all duration-300"
                 >
-                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => handleDelete(agent.id)} className="p-1.5 rounded-lg bg-destructive/20 text-destructive hover:bg-destructive hover:text-white transition-colors">
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity">
+                    <button onClick={() => openEdit(agent)} aria-label={`Edit ${agent.name}`} className="p-1.5 rounded-lg bg-white/5 text-white/60 hover:bg-emerald-500 hover:text-black transition-colors">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => handleDelete(agent.id)} aria-label={`Delete ${agent.name}`} className="p-1.5 rounded-lg bg-destructive/20 text-destructive hover:bg-destructive hover:text-white transition-colors">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                   <div className="text-3xl mb-3 p-3 rounded-xl bg-white/5 inline-block border border-white/5">
-                    {agent.emoji}
+                    <AgentMark value={agent.emoji} className="w-7 h-7 text-white/80" />
                   </div>
                   <h3 className="text-base font-bold text-white mb-1">{agent.name}</h3>
                   <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{agent.description}</p>
@@ -275,7 +323,7 @@ export default function AgentsPage() {
                 <div className="flex items-center justify-between p-6 border-b border-white/5">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-emerald-400" />
-                    <h2 className="text-lg font-display font-bold text-white">Agent Blueprint</h2>
+                    <h2 className="text-lg font-display font-bold text-white">{editingAgentId === null ? "Agent Blueprint" : "Edit Agent"}</h2>
                   </div>
                   <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-white/8 text-muted-foreground hover:text-white transition-colors">
                     <X className="w-4 h-4" />
@@ -283,7 +331,7 @@ export default function AgentsPage() {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-1 p-4 pb-0">
+                {editingAgentId === null && <div className="flex gap-1 p-4 pb-0">
                   {(["templates", "custom"] as const).map(tab => (
                     <button
                       key={tab}
@@ -293,9 +341,9 @@ export default function AgentsPage() {
                       {tab === "templates" ? "Templates" : "Custom"}
                     </button>
                   ))}
-                </div>
+                </div>}
 
-                {activeTab === "templates" ? (
+                {editingAgentId === null && activeTab === "templates" ? (
                   <div className="p-4 grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto">
                     {AGENT_TEMPLATES.map(t => (
                       <button
@@ -303,7 +351,7 @@ export default function AgentsPage() {
                         onClick={() => applyTemplate(t)}
                         className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/8 hover:bg-white/[0.07] hover:border-white/20 transition-all text-left"
                       >
-                        <span className="text-2xl">{t.emoji}</span>
+                        <AgentMark value={t.emoji} className="mt-0.5 h-6 w-6 flex-shrink-0 text-white/80" />
                         <div>
                           <p className="text-sm font-semibold text-white">{t.name}</p>
                           <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{t.description}</p>
@@ -348,8 +396,10 @@ export default function AgentsPage() {
                       <label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">System Directives</label>
                       <textarea required value={formData.systemPrompt} onChange={e => setFormData({ ...formData, systemPrompt: e.target.value })} className="w-full h-28 bg-black/40 border border-white/10 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none transition-colors" placeholder="You are an expert..." />
                     </div>
-                    <button type="submit" disabled={createMutation.isPending} className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:opacity-90 transition-all disabled:opacity-50">
-                      {createMutation.isPending ? "Initializing..." : "Initialize Agent"}
+                    <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:opacity-90 transition-all disabled:opacity-50">
+                      {createMutation.isPending || updateMutation.isPending
+                        ? "Saving..."
+                        : editingAgentId === null ? "Initialize Agent" : "Save Changes"}
                     </button>
                   </form>
                 )}

@@ -7,7 +7,21 @@
  */
 
 export interface AddShieldAccountBody {
-  platform: string;
+  platform:
+    | "tiktok"
+    | "instagram"
+    | "youtube"
+    | "twitter"
+    | "discord"
+    | "discord_server"
+    | "reddit"
+    | "facebook"
+    | "linkedin"
+    | "twitch"
+    | "snapchat"
+    | "github"
+    | "telegram"
+    | "spotify";
   handle: string;
   displayName?: string;
 }

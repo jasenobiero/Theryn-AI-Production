@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import {
-  Home, MessageSquare, Sparkles, Image as ImageIcon, Mic, Bot,
+  Home, MessageSquare, Sparkles, Mic, Bot, Image,
   Settings, Zap, BookMarked, Search, ArrowRight, Command,
   Code2, Pencil, Globe, Lightbulb, FlaskConical, TrendingUp,
   ExternalLink,
@@ -49,7 +49,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     { id: "chat",    label: "AI Chat",     description: "Multi-model chat",       icon: MessageSquare, category: "Navigate", action: () => go("/chat"),   kbd: "G C" },
     { id: "arena",   label: "Model Arena", description: "Race all models",        icon: Zap,         category: "Navigate", action: () => go("/arena"),   color: "text-orange-400" },
     { id: "studio",  label: "Studio",      description: "Build live artifacts",   icon: Sparkles,    category: "Navigate", action: () => go("/studio"),  kbd: "G S" },
-    { id: "images",  label: "Image Gen",   description: "Neural image synthesis", icon: ImageIcon,   category: "Navigate", action: () => go("/images"),  kbd: "G I" },
+    { id: "images",  label: "Images",      description: "Generate images",        icon: Image,       category: "Navigate", action: () => go("/images") },
     { id: "voice",   label: "Voice TTS",   description: "Neural voice synthesis", icon: Mic,         category: "Navigate", action: () => go("/voice"),   kbd: "G V" },
     { id: "agents",  label: "Agent Studio",description: "Custom AI agents",       icon: Bot,         category: "Navigate", action: () => go("/agents"),  kbd: "G A" },
     { id: "prompts", label: "Prompt Library", description: "Browse saved prompts", icon: BookMarked, category: "Navigate", action: () => go("/prompts"), kbd: "G P" },

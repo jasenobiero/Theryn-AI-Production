@@ -9,6 +9,8 @@ import elevenLabsRouter from "./elevenlabs/index";
 import settingsRouter from "./settings";
 import studioRouter from "./studio/index";
 import shieldRouter from "./shield/index";
+import subscriptionRouter from "./subscription";
+import founderRouter from "./founders";
 
 const router: IRouter = Router();
 
@@ -21,6 +23,8 @@ router.use("/agents", agentsRouter);
 router.use("/elevenlabs", elevenLabsRouter);
 router.use("/studio", studioRouter);
 router.use("/shield", shieldRouter);
+router.use(subscriptionRouter);
+router.use(founderRouter);
 router.use(settingsRouter);
 
 export default router;

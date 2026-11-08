@@ -13,5 +13,4 @@ export interface ShieldAnalysis {
   summary: string;
   threats: ShieldThreat[];
   recommendations: string[];
-  shieldStatus: string;
 }

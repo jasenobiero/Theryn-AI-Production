@@ -97,13 +97,13 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
 
   // Streaming → code view; done → preview
   useEffect(() => {
-    if (!artifact) return;
+    if (!artifact) return undefined;
     if (artifact.isStreaming) {
       setView("code");
-    } else {
-      const t = setTimeout(() => { setView("preview"); setRefreshKey(k => k + 1); }, 400);
-      return () => clearTimeout(t);
+      return undefined;
     }
+    const t = setTimeout(() => { setView("preview"); setRefreshKey(k => k + 1); }, 400);
+    return () => clearTimeout(t);
   }, [artifact?.isStreaming, artifact?.id]);
 
   // Auto-scroll code pane while streaming
@@ -150,8 +150,11 @@ export function ArtifactPanel({ artifact, secrets, onClose, onEditCode }: Artifa
 
   const resolvedHtml  = prepareHtml(artifact.content, secrets);
   const device        = DEVICE_SIZES.find(d => d.id === deviceSize)!;
-  const unfilledCount = (artifact.content.match(/\{\{[A-Z_]+\}\}/g) ?? [])
-    .filter(p => !secrets[p.slice(2, -2)]).length;
+  const placeholderMatches: string[] = artifact.content.match(/\{\{[A-Z_]+\}\}/g) ?? [];
+  const unfilledCount = placeholderMatches.filter((p): boolean => {
+    const key = p.slice(2, -2);
+    return !secrets[key];
+  }).length;
 
   const errorCount = consoleMsgs.filter(m => m.level === "error").length;
   const warnCount  = consoleMsgs.filter(m => m.level === "warn").length;

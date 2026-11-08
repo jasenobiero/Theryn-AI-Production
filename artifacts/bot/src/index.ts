@@ -1,7 +1,13 @@
+export {};
+
 const DISCORD_TOKEN  = process.env.DISCORD_BOT_TOKEN;
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const SLACK_TOKEN    = process.env.SLACK_BOT_TOKEN;
 const SLACK_APP_TOKEN = process.env.SLACK_APP_TOKEN;
+
+if ((DISCORD_TOKEN || TELEGRAM_TOKEN || (SLACK_TOKEN && SLACK_APP_TOKEN)) && !process.env.THERYN_BOT_API_TOKEN) {
+  throw new Error("THERYN_BOT_API_TOKEN must be configured when a bot platform is enabled");
+}
 
 let started = 0;
 
@@ -39,6 +45,7 @@ if (started === 0) {
   console.log("  • TELEGRAM_BOT_TOKEN — Telegram bot token");
   console.log("  • SLACK_BOT_TOKEN    — Slack bot token");
   console.log("  • SLACK_APP_TOKEN    — Slack app-level token");
+  console.log("  • THERYN_BOT_API_TOKEN — Shared secret configured on the API server");
   console.log("══════════════════════════════════════════════");
   console.log("");
   console.log("  See the Bot Hub page in THERYN for setup guides.");

@@ -1,0 +1,14 @@
+{
+  "name": "theryn-site",
+  "main": "./src/worker.ts",
+  "compatibility_date": "2026-11-07",
+  "vars": {
+    "API_ORIGIN": "https://theryn-ai.onrender.com"
+  },
+  "assets": {
+    "directory": "./artifacts/ai-hub/dist/public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}

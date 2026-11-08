@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, StopCircle, Plus, ChevronDown, Sparkles,
-  Eye, KeyRound, Check, EyeOff, FolderOpen, Trash2, Save,
+  Eye, KeyRound, Check, EyeOff, FolderOpen, Trash2, Save, CircleAlert,
   Clock, ChevronLeft, Loader2, X, LayoutGrid, Search,
   Gamepad2, Globe, AppWindow, Wrench, LineChart, Cpu,
 } from "lucide-react";
@@ -393,7 +393,7 @@ export default function StudioPage() {
   const [currentProjectId,  setCurrentProjectId]  = useState<number | null>(null);
   const [projectTitle,      setProjectTitle]      = useState("Untitled Project");
   const [showProjects,      setShowProjects]      = useState(false);
-  const [saveState,         setSaveState]         = useState<"idle" | "saving" | "saved">("idle");
+  const [saveState,         setSaveState]         = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [editingTitle,      setEditingTitle]      = useState(false);
   const [titleDraft,        setTitleDraft]        = useState("");
   const [showTemplates,     setShowTemplates]     = useState(false);
@@ -405,13 +405,16 @@ export default function StudioPage() {
   const dragStartW   = useRef(440);
 
   const abortRef       = useRef<AbortController | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesScrollRef = useRef<HTMLDivElement>(null);
+  const shouldAutoScrollRef = useRef(true);
   const textareaRef    = useRef<HTMLTextAreaElement>(null);
   const saveTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleInputRef  = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); },
-    [messages, streamingRaw, pendingSecrets]);
+  useEffect(() => {
+    const viewport = messagesScrollRef.current;
+    if (shouldAutoScrollRef.current && viewport) viewport.scrollTop = viewport.scrollHeight;
+  }, [messages, streamingRaw, pendingSecrets]);
 
   useEffect(() => {
     const ta = textareaRef.current;
@@ -485,23 +488,27 @@ export default function StudioPage() {
 
     try {
       if (currentProjectId) {
-        await fetch(`/api/studio/projects/${currentProjectId}`, {
+        const res = await fetch(`/api/studio/projects/${currentProjectId}`, {
           method: "PUT", headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body), credentials: "include",
         });
+        if (!res.ok) throw new Error(`Project save failed (${res.status})`);
       } else {
         const res = await fetch("/api/studio/projects", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body), credentials: "include",
         });
-        if (res.ok) {
-          const data = await res.json();
-          setCurrentProjectId(data.id);
-          setProjectTitle(autoTitle);
-        }
+        if (!res.ok) throw new Error(`Project save failed (${res.status})`);
+        const data = await res.json() as { id?: number };
+        if (typeof data.id !== "number") throw new Error("Project save response did not include an ID");
+        setCurrentProjectId(data.id);
+        setProjectTitle(autoTitle);
       }
       if (showFeedback) { setSaveState("saved"); setTimeout(() => setSaveState("idle"), 2000); }
-    } catch { if (showFeedback) setSaveState("idle"); }
+    } catch (error) {
+      console.error("Failed to save Studio project", error);
+      setSaveState("error");
+    }
   }, [messages, artifact, provider, projectTitle, currentProjectId]);
 
   // ── Load ─────────────────────────────────────────────────
@@ -637,7 +644,7 @@ export default function StudioPage() {
 
       {/* ── Chat column ── */}
       <div
-        className="flex flex-col h-full flex-shrink-0 overflow-hidden"
+        className="flex flex-col h-full min-h-0 min-w-0 flex-shrink-0 overflow-hidden"
         style={{ width: showSplitPane ? chatWidth : undefined, flex: showSplitPane ? undefined : "1 1 0" }}
       >
         {/* Top bar */}
@@ -676,13 +683,15 @@ export default function StudioPage() {
 
             {/* Save */}
             {hasContent && (
-              <button onClick={() => saveProject(true)} disabled={saveState === "saving"}
+              <button onClick={() => saveProject(true)} disabled={saveState === "saving" || isStreaming}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/[0.07] text-[10px] transition-all hover:bg-white/[0.05] disabled:opacity-40"
-                title="Save project">
+                title={saveState === "error" ? "Save failed. Click to retry." : "Save project"}>
                 {saveState === "saved"
                   ? <><Check className="w-3.5 h-3.5 text-green-400" /><span className="text-green-400">Saved</span></>
                   : saveState === "saving"
                   ? <><Loader2 className="w-3.5 h-3.5 text-white/30 animate-spin" /><span className="text-white/30">Saving…</span></>
+                  : saveState === "error"
+                  ? <><CircleAlert className="w-3.5 h-3.5 text-rose-300" /><span className="text-rose-300">Retry save</span></>
                   : <><Save className="w-3.5 h-3.5 text-white/30" /><span className="text-white/30">Save</span></>}
               </button>
             )}
@@ -725,7 +734,14 @@ export default function StudioPage() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div
+          ref={messagesScrollRef}
+          onScroll={event => {
+            const viewport = event.currentTarget;
+            shouldAutoScrollRef.current = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 64;
+          }}
+          className="flex-1 overflow-y-auto min-h-0"
+        >
           {!hasContent && !isStreaming ? (
             /* Empty state */
             <div className="flex flex-col items-center justify-center h-full px-6 py-8 gap-6">
@@ -830,7 +846,6 @@ export default function StudioPage() {
                   />
                 </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
           )}
         </div>

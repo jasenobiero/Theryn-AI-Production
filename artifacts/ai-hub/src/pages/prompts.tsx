@@ -96,20 +96,38 @@ const BUILTIN: Prompt[] = [
 
 const STORAGE_KEY = "theryn:saved-prompts";
 
-function loadSaved(): Prompt[] {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]"); }
-  catch { return []; }
+function isSavedPrompt(value: unknown): value is Prompt {
+  if (!value || typeof value !== "object") return false;
+  const prompt = value as Record<string, unknown>;
+  return typeof prompt.id === "string" &&
+    typeof prompt.title === "string" &&
+    typeof prompt.text === "string" &&
+    typeof prompt.category === "string";
+}
+
+function loadSaved(): { prompts: Prompt[]; failed: boolean } {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === null) return { prompts: [], failed: false };
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return { prompts: [], failed: true };
+    const prompts = parsed.filter(isSavedPrompt).map(prompt => ({ ...prompt, builtin: false }));
+    return { prompts, failed: prompts.length !== parsed.length };
+  } catch {
+    return { prompts: [], failed: true };
+  }
 }
 function saveSaved(prompts: Prompt[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(prompts));
 }
 
 // Expanded prompt card
-function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
+function PromptCard({ prompt, onUse, onSave, onDelete, onEdit, isSaved }: {
   prompt: Prompt;
   onUse: (p: Prompt) => void;
   onSave: (p: Prompt) => void;
   onDelete?: (id: string) => void;
+  onEdit?: (p: Prompt) => void;
   isSaved: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -138,12 +156,17 @@ function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
             {prompt.text}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center gap-1.5 flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
           <button onClick={copy} className="p-1.5 rounded-lg text-white/25 hover:text-white/70 hover:bg-white/[0.05] transition-all">
             {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
+          {!prompt.builtin && onEdit && (
+            <button onClick={() => onEdit(prompt)} aria-label={`Edit ${prompt.title}`} className="p-1.5 rounded-lg text-white/25 hover:text-cyan-200 hover:bg-cyan-300/10 transition-all">
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          )}
           {!prompt.builtin && onDelete && (
-            <button onClick={() => onDelete(prompt.id)} className="p-1.5 rounded-lg text-white/25 hover:text-red-400 hover:bg-red-500/10 transition-all">
+            <button onClick={() => onDelete(prompt.id)} aria-label={`Delete ${prompt.title}`} className="p-1.5 rounded-lg text-white/25 hover:text-red-400 hover:bg-red-500/10 transition-all">
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}
@@ -177,13 +200,14 @@ function PromptCard({ prompt, onUse, onSave, onDelete, isSaved }: {
 }
 
 // New prompt dialog
-function NewPromptDialog({ onSave, onClose }: {
+function NewPromptDialog({ onSave, onClose, prompt }: {
   onSave: (p: Omit<Prompt, "id">) => void;
   onClose: () => void;
+  prompt?: Prompt;
 }) {
-  const [title, setTitle]     = useState("");
-  const [text, setText]       = useState("");
-  const [category, setCategory] = useState("saved");
+  const [title, setTitle] = useState(prompt?.title ?? "");
+  const [text, setText] = useState(prompt?.text ?? "");
+  const [category, setCategory] = useState(prompt?.category ?? "saved");
 
   return (
     <motion.div
@@ -202,7 +226,7 @@ function NewPromptDialog({ onSave, onClose }: {
         style={{ background: "hsl(0 0% 8%)" }}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.05]">
-          <span className="text-sm font-bold text-white">New Prompt</span>
+          <span className="text-sm font-bold text-white">{prompt ? "Edit Prompt" : "New Prompt"}</span>
           <button onClick={onClose} className="text-white/25 hover:text-white/70 transition-colors">
             <X className="w-4 h-4" />
           </button>
@@ -242,11 +266,11 @@ function NewPromptDialog({ onSave, onClose }: {
         </div>
         <div className="flex gap-2 px-5 pb-5">
           <button
-            onClick={() => { if (title && text) { onSave({ title, text, category }); onClose(); } }}
+            onClick={() => { if (title.trim() && text.trim()) { onSave({ title: title.trim(), text: text.trim(), category }); onClose(); } }}
             disabled={!title.trim() || !text.trim()}
             className="flex-1 py-2.5 rounded-xl bg-cyan-300 hover:bg-cyan-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 text-sm font-semibold transition-all"
           >
-            Save Prompt
+            {prompt ? "Save Changes" : "Save Prompt"}
           </button>
           <button onClick={onClose} className="px-4 py-2.5 rounded-xl border border-white/[0.07] text-white/40 text-sm hover:text-white/70 transition-colors">
             Cancel
@@ -261,10 +285,19 @@ export default function PromptsPage() {
   const [, navigate] = useLocation();
   const [search, setSearch]         = useState("");
   const [activeCategory, setCategory] = useState("all");
-  const [saved, setSaved]           = useState<Prompt[]>(loadSaved);
+  const [initialSaved] = useState(loadSaved);
+  const [saved, setSaved]           = useState<Prompt[]>(initialSaved.prompts);
   const [showNew, setShowNew]       = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+  const [storageError, setStorageError] = useState(initialSaved.failed);
 
-  useEffect(() => { saveSaved(saved); }, [saved]);
+  useEffect(() => {
+    try {
+      saveSaved(saved);
+    } catch {
+      setStorageError(true);
+    }
+  }, [saved]);
 
   const savePrompt = (p: Prompt) => {
     if (saved.find(s => s.id === p.id || s.text === p.text)) return;
@@ -281,13 +314,22 @@ export default function PromptsPage() {
     setSaved(prev => [{ ...p, id: `s-${Date.now()}`, builtin: false }, ...prev]);
   };
 
+  const savePromptDialog = (p: Omit<Prompt, "id">) => {
+    if (editingPrompt) {
+      setSaved(prev => prev.map(item => item.id === editingPrompt.id ? { ...item, ...p } : item));
+    } else {
+      addNew(p);
+    }
+  };
+
   const allPrompts: Prompt[] = [
-    ...saved.map(s => ({ ...s, category: "saved" })),
-    ...BUILTIN,
+    ...saved.map(s => ({ ...s, builtin: false })),
+    ...BUILTIN.map(p => ({ ...p, builtin: true })),
   ];
 
   const filtered = allPrompts.filter(p => {
-    const matchesCategory = activeCategory === "all" || p.category === activeCategory;
+    const matchesCategory = activeCategory === "all" ||
+      (activeCategory === "saved" ? !p.builtin : p.category === activeCategory);
     const matchesSearch   = !search.trim() || p.title.toLowerCase().includes(search.toLowerCase()) || p.text.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -303,6 +345,11 @@ export default function PromptsPage() {
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-300 to-sky-600 flex items-center justify-center">
               <BookMarked className="w-4 h-4 text-white" />
             </div>
+            {storageError && (
+              <p role="status" className="mb-3 text-xs text-amber-300/80">
+                Saved prompts could not be loaded or written to this browser’s storage. Changes may not persist after closing the app.
+              </p>
+            )}
             <div>
               <h1 className="text-sm font-bold text-white">Prompt Library</h1>
               <p className="text-[10px] text-white/25">{BUILTIN.length} curated prompts · {saved.length} saved</p>
@@ -340,7 +387,7 @@ export default function PromptsPage() {
               ? allPrompts.length
               : cat.id === "saved"
               ? saved.length
-              : BUILTIN.filter(p => p.category === cat.id).length;
+              : BUILTIN.filter(p => p.category === cat.id).length + saved.filter(p => p.category === cat.id).length;
             if (count === 0 && cat.id !== "all" && cat.id !== "saved") return null;
             return (
               <button
@@ -385,6 +432,7 @@ export default function PromptsPage() {
                     prompt={p}
                     onUse={usePrompt}
                     onSave={savePrompt}
+                    onEdit={prompt => { setEditingPrompt(prompt); setShowNew(true); }}
                     onDelete={deletePrompt}
                     isSaved={savedIds.has(p.text)}
                   />
@@ -397,7 +445,14 @@ export default function PromptsPage() {
 
       {/* New prompt dialog */}
       <AnimatePresence>
-        {showNew && <NewPromptDialog onSave={addNew} onClose={() => setShowNew(false)} />}
+        {showNew && (
+          <NewPromptDialog
+            key={editingPrompt?.id ?? "new-prompt"}
+            prompt={editingPrompt ?? undefined}
+            onSave={savePromptDialog}
+            onClose={() => { setShowNew(false); setEditingPrompt(null); }}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

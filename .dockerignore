@@ -1,0 +1,16 @@
+node_modules
+**/node_modules
+.git
+.gitignore
+.env
+.env.*
+!*.example
+coverage
+**/dist
+**/build
+**/.next
+**/.expo
+**/.turbo
+**/tmp
+**/logs
+**/.cache

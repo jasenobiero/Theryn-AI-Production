@@ -58,13 +58,13 @@ export function startSlack(botToken: string, appToken: string) {
       "⚡ *THERYN Slack Commands*",
       "",
       "Mention me or use these prefixes:",
-      "`!theryn <msg>` — Theryn (GPT-4o)",
-      "`!vesper <msg>` — Vesper (Claude)",
-      "`!prism <msg>` — Prism (Grok)",
+      "`!theryn <msg>` — Theryn (OpenAI)",
+      "`!vesper <msg>` — Vesper (Anthropic)",
+      "`!prism <msg>` — Prism (OpenRouter)",
       "`!image <prompt>` — Generate image",
       "`!voice <text>` — Text-to-speech",
-      "`!scan <platform> <handle>` — Security scan",
-      "`!new` — Clear conversation",
+      "`!scan <platform> <handle>` — General safety guidance, not a profile scan",
+      "`!new` — Start a new conversation (previous chats remain saved)",
       "",
       "_Or just @mention me with any message!_",
     ].join("\n"));
@@ -74,7 +74,7 @@ export function startSlack(botToken: string, appToken: string) {
     const msg = message as { channel: string; user?: string };
     if (!msg.user) return;
     resetAll("slack", msg.user);
-    await client.chat.postMessage({ channel: msg.channel, text: "🗑️ Conversation cleared!" });
+    await client.chat.postMessage({ channel: msg.channel, text: "Started a new conversation. Earlier chats remain saved in THERYN." });
   });
 
   app.message(/^!image\s+(.+)/i, async ({ message, client, context }) => {
@@ -83,10 +83,10 @@ export function startSlack(botToken: string, appToken: string) {
     if (!prompt || !msg.user) return;
     const res = await client.chat.postMessage({ channel: msg.channel, text: "🎨 Generating image..." });
     try {
-      const buf = await generateImage(prompt);
+      const buf = await generateImage(prompt, "slack", msg.user);
       await client.files.uploadV2({
         channel_id: msg.channel,
-        content: buf,
+        file: buf,
         filename: "theryn-image.png",
         title: `THERYN Image: ${prompt}`,
       });
@@ -102,11 +102,11 @@ export function startSlack(botToken: string, appToken: string) {
     if (!text || !msg.user) return;
     const res = await client.chat.postMessage({ channel: msg.channel, text: "🎙️ Generating voice..." });
     try {
-      const buf = await tts(text);
+      const buf = await tts(text, "slack", msg.user);
       if (!buf) { await client.chat.update({ channel: msg.channel, ts: res.ts as string, text: "❌ ElevenLabs not configured." }); return; }
       await client.files.uploadV2({
         channel_id: msg.channel,
-        content: buf,
+        file: buf,
         filename: "theryn-voice.mp3",
         title: "THERYN Voice",
       });
@@ -121,16 +121,16 @@ export function startSlack(botToken: string, appToken: string) {
     const plat = (context.matches?.[1] as string)?.trim();
     const handle = (context.matches?.[2] as string)?.trim();
     if (!plat || !handle || !msg.user) return;
-    const res = await client.chat.postMessage({ channel: msg.channel, text: `🔍 Scanning *${plat}* @${handle}...` });
+    const res = await client.chat.postMessage({ channel: msg.channel, text: `📝 Preparing general safety guidance for *${plat}* @${handle} (no profile scan)...` });
     try {
-      const result = await scanAccount(plat, handle);
-      const parts = splitText(`🛡️ *Shield Scan — ${plat} @${handle}*\n\n${result}`);
+      const result = await scanAccount(plat, handle, "slack", msg.user);
+      const parts = splitText(`🛡️ *General guidance — ${plat} @${handle}*\n\n${result}`);
       await client.chat.update({ channel: msg.channel, ts: res.ts as string, text: parts[0] });
       for (let i = 1; i < parts.length; i++) {
         await client.chat.postMessage({ channel: msg.channel, text: parts[i] });
       }
     } catch {
-      await client.chat.update({ channel: msg.channel, ts: res.ts as string, text: "❌ Scan failed." });
+      await client.chat.update({ channel: msg.channel, ts: res.ts as string, text: "❌ Could not generate general guidance." });
     }
   });
 
@@ -138,27 +138,27 @@ export function startSlack(botToken: string, appToken: string) {
     const msg = message as { channel: string; user?: string };
     const text = (context.matches?.[1] as string)?.trim();
     if (!text || !msg.user) return;
-    await handleChat(async t => { await client.chat.postMessage({ channel: msg.channel, text: t }); }, app, msg.channel, msg.user, "openai", text);
+    await handleChat(async t => { await client.chat.postMessage({ channel: msg.channel, text: t }); }, client, msg.channel, msg.user, "openai", text);
   });
 
   app.message(/^!vesper\s+(.+)/i, async ({ message, client, context }) => {
     const msg = message as { channel: string; user?: string };
     const text = (context.matches?.[1] as string)?.trim();
     if (!text || !msg.user) return;
-    await handleChat(async t => { await client.chat.postMessage({ channel: msg.channel, text: t }); }, app, msg.channel, msg.user, "anthropic", text);
+    await handleChat(async t => { await client.chat.postMessage({ channel: msg.channel, text: t }); }, client, msg.channel, msg.user, "anthropic", text);
   });
 
   app.message(/^!prism\s+(.+)/i, async ({ message, client, context }) => {
     const msg = message as { channel: string; user?: string };
     const text = (context.matches?.[1] as string)?.trim();
     if (!text || !msg.user) return;
-    await handleChat(async t => { await client.chat.postMessage({ channel: msg.channel, text: t }); }, app, msg.channel, msg.user, "openrouter", text);
+    await handleChat(async t => { await client.chat.postMessage({ channel: msg.channel, text: t }); }, client, msg.channel, msg.user, "openrouter", text);
   });
 
   app.event("app_mention", async ({ event, client }) => {
     const text = event.text.replace(/<@[^>]+>\s*/g, "").trim();
     if (!text) { await client.chat.postMessage({ channel: event.channel, text: "Hi! Use `!help` to see what I can do." }); return; }
-    await handleChat(async t => { await client.chat.postMessage({ channel: event.channel, text: t }); }, app, event.channel, event.user ?? "unknown", "openai", text);
+    await handleChat(async t => { await client.chat.postMessage({ channel: event.channel, text: t }); }, client, event.channel, event.user ?? "unknown", "openai", text);
   });
 
   app.start().then(() => {

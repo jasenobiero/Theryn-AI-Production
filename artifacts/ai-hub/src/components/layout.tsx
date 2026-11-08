@@ -1,8 +1,9 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
-  Bot, MessageSquare, Image as ImageIcon, Mic, Home, Menu,
+  Bot, MessageSquare, Mic, Home, Menu,
   Settings, PenSquare, LogOut, Sparkles, Zap, BookMarked, Command, ShieldCheck, Radio, Download,
+  CreditCard, Eye, Image,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -21,12 +22,13 @@ const NAV_SECTIONS = [
       { href: "/chat",    icon: MessageSquare, label: "AI Chat" },
       { href: "/arena",   icon: Zap,         label: "Arena",        badge: "NEW", badgeColor: "bg-orange-500/20 text-orange-300 border-orange-500/20" },
       { href: "/studio",  icon: Sparkles,    label: "Studio" },
+      { href: "/images",  icon: Image,       label: "Images" },
+      { href: "/preview", icon: Eye,         label: "AI Preview" },
     ],
   },
   {
     label: "Tools",
     items: [
-      { href: "/images",  icon: ImageIcon,   label: "Image Gen" },
       { href: "/voice",   icon: Mic,         label: "Voice TTS" },
       { href: "/agents",  icon: Bot,         label: "Agent Studio" },
       { href: "/prompts", icon: BookMarked,  label: "Prompt Library", badge: "40+", badgeColor: "bg-cyan-300/10 text-cyan-100/80 border-cyan-200/15" },
@@ -158,6 +160,20 @@ export function Layout({ children }: LayoutProps) {
         {/* Bottom: Settings + User */}
         <div className="px-3 pb-3 space-y-1 border-t border-white/[0.05] pt-3">
           <Link
+            href="/subscription"
+            onClick={() => setMobileNavOpen(false)}
+            data-testid="link-nav-subscription"
+            className={cn(
+              "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group",
+              location === "/subscription"
+                ? "bg-cyan-300/10 text-white border border-cyan-200/20"
+                : "text-white/40 hover:text-white hover:bg-white/[0.05]"
+            )}
+          >
+            <CreditCard className={cn("w-4 h-4 flex-shrink-0 transition-colors", location === "/subscription" ? "text-cyan-200" : "group-hover:text-cyan-200/70")} />
+            Subscription &amp; Billing
+          </Link>
+          <Link
             href="/settings"
             onClick={() => setMobileNavOpen(false)}
             data-testid="link-nav-settings"
@@ -195,7 +211,7 @@ export function Layout({ children }: LayoutProps) {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col min-w-0 min-h-[100dvh] overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 h-[100dvh] min-h-0 overflow-hidden">
          <div className="md:hidden h-14 flex items-center justify-between px-4 border-b border-white/[0.07] bg-[hsl(0_0%_7%_/_0.8)] backdrop-blur-xl">
           <button onClick={() => setMobileNavOpen(true)} data-testid="button-open-navigation" className="touch-target flex items-center justify-center -ml-2 text-white/60 hover:text-white" aria-label="Open navigation">
             <Menu className="w-5 h-5" />
@@ -203,22 +219,23 @@ export function Layout({ children }: LayoutProps) {
           <Link href="/" data-testid="link-mobile-home" className="font-display font-bold tracking-[0.24em] text-sm text-white">THERYN</Link>
            <Link href="/settings" data-testid="link-mobile-settings" className="w-8 h-8 rounded-full bg-cyan-300/15 border border-cyan-200/20 flex items-center justify-center text-xs text-cyan-100">{initials}</Link>
         </div>
-         <div className="flex-1 overflow-y-auto overflow-x-hidden h-full pb-16 md:pb-0">
+         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pb-16 md:pb-0">
            <motion.div
              key={location}
              initial={{ opacity: 0, y: 10, filter: "blur(5px)" }}
              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
              transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-             className="min-h-full"
+             className="h-full min-h-0"
            >
              {children}
            </motion.div>
         </div>
-        <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 h-16 border-t border-white/[0.08] bg-[hsl(0_0%_5%_/_0.94)] backdrop-blur-xl grid grid-cols-4 px-2 pb-[env(safe-area-inset-bottom)]">
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 h-16 border-t border-white/[0.08] bg-[hsl(0_0%_5%_/_0.94)] backdrop-blur-xl grid grid-cols-5 px-2 pb-[env(safe-area-inset-bottom)]">
           {[
             { href: "/", label: "Home", icon: Home },
             { href: "/chat", label: "Chat", icon: MessageSquare },
             { href: "/studio", label: "Studio", icon: Sparkles },
+            { href: "/preview", label: "Preview", icon: Eye },
             { href: "/agents", label: "Agents", icon: Bot },
           ].map(item => {
             const active = item.href === "/" ? location === "/" : location.startsWith(item.href);

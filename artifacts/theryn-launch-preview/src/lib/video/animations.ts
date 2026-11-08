@@ -23,7 +23,7 @@ export const easings = {
 } as const;
 
 // Scene transitions for AnimatePresence
-export const sceneTransitions = {
+export const sceneTransitions: Record<string, any> = {
   fadeBlur: {
     initial: { opacity: 0, filter: 'blur(20px)' },
     animate: { opacity: 1, filter: 'blur(0px)' },
@@ -123,7 +123,7 @@ export const sceneTransitions = {
 } as const;
 
 // Element animations
-export const elementAnimations = {
+export const elementAnimations: Record<string, any> = {
   popIn: {
     initial: { opacity: 0, scale: 0 },
     animate: { opacity: 1, scale: 1 },

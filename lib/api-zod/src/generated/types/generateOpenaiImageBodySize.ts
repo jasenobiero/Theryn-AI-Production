@@ -11,6 +11,6 @@ export type GenerateOpenaiImageBodySize =
 
 export const GenerateOpenaiImageBodySize = {
   "1024x1024": "1024x1024",
-  "512x512": "512x512",
-  "256x256": "256x256",
+  "1536x1024": "1536x1024",
+  "1024x1536": "1024x1536",
 } as const;

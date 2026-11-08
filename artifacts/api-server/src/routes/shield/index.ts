@@ -5,6 +5,73 @@ import { eq, and, desc } from "drizzle-orm";
 import { getOpenAIClientForRequest } from "../../lib/provider-clients";
 
 const router: IRouter = Router();
+const SUPPORTED_PLATFORMS = new Set([
+  "tiktok", "instagram", "youtube", "twitter", "discord", "discord_server",
+  "reddit", "facebook", "linkedin", "twitch", "snapchat", "github", "telegram", "spotify",
+]);
+const RISK_LEVELS = new Set(["safe", "low", "medium", "high", "critical"]);
+const SEVERITIES = new Set(["info", "low", "medium", "high", "critical"]);
+
+interface ReviewAnalysis {
+  riskScore: number;
+  riskLevel: string;
+  summary: string;
+  threats: Array<{ type: string; severity: string; title: string; description: string }>;
+  recommendations: string[];
+}
+
+function parseReviewAnalysis(value: unknown): ReviewAnalysis {
+  if (!value || typeof value !== "object") throw new Error("AI response must be an object");
+  const data = value as Record<string, unknown>;
+  const riskScore = data.riskScore;
+  const riskLevel = data.riskLevel;
+  const summary = data.summary;
+  if (typeof riskScore !== "number" || !Number.isInteger(riskScore) || riskScore < 0 || riskScore > 100) {
+    throw new Error("AI response has an invalid risk estimate");
+  }
+  if (typeof riskLevel !== "string" || !RISK_LEVELS.has(riskLevel)) {
+    throw new Error("AI response has an invalid risk level");
+  }
+  if (typeof summary !== "string" || !summary.trim() || summary.length > 2000) {
+    throw new Error("AI response has an invalid summary");
+  }
+  if (!Array.isArray(data.threats) || data.threats.length > 20 || !Array.isArray(data.recommendations) || data.recommendations.length > 20) {
+    throw new Error("AI response has invalid guidance lists");
+  }
+
+  const threats = data.threats.map((item) => {
+    if (!item || typeof item !== "object") throw new Error("AI response contains an invalid guidance item");
+    const threat = item as Record<string, unknown>;
+    if (
+      typeof threat.type !== "string" || threat.type.length > 80 ||
+      typeof threat.severity !== "string" || !SEVERITIES.has(threat.severity) ||
+      typeof threat.title !== "string" || !threat.title.trim() || threat.title.length > 160 ||
+      typeof threat.description !== "string" || !threat.description.trim() || threat.description.length > 1000
+    ) {
+      throw new Error("AI response contains an invalid guidance item");
+    }
+    return {
+      type: threat.type,
+      severity: threat.severity,
+      title: threat.title,
+      description: threat.description,
+    };
+  });
+  const recommendations = data.recommendations.map((item) => {
+    if (typeof item !== "string" || !item.trim() || item.length > 500) {
+      throw new Error("AI response contains an invalid recommendation");
+    }
+    return item;
+  });
+
+  return {
+    riskScore,
+    riskLevel,
+    summary,
+    threats,
+    recommendations,
+  };
+}
 
 router.use(clerkRequireAuth);
 
@@ -20,12 +87,42 @@ router.get("/accounts", async (req, res) => {
 
 router.post("/accounts", async (req, res) => {
   const userId = (req as any).userId as string;
-  const { platform, handle, displayName } = req.body ?? {};
-  if (!platform || !handle) { res.status(400).json({ error: "platform and handle are required" }); return; }
-  const body = { platform: String(platform), handle: String(handle), displayName: displayName ? String(displayName) : undefined };
+  const { platform: rawPlatform, handle: rawHandle, displayName: rawDisplayName } = req.body ?? {};
+  const platform = typeof rawPlatform === "string" ? rawPlatform.trim().toLowerCase() : "";
+  const handle = typeof rawHandle === "string" ? rawHandle.trim().replace(/^@/, "") : "";
+  const displayName = typeof rawDisplayName === "string" ? rawDisplayName.trim() : "";
+  if (rawDisplayName != null && typeof rawDisplayName !== "string") {
+    res.status(400).json({ error: "Display name must be text" });
+    return;
+  }
+  if (!SUPPORTED_PLATFORMS.has(platform)) {
+    res.status(400).json({ error: "A supported social platform is required" });
+    return;
+  }
+  if (!handle || handle.length > 200 || /[\u0000-\u001f\u007f]/.test(handle)) {
+    res.status(400).json({ error: "Handle must be 1-200 characters without control characters" });
+    return;
+  }
+  if (displayName.length > 100 || /[\u0000-\u001f\u007f]/.test(displayName)) {
+    res.status(400).json({ error: "Display name must be at most 100 characters without control characters" });
+    return;
+  }
+  const [existingAccount] = await db.select({ id: socialAccounts.id })
+    .from(socialAccounts)
+    .where(and(
+      eq(socialAccounts.userId, userId),
+      eq(socialAccounts.platform, platform),
+      eq(socialAccounts.handle, handle),
+      eq(socialAccounts.isActive, true),
+    ))
+    .limit(1);
+  if (existingAccount) {
+    res.status(409).json({ error: "This handle is already saved" });
+    return;
+  }
   const [account] = await db
     .insert(socialAccounts)
-    .values({ userId, platform: body.platform, handle: body.handle, displayName: body.displayName ?? null })
+    .values({ userId, platform, handle, displayName: displayName || null })
     .returning();
   res.status(201).json(account);
 });
@@ -33,35 +130,38 @@ router.post("/accounts", async (req, res) => {
 router.delete("/accounts/:id", async (req, res) => {
   const userId = (req as any).userId as string;
   const id = Number(req.params.id);
+  if (!Number.isSafeInteger(id) || id < 1) { res.status(400).json({ error: "Invalid account ID" }); return; }
   const [account] = await db
     .select()
     .from(socialAccounts)
     .where(and(eq(socialAccounts.id, id), eq(socialAccounts.userId, userId)));
   if (!account) { res.status(404).json({ error: "Account not found" }); return; }
-  await db.update(socialAccounts).set({ isActive: false }).where(eq(socialAccounts.id, id));
+  await db.update(socialAccounts).set({ isActive: false }).where(and(
+    eq(socialAccounts.id, id),
+    eq(socialAccounts.userId, userId),
+  ));
   res.status(204).send();
 });
 
 router.post("/accounts/:id/scan", async (req, res) => {
   const userId = (req as any).userId as string;
   const id = Number(req.params.id);
+  if (!Number.isSafeInteger(id) || id < 1) { res.status(400).json({ error: "Invalid account ID" }); return; }
   const [account] = await db
     .select()
     .from(socialAccounts)
-    .where(and(eq(socialAccounts.id, id), eq(socialAccounts.userId, userId)));
+    .where(and(
+      eq(socialAccounts.id, id),
+      eq(socialAccounts.userId, userId),
+      eq(socialAccounts.isActive, true),
+    ));
   if (!account) { res.status(404).json({ error: "Account not found" }); return; }
 
-  const prompt = `You are an elite cybersecurity AI protecting social media accounts. Analyze the following account for security threats, vulnerabilities, and risks.
+  const prompt = `You are an informational cybersecurity assistant. You cannot access the social platform, inspect this profile, or verify its security status. Do not claim that you detected threats or that this account is protected.
 
 Platform: ${account.platform}
-Handle/Username: @${account.handle}
 
-Perform a comprehensive threat assessment covering:
-1. Platform-specific attack vectors for ${account.platform} accounts
-2. Common threats targeting ${account.platform} users (phishing, credential stuffing, impersonation, social engineering)
-3. Public exposure risks for the handle "@${account.handle}"
-4. Recommended immediate security actions
-5. Overall risk assessment
+Provide general, clearly unverified security guidance for users of ${account.platform}. This is not a review of an individual account. The risk score is only a subjective estimate of general platform risks, not a finding about any account. Return general precautions in the threats array, not detected incidents.
 
 Respond with ONLY valid JSON in this exact format:
 {
@@ -71,11 +171,10 @@ Respond with ONLY valid JSON in this exact format:
   "threats": [
     { "type": "<threat type>", "severity": "<info|low|medium|high|critical>", "title": "<short title>", "description": "<detail>" }
   ],
-  "recommendations": ["<actionable recommendation 1>", "<actionable recommendation 2>", ...],
-  "shieldStatus": "<PROTECTED|AT_RISK|VULNERABLE>"
+  "recommendations": ["<actionable recommendation 1>", "<actionable recommendation 2>", ...]
 }`;
 
-  let analysisText = "";
+  let analysisText: string;
   try {
      const client = await getOpenAIClientForRequest(req);
      const completion = await client.chat.completions.create({
@@ -84,50 +183,40 @@ Respond with ONLY valid JSON in this exact format:
       response_format: { type: "json_object" },
       max_completion_tokens: 1500,
     });
-    analysisText = completion.choices[0]?.message?.content ?? "{}";
-  } catch {
-    res.status(500).json({ error: "AI scan failed" });
+    const responseContent = completion.choices[0]?.message?.content;
+    if (!responseContent) throw new Error("AI provider returned an empty response");
+    analysisText = responseContent;
+  } catch (error) {
+    console.error("[shield] AI guidance request failed", error);
+    res.status(502).json({ error: "AI guidance request failed" });
     return;
   }
 
-  let analysis: {
-    riskScore: number;
-    riskLevel: string;
-    summary: string;
-    threats: Array<{ type: string; severity: string; title: string; description: string }>;
-    recommendations: string[];
-    shieldStatus: string;
-  };
+  let analysis: ReviewAnalysis;
   try {
-    analysis = JSON.parse(analysisText);
-  } catch {
-    res.status(500).json({ error: "Failed to parse AI response" });
+    analysis = parseReviewAnalysis(JSON.parse(analysisText) as unknown);
+  } catch (error) {
+    console.error("[shield] AI guidance response was invalid", error);
+    res.status(502).json({ error: "AI guidance response was invalid; no review was saved" });
     return;
   }
 
   await db.update(socialAccounts).set({
-    riskScore: Math.min(100, Math.max(0, analysis.riskScore ?? 0)),
+    riskScore: analysis.riskScore,
     lastScannedAt: new Date(),
-  }).where(eq(socialAccounts.id, id));
-
-  for (const threat of (analysis.threats ?? [])) {
-    await db.insert(securityAlerts).values({
-      userId,
-      accountId: id,
-      type: "threat_detected",
-      severity: threat.severity ?? "low",
-      title: threat.title ?? "Security Threat",
-      message: `[${account.platform.toUpperCase()} @${account.handle}] ${threat.description}`,
-    });
-  }
+  }).where(and(
+    eq(socialAccounts.id, id),
+    eq(socialAccounts.userId, userId),
+    eq(socialAccounts.isActive, true),
+  ));
 
   await db.insert(securityAlerts).values({
     userId,
     accountId: id,
-    type: "scan_complete",
+    type: "review_summary",
     severity: "info",
-    title: `Scan complete — ${account.platform} @${account.handle}`,
-    message: analysis.summary ?? "Security scan completed.",
+    title: `Unverified AI guidance — ${account.platform} @${account.handle}`,
+    message: `General guidance based on the platform only; this profile was not inspected or monitored. ${analysis.summary}`,
     resolvedAt: new Date(),
   });
 
@@ -151,9 +240,11 @@ router.get("/alerts", async (req, res) => {
 router.patch("/alerts/:id/read", async (req, res) => {
   const userId = (req as any).userId as string;
   const id = Number(req.params.id);
-  await db.update(securityAlerts).set({ isRead: true }).where(
+  if (!Number.isSafeInteger(id) || id < 1) { res.status(400).json({ error: "Invalid review ID" }); return; }
+  const [alert] = await db.update(securityAlerts).set({ isRead: true }).where(
     and(eq(securityAlerts.id, id), eq(securityAlerts.userId, userId))
-  );
+  ).returning({ id: securityAlerts.id });
+  if (!alert) { res.status(404).json({ error: "Review not found" }); return; }
   res.json({ ok: true });
 });
 

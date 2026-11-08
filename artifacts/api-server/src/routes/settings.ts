@@ -25,6 +25,7 @@ router.get("/settings", clerkRequireAuth, async (req: Request, res: Response) =>
 
   res.json({
     ...settings,
+    featureUpdatesUnsubscribeToken: undefined,
     elevenlabsApiKey: settings.elevenlabsApiKey ? maskKey(settings.elevenlabsApiKey) : null,
     openaiApiKey: settings.openaiApiKey ? maskKey(settings.openaiApiKey) : null,
     anthropicApiKey: settings.anthropicApiKey ? maskKey(settings.anthropicApiKey) : null,
@@ -37,14 +38,22 @@ router.patch("/settings", clerkRequireAuth, async (req: Request, res: Response) 
   const allowed = [
     "displayName", "bio",
     "elevenlabsApiKey", "openaiApiKey", "anthropicApiKey", "openrouterApiKey",
-    "defaultProvider", "defaultModel", "streamingEnabled",
+    "defaultProvider", "defaultModel", "streamingEnabled", "featureUpdatesEnabled",
   ];
 
   const updates: Record<string, any> = {};
   for (const key of allowed) {
     if (key in req.body) {
       const val = req.body[key];
-      updates[key] = typeof val === "string" && val.trim() ? val.trim() : null;
+      if (key === "featureUpdatesEnabled") {
+        if (typeof val !== "boolean") {
+          res.status(400).json({ error: "featureUpdatesEnabled must be a boolean." });
+          return;
+        }
+        updates[key] = val;
+      } else {
+        updates[key] = typeof val === "string" && val.trim() ? val.trim() : null;
+      }
     }
   }
 

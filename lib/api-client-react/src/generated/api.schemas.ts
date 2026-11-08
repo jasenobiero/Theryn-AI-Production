@@ -90,8 +90,8 @@ export type GenerateOpenaiImageBodySize =
 
 export const GenerateOpenaiImageBodySize = {
   "1024x1024": "1024x1024",
-  "512x512": "512x512",
-  "256x256": "256x256",
+  "1536x1024": "1536x1024",
+  "1024x1536": "1024x1536",
 } as const;
 
 export interface GenerateOpenaiImageBody {
@@ -255,7 +255,21 @@ export interface SocialAccount {
 }
 
 export interface AddShieldAccountBody {
-  platform: string;
+  platform:
+    | "tiktok"
+    | "instagram"
+    | "youtube"
+    | "twitter"
+    | "discord"
+    | "discord_server"
+    | "reddit"
+    | "facebook"
+    | "linkedin"
+    | "twitch"
+    | "snapchat"
+    | "github"
+    | "telegram"
+    | "spotify";
   handle: string;
   displayName?: string;
 }
@@ -286,7 +300,6 @@ export interface ShieldAnalysis {
   summary: string;
   threats: ShieldThreat[];
   recommendations: string[];
-  shieldStatus: string;
 }
 
 export interface ShieldScanResult {

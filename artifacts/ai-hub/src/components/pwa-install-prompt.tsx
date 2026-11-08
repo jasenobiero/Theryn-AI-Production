@@ -65,7 +65,7 @@ export function PWAInstallPrompt() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white">Install THERYN</p>
-                <p className="text-xs text-white/40 mt-0.5 leading-relaxed">Add to your desktop for instant access — works offline too.</p>
+                <p className="text-xs text-white/40 mt-0.5 leading-relaxed">Add THERYN to your device for quicker access.</p>
               </div>
               <button onClick={dismiss} className="p-1 rounded-lg hover:bg-white/[0.06] text-white/30 hover:text-white/60 transition-colors flex-shrink-0">
                 <X className="w-4 h-4" />

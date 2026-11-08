@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, StopCircle, X, ImageIcon, Paperclip } from "lucide-react";
+import { Send, StopCircle, X, ImageIcon, Paperclip, RotateCcw } from "lucide-react";
 import { Markdown } from "./markdown";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +21,7 @@ interface ChatInterfaceProps {
   messages: ChatMessage[];
   isStreaming: boolean;
   onSendMessage: (content: string, images?: PastedImage[]) => void;
+  onRegenerate?: () => void;
   onStopStream?: () => void;
   placeholder?: string;
 }
@@ -29,18 +30,21 @@ export function ChatInterface({
   messages,
   isStreaming,
   onSendMessage,
+  onRegenerate,
   onStopStream,
   placeholder = "Type your message…",
 }: ChatInterfaceProps) {
   const [input, setInput] = useState("");
   const [attachedImages, setAttachedImages] = useState<PastedImage[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesScrollRef = useRef<HTMLDivElement>(null);
+  const shouldAutoScrollRef = useRef(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const viewport = messagesScrollRef.current;
+    if (shouldAutoScrollRef.current && viewport) viewport.scrollTop = viewport.scrollHeight;
   }, [messages, isStreaming]);
 
   // Auto-resize textarea
@@ -101,7 +105,7 @@ export function ChatInterface({
 
   return (
     <div
-      className="flex flex-col h-full relative"
+      className="flex flex-col h-full min-h-0 relative"
       onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
@@ -124,7 +128,14 @@ export function ChatInterface({
       </AnimatePresence>
 
       {/* Messages */}
-       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-5">
+       <div
+         ref={messagesScrollRef}
+         onScroll={event => {
+           const viewport = event.currentTarget;
+           shouldAutoScrollRef.current = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 64;
+         }}
+         className="flex-1 min-h-0 overflow-y-auto px-4 md:px-8 py-6 space-y-5"
+       >
         <AnimatePresence initial={false}>
           {messages.length === 0 ? (
             <motion.div
@@ -137,7 +148,7 @@ export function ChatInterface({
               <p className="text-xs mt-1 opacity-60">Paste images with Ctrl+V or drag &amp; drop</p>
             </motion.div>
           ) : (
-            messages.map((msg) => (
+            messages.map((msg, index) => (
               <motion.div
                 key={msg.id}
                 initial={{ opacity: 0, y: 8 }}
@@ -160,7 +171,7 @@ export function ChatInterface({
                         <img
                           key={i}
                           src={src}
-                          alt="pasted"
+                          alt="Chat image"
                           className="rounded-xl max-w-[280px] max-h-[280px] object-contain border border-white/10"
                         />
                       ))}
@@ -176,12 +187,23 @@ export function ChatInterface({
                   {msg.role === "assistant" && isStreaming && !msg.content && (
                     <span className="inline-block w-2 h-4 bg-white/50 rounded-sm animate-pulse" />
                   )}
+                  {msg.role === "assistant" && index === messages.length - 1 && msg.content && onRegenerate && !isStreaming && (
+                    <button
+                      type="button"
+                      onClick={onRegenerate}
+                      aria-label="Regenerate response"
+                      title="Regenerate response"
+                      className="mt-3 flex items-center gap-1.5 border-t border-white/[0.07] pt-2 text-[10px] text-white/35 hover:text-white/80 transition-colors"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Regenerate
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))
           )}
         </AnimatePresence>
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input area */}

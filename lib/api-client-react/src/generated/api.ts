@@ -2988,7 +2988,7 @@ export const useElevenLabsTts = <
 };
 
 /**
- * @summary List connected social accounts
+ * @summary List saved social handles
  */
 export const getListShieldAccountsUrl = () => {
   return `/api/shield/accounts`;
@@ -3039,7 +3039,7 @@ export type ListShieldAccountsQueryResult = NonNullable<
 export type ListShieldAccountsQueryError = ErrorType<unknown>;
 
 /**
- * @summary List connected social accounts
+ * @summary List saved social handles
  */
 
 export function useListShieldAccounts<
@@ -3063,7 +3063,7 @@ export function useListShieldAccounts<
 }
 
 /**
- * @summary Add a social account to shield
+ * @summary Save a social handle for general guidance
  */
 export const getAddShieldAccountUrl = () => {
   return `/api/shield/accounts`;
@@ -3126,7 +3126,7 @@ export type AddShieldAccountMutationBody = BodyType<AddShieldAccountBody>;
 export type AddShieldAccountMutationError = ErrorType<unknown>;
 
 /**
- * @summary Add a social account to shield
+ * @summary Save a social handle for general guidance
  */
 export const useAddShieldAccount = <
   TError = ErrorType<unknown>,
@@ -3233,7 +3233,7 @@ export const useRemoveShieldAccount = <
 };
 
 /**
- * @summary Run an AI security scan on an account
+ * @summary Generate unverified platform guidance; does not inspect the profile
  */
 export const getScanShieldAccountUrl = (id: number) => {
   return `/api/shield/accounts/${id}/scan`;
@@ -3294,7 +3294,7 @@ export type ScanShieldAccountMutationResult = NonNullable<
 export type ScanShieldAccountMutationError = ErrorType<unknown>;
 
 /**
- * @summary Run an AI security scan on an account
+ * @summary Generate unverified platform guidance; does not inspect the profile
  */
 export const useScanShieldAccount = <
   TError = ErrorType<unknown>,
@@ -3317,7 +3317,7 @@ export const useScanShieldAccount = <
 };
 
 /**
- * @summary List security alerts
+ * @summary List saved AI review summaries
  */
 export const getListShieldAlertsUrl = () => {
   return `/api/shield/alerts`;
@@ -3368,7 +3368,7 @@ export type ListShieldAlertsQueryResult = NonNullable<
 export type ListShieldAlertsQueryError = ErrorType<unknown>;
 
 /**
- * @summary List security alerts
+ * @summary List saved AI review summaries
  */
 
 export function useListShieldAlerts<
@@ -3392,7 +3392,7 @@ export function useListShieldAlerts<
 }
 
 /**
- * @summary Mark an alert as read
+ * @summary Mark a review summary as read
  */
 export const getMarkShieldAlertReadUrl = (id: number) => {
   return `/api/shield/alerts/${id}/read`;
@@ -3453,7 +3453,7 @@ export type MarkShieldAlertReadMutationResult = NonNullable<
 export type MarkShieldAlertReadMutationError = ErrorType<unknown>;
 
 /**
- * @summary Mark an alert as read
+ * @summary Mark a review summary as read
  */
 export const useMarkShieldAlertRead = <
   TError = ErrorType<unknown>,

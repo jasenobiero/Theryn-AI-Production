@@ -271,7 +271,7 @@ Only respond in plain text (no artifact) for purely conversational messages like
 type Provider = "openai" | "anthropic" | "openrouter";
 type Message = { role: "user" | "assistant" | "system"; content: string };
 
-router.post("/chat", async (req, res) => {
+router.post("/chat", clerkRequireAuth, async (req, res) => {
   const { messages, provider = "openai", model }: {
     messages: Message[];
     provider?: Provider;
@@ -306,8 +306,9 @@ router.post("/chat", async (req, res) => {
       }
     } else if (provider === "openrouter") {
       const client = await getOpenRouterClientForRequest(req);
+      const normalizedModel = model && model.trim() ? model.trim() : "x-ai/grok-4.3";
       const stream = await client.chat.completions.create({
-        model: model ?? "x-ai/grok-4.3",
+        model: normalizedModel,
         max_tokens: 16000,
         messages: history,
         stream: true,

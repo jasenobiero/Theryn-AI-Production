@@ -13,7 +13,7 @@ export const openai = createImageClient();
 
 export async function generateImageBuffer(
   prompt: string,
-  size: "1024x1024" | "512x512" | "256x256" = "1024x1024",
+  size: "1024x1024" | "1536x1024" | "1024x1536" = "1024x1024",
   apiKey?: string,
 ): Promise<Buffer> {
   const response = await createImageClient(apiKey).images.generate({
@@ -21,7 +21,8 @@ export async function generateImageBuffer(
     prompt,
     size,
   });
-  const base64 = response.data[0]?.b64_json ?? "";
+  const imageData = response.data ?? [];
+  const base64 = imageData[0]?.b64_json ?? "";
   return Buffer.from(base64, "base64");
 }
 
@@ -45,7 +46,8 @@ export async function editImages(
     prompt,
   });
 
-  const imageBase64 = response.data[0]?.b64_json ?? "";
+  const imageData = response.data ?? [];
+  const imageBase64 = imageData[0]?.b64_json ?? "";
   const imageBytes = Buffer.from(imageBase64, "base64");
 
   if (outputPath) {

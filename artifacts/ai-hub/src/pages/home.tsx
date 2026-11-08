@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TherynIcon } from "@/components/nexus-icon";
 import { useUser } from "@clerk/react";
 import {
-  ArrowUp, Plus, Image as ImageIcon, Mic, Bot,
+  ArrowUp, Plus, Mic, Bot,
   ChevronDown, Code2, BookOpen, Globe, Lightbulb,
   Pencil, FlaskConical, TrendingUp, Wand2, MessageSquare,
 } from "lucide-react";
@@ -22,7 +22,6 @@ const PROMPTS = [
 
 const QUICK = [
   { icon: MessageSquare, label: "AI Chat",      sub: "Theryn · Vesper · Prism",   href: "/chat",   color: "bg-cyan-300" },
-  { icon: ImageIcon,     label: "Image Gen",    sub: "Visual synthesis",          href: "/images", color: "bg-white/10" },
   { icon: Mic,           label: "Voice TTS",    sub: "Neural voice synthesis",    href: "/voice",  color: "bg-white/10" },
   { icon: Bot,           label: "Agent Studio", sub: "Build custom AI agents",    href: "/agents", color: "bg-white/10" },
 ];
@@ -105,7 +104,6 @@ export default function Home() {
               <div className="flex items-center gap-1.5">
                   {[
                    { icon: Plus,      label: "New chat", action: () => navigate("/chat") },
-                  { icon: ImageIcon, label: "Image",  action: () => navigate("/images") },
                   { icon: Bot,       label: "Agent",  action: () => navigate("/agents") },
                 ].map(b => (
                   <button key={b.label} onClick={b.action} data-testid={`button-home-${b.label.toLowerCase().replace(" ", "-")}`} className="touch-target flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] text-white/30 hover:text-white/70 hover:bg-white/[0.05] transition-all">

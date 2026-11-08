@@ -11,6 +11,17 @@ import { TherynIcon } from "@/components/nexus-icon";
 
 type Section = "profile" | "api-keys" | "preferences" | "security";
 
+function readJson(response: Response) {
+  if (!response.ok) {
+    const contentType = response.headers.get("content-type") ?? "";
+    if (response.status === 403 && contentType.includes("text/html")) {
+      throw new Error("Cloudflare is challenging the settings API. The site owner needs to allow /api/* requests through to the API service.");
+    }
+    throw new Error(`Settings API request failed (${response.status}).`);
+  }
+  return response.json();
+}
+
 const SECTIONS: { id: Section; icon: typeof User; label: string; desc: string }[] = [
   { id: "profile",     icon: User,     label: "Profile",      desc: "Your name, bio, and photo" },
   { id: "api-keys",    icon: Key,      label: "API Keys",     desc: "Connect your own AI keys" },
@@ -28,6 +39,7 @@ interface Settings {
   defaultProvider: string | null;
   defaultModel: string | null;
   streamingEnabled: string | null;
+  featureUpdatesEnabled: boolean;
 }
 
 const API_KEY_FIELDS: { key: keyof Settings; label: string; placeholder: string; hint: string; icon: typeof Cpu; color: string }[] = [
@@ -51,7 +63,7 @@ export default function SettingsPage() {
   const [section, setSection] = useState<Section>("profile");
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [edits, setEdits] = useState<Partial<Settings>>({});
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
@@ -60,14 +72,15 @@ export default function SettingsPage() {
 
   const loadSettings = () => {
     setLoading(true);
-    setLoadError(false);
+    setLoadError(null);
     fetch("/api/settings", { credentials: "include" })
-      .then(r => {
-        if (!r.ok) throw new Error("Unable to load settings");
-        return r.json();
-      })
+      .then(readJson)
       .then((data: Settings) => { setSettings(data); setEdits({}); })
-      .catch(() => { setLoadError(true); toast({ title: "Failed to load settings", description: "Check your connection and try again.", variant: "destructive" }); })
+      .catch((error) => {
+        const message = error instanceof Error ? error.message : "Unable to load settings";
+        setLoadError(message);
+        toast({ title: "Failed to load settings", description: message, variant: "destructive" });
+      })
       .finally(() => setLoading(false));
   };
 
@@ -124,7 +137,10 @@ export default function SettingsPage() {
       <div className="min-h-full flex items-center justify-center px-6" data-testid="state-settings-error">
         <div className="card max-w-md w-full text-center space-y-4">
           <TherynIcon size={38} className="mx-auto opacity-60" />
-          <div><h1 className="text-lg font-semibold text-white">Settings are unavailable</h1><p className="text-sm text-muted-foreground mt-1">We couldn't reach your workspace settings.</p></div>
+          <div>
+            <h1 className="text-lg font-semibold text-white">Settings are unavailable</h1>
+            <p className="mt-2 text-sm text-muted-foreground">{loadError}</p>
+          </div>
           <button onClick={loadSettings} data-testid="button-retry-settings" className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/85 transition-colors">Try again</button>
         </div>
       </div>
@@ -382,6 +398,21 @@ export default function SettingsPage() {
                              data-testid="button-settings-streaming-toggle"
                             checked={(settings?.streamingEnabled ?? "true") === "true"}
                             onChange={v => { save({ streamingEnabled: String(v) }); setSettings(prev => prev ? { ...prev, streamingEnabled: String(v) } : prev); }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Feature Preview Emails</label>
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-black/20 border border-white/8">
+                          <div>
+                            <p className="text-sm text-white font-medium">Send me pre-release feature updates</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Optional product previews and early-access announcements. Unsubscribe anytime.</p>
+                          </div>
+                          <ToggleSwitch
+                            data-testid="button-settings-feature-updates-toggle"
+                            checked={settings?.featureUpdatesEnabled ?? false}
+                            onChange={value => { void save({ featureUpdatesEnabled: value }); }}
                           />
                         </div>
                       </div>

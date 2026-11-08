@@ -176,7 +176,7 @@ export const SendOpenaiMessageBody = zod.object({
  */
 export const GenerateOpenaiImageBody = zod.object({
   prompt: zod.string(),
-  size: zod.enum(["1024x1024", "512x512", "256x256"]).optional(),
+  size: zod.enum(["1024x1024", "1536x1024", "1024x1536"]).optional(),
 });
 
 export const GenerateOpenaiImageResponse = zod.object({
@@ -471,7 +471,7 @@ export const ElevenLabsTtsResponse = zod.object({
 });
 
 /**
- * @summary List connected social accounts
+ * @summary List saved social handles
  */
 export const ListShieldAccountsResponseItem = zod.object({
   id: zod.number(),
@@ -489,12 +489,15 @@ export const ListShieldAccountsResponse = zod.array(
 );
 
 /**
- * @summary Add a social account to shield
+ * @summary Save a social handle for general guidance
  */
 export const AddShieldAccountBody = zod.object({
-  platform: zod.string(),
-  handle: zod.string(),
-  displayName: zod.string().optional(),
+  platform: zod.enum([
+    "tiktok", "instagram", "youtube", "twitter", "discord", "discord_server",
+    "reddit", "facebook", "linkedin", "twitch", "snapchat", "github", "telegram", "spotify",
+  ]),
+  handle: zod.string().max(200),
+  displayName: zod.string().max(100).optional(),
 });
 
 /**
@@ -505,7 +508,7 @@ export const RemoveShieldAccountParams = zod.object({
 });
 
 /**
- * @summary Run an AI security scan on an account
+ * @summary Generate unverified platform guidance; does not inspect the profile
  */
 export const ScanShieldAccountParams = zod.object({
   id: zod.coerce.number(),
@@ -524,7 +527,7 @@ export const ScanShieldAccountResponse = zod.object({
     createdAt: zod.coerce.date(),
   }),
   analysis: zod.object({
-    riskScore: zod.number(),
+    riskScore: zod.number().int().min(0).max(100),
     riskLevel: zod.string(),
     summary: zod.string(),
     threats: zod.array(
@@ -536,12 +539,11 @@ export const ScanShieldAccountResponse = zod.object({
       }),
     ),
     recommendations: zod.array(zod.string()),
-    shieldStatus: zod.string(),
   }),
 });
 
 /**
- * @summary List security alerts
+ * @summary List saved AI review summaries
  */
 export const ListShieldAlertsResponseItem = zod.object({
   id: zod.number(),

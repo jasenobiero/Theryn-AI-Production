@@ -1,33 +1,50 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, ShieldAlert, ShieldX, Plus, X, Scan, Bell,
   BellOff, Trash2, AlertTriangle, CheckCircle2, Info, Zap,
-  ExternalLink, RefreshCw, Eye, EyeOff,
+  ExternalLink, RefreshCw, Eye, EyeOff, Link2,
 } from "lucide-react";
+import type { IconType } from "react-icons";
+import {
+  SiDiscord, SiFacebook, SiGithub, SiInstagram, SiReddit,
+  SiSnapchat, SiSpotify, SiTiktok, SiTelegram, SiTwitch, SiX, SiYoutube,
+} from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa6";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
-const PLATFORMS: Array<{
-  id: string; label: string; color: string; bg: string; icon: string; placeholder: string;
-}> = [
-  { id: "tiktok",         label: "TikTok",         color: "#e5e5e5", bg: "bg-white/10", icon: "TT", placeholder: "@username" },
-  { id: "instagram",      label: "Instagram",      color: "#d4d4d4", bg: "bg-white/10", icon: "IG", placeholder: "@username" },
-  { id: "youtube",        label: "YouTube",         color: "#e5e5e5", bg: "bg-white/10", icon: "YT",  placeholder: "@channel or handle" },
-  { id: "twitter",        label: "X / Twitter",    color: "#d4d4d4", bg: "bg-white/10", icon: "𝕏",  placeholder: "@username" },
-  { id: "discord",        label: "Discord Account", color: "#e5e5e5", bg: "bg-white/10", icon: "DS", placeholder: "username#0000 or username" },
-  { id: "discord_server", label: "Discord Server",  color: "#d4d4d4", bg: "bg-white/10", icon: "SV", placeholder: "server name or invite code" },
-  { id: "reddit",         label: "Reddit",          color: "#e5e5e5", bg: "bg-white/10", icon: "RD", placeholder: "u/username" },
-  { id: "facebook",       label: "Facebook",        color: "#d4d4d4", bg: "bg-white/10", icon: "FB", placeholder: "profile name or URL" },
-  { id: "linkedin",       label: "LinkedIn",        color: "#e5e5e5", bg: "bg-white/10", icon: "IN", placeholder: "profile name or URL" },
-  { id: "twitch",         label: "Twitch",          color: "#d4d4d4", bg: "bg-white/10", icon: "TW", placeholder: "@streamer" },
-  { id: "snapchat",       label: "Snapchat",        color: "#e5e5e5", bg: "bg-white/10", icon: "SC", placeholder: "@username" },
-  { id: "github",         label: "GitHub",          color: "#ffffff", bg: "bg-white/10",       icon: "GH", placeholder: "@username" },
-  { id: "telegram",       label: "Telegram",        color: "#d4d4d4", bg: "bg-white/10", icon: "TG",  placeholder: "@username or channel" },
-  { id: "spotify",        label: "Spotify",         color: "#e5e5e5", bg: "bg-white/10", icon: "SP", placeholder: "profile name or URL" },
+type PlatformDefinition = {
+  id: string;
+  label: string;
+  color: string;
+  Logo: IconType;
+  placeholder: string;
+};
+
+const PLATFORMS: PlatformDefinition[] = [
+  { id: "tiktok",         label: "TikTok",          color: "#25F4EE", Logo: SiTiktok,    placeholder: "@username" },
+  { id: "instagram",      label: "Instagram",       color: "#E4405F", Logo: SiInstagram, placeholder: "@username" },
+  { id: "youtube",        label: "YouTube",         color: "#FF0033", Logo: SiYoutube,   placeholder: "@channel or handle" },
+  { id: "twitter",        label: "X / Twitter",     color: "#FFFFFF", Logo: SiX,          placeholder: "@username" },
+  { id: "discord",        label: "Discord Account", color: "#5865F2", Logo: SiDiscord,    placeholder: "username#0000 or username" },
+  { id: "discord_server", label: "Discord Server",  color: "#5865F2", Logo: SiDiscord,    placeholder: "server name or invite code" },
+  { id: "reddit",         label: "Reddit",          color: "#FF4500", Logo: SiReddit,     placeholder: "u/username" },
+  { id: "facebook",       label: "Facebook",        color: "#0866FF", Logo: SiFacebook,   placeholder: "profile name or URL" },
+  { id: "linkedin",       label: "LinkedIn",        color: "#0A66C2", Logo: FaLinkedin,  placeholder: "profile name or URL" },
+  { id: "twitch",         label: "Twitch",          color: "#9146FF", Logo: SiTwitch,     placeholder: "@streamer" },
+  { id: "snapchat",       label: "Snapchat",        color: "#FFFC00", Logo: SiSnapchat,   placeholder: "@username" },
+  { id: "github",         label: "GitHub",          color: "#FFFFFF", Logo: SiGithub,     placeholder: "@username" },
+  { id: "telegram",       label: "Telegram",        color: "#24A1DE", Logo: SiTelegram,   placeholder: "@username or channel" },
+  { id: "spotify",        label: "Spotify",         color: "#1DB954", Logo: SiSpotify,    placeholder: "profile name or URL" },
 ];
 
 const getPlatform = (id: string) => PLATFORMS.find(p => p.id === id);
+
+function PlatformLogo({ platform, size = 18 }: { platform?: PlatformDefinition; size?: number }) {
+  const Logo = platform?.Logo ?? Link2;
+  return <Logo size={size} color={platform?.color ?? "#a3a3a3"} aria-hidden="true" />;
+}
 
 const SEVERITY_CONFIG: Record<string, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
   info:     { color: "text-blue-300",   bg: "bg-blue-500/10 border-blue-500/20",   icon: <Info className="w-3.5 h-3.5" />,          label: "Info" },
@@ -46,6 +63,13 @@ interface Alert {
   id: number; userId: string; accountId?: number | null; type: string;
   severity: string; title: string; message: string;
   isRead: boolean; resolvedAt?: string | null; createdAt: string;
+}
+interface ShieldAnalysis {
+  riskScore: number;
+  riskLevel: string;
+  summary: string;
+  threats: Array<{ type: string; severity: string; title: string; description: string }>;
+  recommendations: string[];
 }
 
 function RiskRing({ score, size = 56 }: { score: number; size?: number }) {
@@ -74,7 +98,7 @@ function OverallRing({ score }: { score: number }) {
   const pct = Math.min(100, Math.max(0, score)) / 100;
   const safeScore = 100 - score;
   const color = score >= 70 ? "#d4d4d4" : score >= 40 ? "#a3a3a3" : score >= 20 ? "#737373" : "#4b4b4b";
-  const label = score >= 70 ? "CRITICAL" : score >= 40 ? "AT RISK" : score >= 20 ? "CAUTION" : "PROTECTED";
+  const label = score >= 70 ? "HIGH ESTIMATE" : score >= 40 ? "ELEVATED ESTIMATE" : score >= 20 ? "CAUTION" : "LOW ESTIMATE";
   return (
     <div className="flex flex-col items-center gap-1">
       <div className="relative" style={{ width: size, height: size }}>
@@ -109,27 +133,37 @@ export default function ShieldPage() {
   const [addDisplayName, setAddDisplayName] = useState("");
   const [adding, setAdding] = useState(false);
   const [scanningId, setScanningId] = useState<number | null>(null);
-  const [lastScan, setLastScan] = useState<{ accountId: number; analysis: Record<string, unknown> } | null>(null);
+  const [lastScan, setLastScan] = useState<{ accountId: number; analysis: ShieldAnalysis } | null>(null);
+  const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
   const [showAlerts, setShowAlerts] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [accsRes, alertsRes] = await Promise.all([
         fetch(`${base}/api/shield/accounts`, { credentials: "include" }),
         fetch(`${base}/api/shield/alerts`, { credentials: "include" }),
       ]);
-      if (accsRes.ok) setAccounts(await accsRes.json());
-      if (alertsRes.ok) setAlerts(await alertsRes.json());
+      if (!accsRes.ok || !alertsRes.ok) {
+        throw new Error(`Account data could not be loaded (HTTP ${!accsRes.ok ? accsRes.status : alertsRes.status})`);
+      }
+      setAccounts(await accsRes.json() as Account[]);
+      setAlerts(await alertsRes.json() as Alert[]);
+    } catch (error) {
+      toast({
+        title: "Social Shield data could not be loaded",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [base, toast]);
 
-  useState(() => { fetchAll(); });
+  useEffect(() => { void fetchAll(); }, [fetchAll]);
 
   const handleAdd = async () => {
     if (!addHandle.trim()) return;
@@ -141,15 +175,19 @@ export default function ShieldPage() {
         credentials: "include",
         body: JSON.stringify({ platform: addPlatform, handle: addHandle.trim().replace(/^@/, ""), displayName: addDisplayName.trim() || undefined }),
       });
-      if (!res.ok) throw new Error("Failed to add account");
-      const account = await res.json();
+      if (!res.ok) throw new Error(`Failed to add account (HTTP ${res.status})`);
+      const account = await res.json() as Account;
       setAccounts(prev => [account, ...prev]);
       setShowAddModal(false);
       setAddHandle("");
       setAddDisplayName("");
-      toast({ title: "Account added", description: `${getPlatform(addPlatform)?.label} @${account.handle} is now under THERYN Shield protection.` });
-    } catch {
-      toast({ title: "Failed to add account", variant: "destructive" });
+      toast({ title: "Handle saved", description: `${getPlatform(addPlatform)?.label} @${account.handle} is ready for an AI-generated review.` });
+    } catch (error) {
+      toast({
+        title: "Failed to add account",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setAdding(false);
     }
@@ -162,18 +200,25 @@ export default function ShieldPage() {
         method: "POST",
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Scan failed");
-      const result = await res.json();
+      if (!res.ok) throw new Error(`Review failed (HTTP ${res.status})`);
+      const result = await res.json() as { account: Account; analysis: ShieldAnalysis };
       setAccounts(prev => prev.map(a => a.id === account.id ? result.account : a));
+      setSelectedAccountId(account.id);
       setLastScan({ accountId: account.id, analysis: result.analysis });
       const alertsRes = await fetch(`${base}/api/shield/alerts`, { credentials: "include" });
       if (alertsRes.ok) setAlerts(await alertsRes.json());
+      const historyRefreshError = alertsRes.ok ? "" : ` Review history could not be refreshed (HTTP ${alertsRes.status}).`;
       toast({
-        title: `Scan complete — ${getPlatform(account.platform)?.label} @${account.handle}`,
-        description: `Risk score: ${result.analysis.riskScore}/100 · ${result.analysis.shieldStatus}`,
+        title: `AI review complete — ${getPlatform(account.platform)?.label} @${account.handle}`,
+        description: `Unverified estimate: ${result.analysis.riskScore}/100. No live account monitoring was performed.${historyRefreshError}`,
+        variant: historyRefreshError ? "destructive" : undefined,
       });
-    } catch {
-      toast({ title: "Scan failed", variant: "destructive" });
+    } catch (error) {
+      toast({
+        title: "AI review failed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setScanningId(null);
     }
@@ -182,23 +227,42 @@ export default function ShieldPage() {
   const handleDelete = async (id: number) => {
     setDeletingId(id);
     try {
-      await fetch(`${base}/api/shield/accounts/${id}`, { method: "DELETE", credentials: "include" });
+      const response = await fetch(`${base}/api/shield/accounts/${id}`, { method: "DELETE", credentials: "include" });
+      if (!response.ok) throw new Error(`Remove failed (HTTP ${response.status})`);
       setAccounts(prev => prev.filter(a => a.id !== id));
+      if (selectedAccountId === id) setSelectedAccountId(null);
       if (lastScan?.accountId === id) setLastScan(null);
       toast({ title: "Account removed from Shield" });
+    } catch (error) {
+      toast({
+        title: "Account could not be removed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setDeletingId(null);
     }
   };
 
   const handleMarkRead = async (id: number) => {
-    await fetch(`${base}/api/shield/alerts/${id}/read`, { method: "PATCH", credentials: "include" });
-    setAlerts(prev => prev.map(a => a.id === id ? { ...a, isRead: true } : a));
+    try {
+      const response = await fetch(`${base}/api/shield/alerts/${id}/read`, { method: "PATCH", credentials: "include" });
+      if (!response.ok) throw new Error(`Request failed (HTTP ${response.status})`);
+      setAlerts(prev => prev.map(a => a.id === id ? { ...a, isRead: true } : a));
+    } catch (error) {
+      toast({
+        title: "Review could not be marked as read",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const avgRisk = accounts.length
-    ? Math.round(accounts.reduce((s, a) => s + a.riskScore, 0) / accounts.length)
+  const reviewedAccounts = accounts.filter(account => account.lastScannedAt);
+  const avgRisk = reviewedAccounts.length
+    ? Math.round(reviewedAccounts.reduce((sum, account) => sum + account.riskScore, 0) / reviewedAccounts.length)
     : 0;
+  const reviewedCount = reviewedAccounts.length;
   const unreadCount = alerts.filter(a => !a.isRead).length;
 
   return (
@@ -235,8 +299,8 @@ export default function ShieldPage() {
           </div>
           <p className="text-[10px] text-white/25 leading-relaxed">
             {accounts.length === 0
-              ? "Add your social accounts to enable AI-powered threat protection."
-              : `${accounts.length} account${accounts.length !== 1 ? "s" : ""} under protection`}
+              ? "Add a handle for a general AI-generated security review. No live monitoring is available."
+              : `${accounts.length} account handle${accounts.length !== 1 ? "s" : ""} saved for review`}
           </p>
         </div>
 
@@ -259,7 +323,7 @@ export default function ShieldPage() {
           ) : accounts.map(account => {
             const plat = getPlatform(account.platform);
             const isScanning = scanningId === account.id;
-            const isSelected = lastScan?.accountId === account.id;
+            const isSelected = selectedAccountId === account.id;
             return (
               <motion.div
                 key={account.id}
@@ -271,12 +335,16 @@ export default function ShieldPage() {
                     ? "bg-red-600/10 border-red-500/20"
                     : "border-white/[0.05] hover:border-white/[0.1] hover:bg-white/[0.03]"
                 )}
-                onClick={() => !isScanning && setLastScan(prev => prev?.accountId === account.id ? null : { accountId: account.id, analysis: {} })}
+                onClick={() => {
+                  if (isScanning) return;
+                  setSelectedAccountId(prev => prev === account.id ? null : account.id);
+                  setLastScan(null);
+                }}
               >
                 <div className="relative flex-shrink-0">
-                  <RiskRing score={account.riskScore} size={42} />
-                  <div className="absolute inset-0 flex items-center justify-center text-[14px]">
-                    {plat?.icon ?? "LINK"}
+                  <RiskRing score={account.lastScannedAt ? account.riskScore : 0} size={42} />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <PlatformLogo platform={plat} size={16} />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -284,22 +352,22 @@ export default function ShieldPage() {
                   <p className="text-[10px] text-white/40 truncate">@{account.handle}</p>
                   <p className="text-[9px] text-white/20 mt-0.5">
                     {account.lastScannedAt
-                      ? `Scanned ${new Date(account.lastScannedAt).toLocaleDateString()}`
-                      : "Not scanned"}
+                      ? `Last review ${new Date(account.lastScannedAt).toLocaleDateString()}`
+                      : "No review yet"}
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                   <span className="text-[10px] font-bold" style={{
                     color: account.riskScore >= 70 ? "#d4d4d4" : account.riskScore >= 40 ? "#a3a3a3" : account.riskScore >= 20 ? "#737373" : "#4b4b4b"
                   }}>
-                    {account.riskScore}
+                    {account.lastScannedAt ? account.riskScore : "—"}
                   </span>
                   <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={e => { e.stopPropagation(); handleScan(account); }}
                       disabled={isScanning}
                       className="p-1 rounded-md text-white/30 hover:text-white/80 hover:bg-white/[0.08] transition-all"
-                      title="Scan"
+                      title="Request general guidance"
                     >
                       <Scan className={cn("w-3 h-3", isScanning && "animate-spin")} />
                     </button>
@@ -334,13 +402,13 @@ export default function ShieldPage() {
             >
               <div className="px-6 py-3 max-h-64 overflow-y-auto">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-white/60 tracking-widest uppercase">Security Alerts</span>
+                  <span className="text-xs font-bold text-white/60 tracking-widest uppercase">Review Summaries</span>
                   <button onClick={() => setShowAlerts(false)} className="text-white/20 hover:text-white/50 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 {alerts.length === 0 ? (
-                  <p className="text-xs text-white/25 py-2">No alerts yet. Run a scan to detect threats.</p>
+                  <p className="text-xs text-white/25 py-2">No review summaries yet.</p>
                 ) : (
                   <div className="space-y-1.5">
                     {alerts.map(alert => {
@@ -382,31 +450,34 @@ export default function ShieldPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-white tracking-tight mb-1">Social Shield</h1>
-            <p className="text-sm text-white/35">AI-powered account protection and threat intelligence</p>
+            <p className="text-sm text-white/35">AI-generated general guidance only; this is not live monitoring or a verified security scan.</p>
           </div>
 
           {/* Stats row */}
           <div className="grid grid-cols-4 gap-4 mb-8">
             {[
               {
-                label: "Security Score",
-                value: <OverallRing score={avgRisk} />,
+                label: "General Risk Estimate",
+                value: reviewedCount
+                  ? <OverallRing score={avgRisk} />
+                  : <span className="text-3xl font-bold text-white/30">—</span>,
+                sub: `${reviewedCount} unverified review${reviewedCount === 1 ? "" : "s"}`,
                 wide: true,
               },
               {
-                label: "Accounts Protected",
+                label: "Handles Saved",
                 value: <span className="text-3xl font-bold text-white">{accounts.length}</span>,
-                sub: "connected",
+                sub: "not connected",
               },
               {
-                label: "Active Threats",
-                value: <span className="text-3xl font-bold text-red-400">{alerts.filter(a => !a.isRead && (a.severity === "high" || a.severity === "critical")).length}</span>,
-                sub: "unresolved",
-              },
-              {
-                label: "Alerts Total",
+                label: "Review Summaries",
                 value: <span className="text-3xl font-bold text-white">{alerts.length}</span>,
-                sub: `${unreadCount} unread`,
+                sub: "unverified guidance",
+              },
+              {
+                label: "Unread Summaries",
+                value: <span className="text-3xl font-bold text-white">{unreadCount}</span>,
+                sub: "review history",
               },
             ].map((stat, i) => (
               <div
@@ -423,7 +494,7 @@ export default function ShieldPage() {
             ))}
           </div>
 
-          {/* Scan Result or Empty State */}
+          {/* Guidance result or empty state */}
           <AnimatePresence mode="wait">
             {lastScan && lastScan.analysis && Object.keys(lastScan.analysis).length > 0 ? (
               <motion.div
@@ -434,19 +505,17 @@ export default function ShieldPage() {
               >
                 {(() => {
                   const acc = accounts.find(a => a.id === lastScan.accountId);
-                  const plat = acc ? getPlatform(acc.platform) : null;
-                  const a = lastScan.analysis as {
-                    riskScore: number; riskLevel: string; summary: string; shieldStatus: string;
-                    threats: Array<{ type: string; severity: string; title: string; description: string }>;
-                    recommendations: string[];
-                  };
-                  const statusColor = a.shieldStatus === "PROTECTED" ? "#d4d4d4" : a.shieldStatus === "AT_RISK" ? "#a3a3a3" : "#737373";
+                  const plat = acc ? getPlatform(acc.platform) : undefined;
+                  const a = lastScan.analysis;
+                  const statusColor = "#d4d4d4";
                   return (
                     <div className="space-y-5">
-                      {/* Scan header */}
+                      {/* Guidance header */}
                       <div className="flex items-start justify-between p-5 rounded-2xl border border-white/[0.06]" style={{ background: "hsl(0 0% 8%)" }}>
                         <div className="flex items-center gap-4">
-                          <div className="text-3xl">{plat?.icon ?? "LINK"}</div>
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.03]">
+                            <PlatformLogo platform={plat} size={22} />
+                          </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <h2 className="text-base font-bold text-white">{plat?.label ?? acc?.platform}</h2>
@@ -454,8 +523,9 @@ export default function ShieldPage() {
                               <span
                                 className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
                                 style={{ color: statusColor, borderColor: `${statusColor}40`, background: `${statusColor}15` }}
+                                title="AI-generated estimate based only on the platform and handle"
                               >
-                                {a.shieldStatus}
+                                AI estimate only
                               </span>
                             </div>
                             <p className="text-sm text-white/50 leading-relaxed max-w-xl">{a.summary}</p>
@@ -475,13 +545,13 @@ export default function ShieldPage() {
                         <div className="p-5 rounded-2xl border border-white/[0.06]" style={{ background: "hsl(0 0% 8%)" }}>
                           <div className="flex items-center gap-2 mb-4">
                             <ShieldAlert className="w-4 h-4 text-red-400" />
-                            <h3 className="text-sm font-bold text-white">Detected Threats</h3>
-                            <span className="ml-auto text-xs text-white/25">{a.threats?.length ?? 0} found</span>
+                            <h3 className="text-sm font-bold text-white">Common Risks (Unverified)</h3>
+                            <span className="ml-auto text-xs text-white/25">{a.threats?.length ?? 0} suggestions</span>
                           </div>
                           {(!a.threats || a.threats.length === 0) ? (
                             <div className="flex items-center gap-2 text-green-400 text-xs">
                               <CheckCircle2 className="w-4 h-4" />
-                              No active threats detected
+                              No general risks listed
                             </div>
                           ) : (
                             <div className="space-y-2.5">
@@ -506,7 +576,7 @@ export default function ShieldPage() {
                         <div className="p-5 rounded-2xl border border-white/[0.06]" style={{ background: "hsl(0 0% 8%)" }}>
                           <div className="flex items-center gap-2 mb-4">
                             <Zap className="w-4 h-4 text-yellow-400" />
-                            <h3 className="text-sm font-bold text-white">AI Recommendations</h3>
+                            <h3 className="text-sm font-bold text-white">General Recommendations</h3>
                           </div>
                           <div className="space-y-2">
                             {(a.recommendations ?? []).map((rec, i) => (
@@ -537,9 +607,9 @@ export default function ShieldPage() {
                   </div>
                   <div className="absolute inset-0 rounded-full animate-ping bg-red-600/5" style={{ animationDuration: "3s" }} />
                 </div>
-                <h2 className="text-lg font-bold text-white mb-2">No accounts protected yet</h2>
+                <h2 className="text-lg font-bold text-white mb-2">No handles saved yet</h2>
                 <p className="text-sm text-white/30 max-w-sm leading-relaxed mb-6">
-                  Add your social media accounts to get AI-powered threat detection, vulnerability scanning, and real-time security alerts.
+                  Save a platform and handle for general AI-generated safety guidance. Theryn does not connect to or monitor social accounts.
                 </p>
                 <button
                   onClick={() => setShowAddModal(true)}
@@ -557,17 +627,17 @@ export default function ShieldPage() {
                 className="flex flex-col items-center justify-center py-16 text-center"
               >
                 <ShieldCheck className="w-8 h-8 text-white/10 mb-3" />
-                <p className="text-sm text-white/25">Select an account from the left and click scan to run a threat analysis</p>
+                <p className="text-sm text-white/25">Select a saved handle to request general platform guidance. Profiles are not inspected or monitored.</p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Recent Alert Feed */}
+          {/* Recent review history */}
           {alerts.length > 0 && !showAlerts && (
             <div className="mt-8">
               <div className="flex items-center gap-2 mb-4">
                 <Bell className="w-4 h-4 text-white/30" />
-                <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">Recent Alerts</h3>
+                <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">Recent Reviews</h3>
                 <button
                   onClick={() => setShowAlerts(true)}
                   className="ml-auto text-xs text-red-400/70 hover:text-red-400 transition-colors"
@@ -622,7 +692,7 @@ export default function ShieldPage() {
                 <div className="flex items-center justify-between mb-5">
                   <div>
                     <h2 className="text-base font-bold text-white">Add Social Account</h2>
-                    <p className="text-xs text-white/35 mt-0.5">Connect an account to enable Shield protection</p>
+                    <p className="text-xs text-white/35 mt-0.5">Save a handle for general, unverified AI guidance. No account connection is made.</p>
                   </div>
                   <button onClick={() => setShowAddModal(false)} className="text-white/25 hover:text-white/60 transition-colors">
                     <X className="w-4 h-4" />
@@ -644,7 +714,7 @@ export default function ShieldPage() {
                             : "border-white/[0.05] text-white/40 hover:border-white/[0.1] hover:text-white/70"
                         )}
                       >
-                        <span className="text-base">{p.icon}</span>
+                        <PlatformLogo platform={p} size={18} />
                         <span className="truncate w-full text-center leading-tight">{p.label}</span>
                       </button>
                     ))}
@@ -694,7 +764,7 @@ export default function ShieldPage() {
                     className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white text-sm font-semibold transition-all flex items-center justify-center gap-2"
                   >
                     {adding ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
-                    {adding ? "Adding..." : "Add & Protect"}
+                    {adding ? "Saving..." : "Save Handle"}
                   </button>
                 </div>
               </div>

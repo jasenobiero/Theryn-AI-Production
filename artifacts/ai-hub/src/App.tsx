@@ -16,14 +16,16 @@ import { shadcn } from "@clerk/themes";
 
 import Home from "@/pages/home";
 import ChatPage from "@/pages/chat";
-import ImagesPage from "@/pages/images";
 import VoicePage from "@/pages/voice";
 import AgentsPage from "@/pages/agents";
 import AgentChatPage from "@/pages/agent-chat";
 import StudioPage from "@/pages/studio";
+import ImagesPage from "@/pages/images";
+import AiPreviewPage from "@/pages/ai-preview";
 import ArenaPage from "@/pages/arena";
 import PromptsPage from "@/pages/prompts";
 import SettingsPage from "@/pages/settings";
+import SubscriptionPage from "@/pages/subscription";
 import ShieldPage from "@/pages/shield";
 import BotHubPage from "@/pages/bot-hub";
 import DownloadsPage from "@/pages/downloads";
@@ -42,13 +44,15 @@ const queryClient = new QueryClient({
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const clerkPubKey = publishableKeyFromHost(
-  window.location.hostname,
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-);
-if (!clerkPubKey) throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY");
+const configuredClerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkPubKey = import.meta.env.PROD
+  ? publishableKeyFromHost(window.location.hostname, configuredClerkPubKey)
+  : configuredClerkPubKey;
+if (!clerkPubKey) {
+  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Add your Clerk publishable key to artifacts/ai-hub/.env.local, then restart Vite.");
+}
 
-const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
+const clerkProxyUrl = import.meta.env.PROD ? import.meta.env.VITE_CLERK_PROXY_URL : undefined;
 
 function stripBase(path: string): string {
   return basePath && path.startsWith(basePath)
@@ -247,15 +251,17 @@ function AuthedRouter() {
         <Route path="/chat" component={ChatPage} />
         <Route path="/arena" component={ArenaPage} />
         <Route path="/prompts" component={PromptsPage} />
-        <Route path="/images" component={ImagesPage} />
         <Route path="/voice" component={VoicePage} />
         <Route path="/agents" component={AgentsPage} />
         <Route path="/agents/:id/chat" component={AgentChatPage} />
         <Route path="/studio" component={StudioPage} />
+        <Route path="/images" component={ImagesPage} />
+        <Route path="/preview" component={AiPreviewPage} />
         <Route path="/shield" component={ShieldPage} />
         <Route path="/bot-hub" component={BotHubPage} />
         <Route path="/downloads" component={DownloadsPage} />
         <Route path="/settings" component={SettingsPage} />
+        <Route path="/subscription" component={SubscriptionPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

@@ -6,13 +6,14 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import type { IconType } from "react-icons";
+import { SiDiscord, SiSlack, SiTelegram } from "react-icons/si";
 
 interface Platform {
   id: string;
   name: string;
-  icon: string;
+  icon: IconType;
   color: string;
-  bg: string;
   envVars: string[];
   steps: Array<{ title: string; description: string; link?: { label: string; url: string } }>;
   note?: string;
@@ -22,10 +23,9 @@ const PLATFORMS: Platform[] = [
   {
     id: "discord",
     name: "Discord",
-    icon: "DS",
-    color: "#e5e5e5",
-    bg: "bg-white/10",
-    envVars: ["DISCORD_BOT_TOKEN"],
+    icon: SiDiscord,
+    color: "#5865F2",
+    envVars: ["DISCORD_BOT_TOKEN", "THERYN_BOT_API_TOKEN"],
     steps: [
       {
         title: "Create a Discord Application",
@@ -42,21 +42,20 @@ const PLATFORMS: Platform[] = [
       },
       {
         title: "Set environment secret",
-        description: 'In Replit Secrets, add DISCORD_BOT_TOKEN with your bot token value.',
+        description: 'Set DISCORD_BOT_TOKEN on the bot host. Set the same long random THERYN_BOT_API_TOKEN secret on both the bot host and API server.',
       },
       {
         title: "Invite the bot to your server",
-        description: 'Go to OAuth2 → URL Generator → select "bot" scope → permissions: Send Messages, Read Messages, Attach Files. Use the generated URL to invite.',
+        description: 'Go to OAuth2 → URL Generator → select "bot" scope → grant View Channels and Send Messages only where needed. Enable Message Content Intent only if prefix commands are required.',
       },
     ],
   },
   {
     id: "telegram",
     name: "Telegram",
-    icon: "TG",
-    color: "#d4d4d4",
-    bg: "bg-white/10",
-    envVars: ["TELEGRAM_BOT_TOKEN"],
+    icon: SiTelegram,
+    color: "#24A1DE",
+    envVars: ["TELEGRAM_BOT_TOKEN", "THERYN_BOT_API_TOKEN"],
     steps: [
       {
         title: "Message @BotFather",
@@ -73,17 +72,16 @@ const PLATFORMS: Platform[] = [
       },
       {
         title: "Set environment secret",
-        description: "In Replit Secrets, add TELEGRAM_BOT_TOKEN with your token.",
+        description: "Set TELEGRAM_BOT_TOKEN on the bot host. Set the same long random THERYN_BOT_API_TOKEN secret on both the bot host and API server.",
       },
     ],
   },
   {
     id: "slack",
     name: "Slack",
-    icon: "SL",
-    color: "#a3a3a3",
-    bg: "bg-purple-500/10",
-    envVars: ["SLACK_BOT_TOKEN", "SLACK_APP_TOKEN"],
+    icon: SiSlack,
+    color: "#4A154B",
+    envVars: ["SLACK_BOT_TOKEN", "SLACK_APP_TOKEN", "THERYN_BOT_API_TOKEN"],
     steps: [
       {
         title: "Create a Slack App",
@@ -108,7 +106,7 @@ const PLATFORMS: Platform[] = [
       },
       {
         title: "Set environment secrets",
-        description: "Add SLACK_BOT_TOKEN (xoxb-...) and SLACK_APP_TOKEN (xapp-...) in Replit Secrets.",
+        description: "Set SLACK_BOT_TOKEN and SLACK_APP_TOKEN on the bot host. Set the same long random THERYN_BOT_API_TOKEN secret on both the bot host and API server.",
       },
     ],
     note: "Requires Socket Mode — no public URL needed.",
@@ -116,27 +114,32 @@ const PLATFORMS: Platform[] = [
 ];
 
 const COMMANDS = [
-  { cmd: "!theryn <message>",  alias: "!t",   desc: "Chat with Theryn (GPT-4o)",         icon: <Zap className="w-3.5 h-3.5 text-cyan-200" /> },
-  { cmd: "!vesper <message>",  alias: "!v",   desc: "Chat with Vesper (Claude)",          icon: <Zap className="w-3.5 h-3.5 text-purple-400" /> },
-  { cmd: "!prism <message>",   alias: "!p",   desc: "Chat with Prism (Grok)",             icon: <Zap className="w-3.5 h-3.5 text-blue-400" /> },
-  { cmd: "!ai <message>",      alias: null,   desc: "Quick chat (defaults to Theryn)",    icon: <Bot className="w-3.5 h-3.5 text-white/40" /> },
-  { cmd: "!image <prompt>",    alias: "!img", desc: "Generate an image with DALL-E",      icon: <ImageIcon className="w-3.5 h-3.5 text-orange-400" /> },
-  { cmd: "!voice <text>",      alias: "!tts", desc: "Text-to-speech audio (ElevenLabs)", icon: <Mic className="w-3.5 h-3.5 text-green-400" /> },
-  { cmd: "!scan <plat> <user>",alias: null,   desc: "AI security scan (Social Shield)",  icon: <ShieldCheck className="w-3.5 h-3.5 text-yellow-400" /> },
-  { cmd: "!new",               alias: null,   desc: "Clear conversation history",         icon: <RefreshCw className="w-3.5 h-3.5 text-white/40" /> },
+  { cmd: "!theryn <message>",  alias: "!t",   desc: "Chat using the configured OpenAI provider",          icon: <Zap className="w-3.5 h-3.5 text-cyan-200" /> },
+  { cmd: "!vesper <message>",  alias: "!v",   desc: "Chat using the configured Anthropic provider",       icon: <Zap className="w-3.5 h-3.5 text-purple-400" /> },
+  { cmd: "!prism <message>",   alias: "!p",   desc: "Chat using the configured OpenRouter provider",       icon: <Zap className="w-3.5 h-3.5 text-blue-400" /> },
+  { cmd: "!ai <message>",      alias: null,   desc: "Quick OpenAI chat on Discord/Telegram; Slack use !theryn or @mention", icon: <Bot className="w-3.5 h-3.5 text-white/40" /> },
+  { cmd: "!image <prompt>",    alias: "!img", desc: "Generate an image using the configured OpenAI API",    icon: <ImageIcon className="w-3.5 h-3.5 text-orange-400" /> },
+  { cmd: "!voice <text>",      alias: "!tts", desc: "Text-to-speech; requires an ElevenLabs API key",       icon: <Mic className="w-3.5 h-3.5 text-green-400" /> },
+  { cmd: "!scan <plat> <user>",alias: null,   desc: "General safety guidance; does not inspect the profile", icon: <ShieldCheck className="w-3.5 h-3.5 text-yellow-400" /> },
+  { cmd: "!new",               alias: null,   desc: "Start a new chat; previous conversations remain saved", icon: <RefreshCw className="w-3.5 h-3.5 text-white/40" /> },
   { cmd: "!help",              alias: null,   desc: "Show all commands",                  icon: <Terminal className="w-3.5 h-3.5 text-white/40" /> },
 ];
 
 function PlatformCard({ platform }: { platform: Platform }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const configured = platform.envVars.every(v => {
-    return false;
-  });
-
-  const copySecret = (v: string) => {
-    navigator.clipboard.writeText(v);
-    toast({ title: `Copied "${v}" to clipboard`, description: "Paste this as the secret name in Replit Secrets." });
+  const PlatformIcon = platform.icon;
+  const copySecret = async (v: string) => {
+    try {
+      await navigator.clipboard.writeText(v);
+      toast({ title: `Copied "${v}" to clipboard`, description: "Paste this as the secret name in your bot host." });
+    } catch (error) {
+      toast({
+        title: "Could not copy the secret name",
+        description: error instanceof Error ? error.message : "Copy it manually instead.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -150,7 +153,7 @@ function PlatformCard({ platform }: { platform: Platform }) {
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
       >
-        <span className="text-2xl">{platform.icon}</span>
+        <PlatformIcon size={24} color={platform.color} aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="text-sm font-bold text-white">{platform.name}</h3>
@@ -243,15 +246,15 @@ export default function BotHubPage() {
           <h1 className="text-2xl font-bold text-white tracking-tight">Bot Hub</h1>
         </div>
         <p className="text-sm text-white/35 max-w-xl">
-          Deploy THERYN as a bot on Discord, Telegram, and Slack — it responds exactly like the web app, with full AI chat, image generation, voice TTS, and security scanning.
+          Run a bot on Discord, Telegram, or Slack after configuring the platform tokens and shared API secret. AI and image features require their provider keys; voice requires ElevenLabs. The social command offers general guidance only—it does not inspect profiles or monitor accounts. Bot conversations are saved under platform-specific identities.
         </p>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-10">
         {[
           { icon: <Zap className="w-5 h-5 text-cyan-200" />, label: "3 AI engines", sub: "Theryn · Vesper · Prism" },
-          { icon: <ImageIcon className="w-5 h-5 text-orange-400" />, label: "Image Gen", sub: "DALL-E via !image" },
-          { icon: <Mic className="w-5 h-5 text-green-400" />, label: "Voice TTS", sub: "ElevenLabs via !voice" },
+          { icon: <ImageIcon className="w-5 h-5 text-orange-400" />, label: "Image Gen", sub: "OpenAI API via !image" },
+          { icon: <Mic className="w-5 h-5 text-green-400" />, label: "Voice TTS", sub: "ElevenLabs key required" },
         ].map((f, i) => (
           <div key={i} className="flex items-center gap-3 p-4 rounded-2xl border border-white/[0.06]" style={{ background: "hsl(0 0% 8%)" }}>
             {f.icon}
@@ -276,7 +279,7 @@ export default function BotHubPage() {
             <span className="text-xl">𝕏</span>
             <div>
               <p className="text-sm font-semibold text-white/50">Twitter / X</p>
-              <p className="text-xs text-white/25">Requires a paid X Developer API subscription ($100/month). Not included.</p>
+              <p className="text-xs text-white/25">No X integration is configured; bot commands do not connect to X accounts.</p>
             </div>
             <XCircle className="w-4 h-4 text-white/20 ml-auto flex-shrink-0" />
           </div>
@@ -289,7 +292,7 @@ export default function BotHubPage() {
         <div className="rounded-2xl border border-white/[0.07] overflow-hidden" style={{ background: "hsl(0 0% 8%)" }}>
           <div className="grid grid-cols-[1fr_auto_1fr] text-[10px] uppercase tracking-widest text-white/20 font-semibold px-5 py-3 border-b border-white/[0.05]">
             <span>Command</span>
-            <span className="text-center px-4">Alias</span>
+            <span className="text-center px-4">Discord alias</span>
             <span>Description</span>
           </div>
           {COMMANDS.map((c, i) => (
@@ -317,9 +320,9 @@ export default function BotHubPage() {
         </div>
 
         <p className="text-xs text-white/20 mt-3">
-          On Telegram: use <code className="font-mono">/theryn</code> instead of <code className="font-mono">!theryn</code>.
-          On Slack: use <code className="font-mono">!theryn</code> or <code className="font-mono">@mention</code> the bot.
-          Plain messages on Telegram/Discord also chat with Theryn by default.
+          Telegram uses slash commands and also chats on ordinary text messages; Discord and Slack use the listed prefixes.
+          Slack also responds to an <code className="font-mono">@mention</code>. Discord aliases are not available on the other platforms.
+          Restart the bot process after changing environment secrets.
         </p>
       </div>
     </div>
