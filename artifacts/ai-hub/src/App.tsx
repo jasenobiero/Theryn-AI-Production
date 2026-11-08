@@ -52,7 +52,13 @@ if (!clerkPubKey) {
   throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Add your Clerk publishable key to artifacts/ai-hub/.env.local, then restart Vite.");
 }
 
-const clerkProxyUrl = import.meta.env.PROD ? import.meta.env.VITE_CLERK_PROXY_URL : undefined;
+// Keep Clerk's session cookie first-party on the custom domain. This fallback
+// matters for production builds where VITE_CLERK_PROXY_URL is not injected;
+// without it Clerk can authenticate the UI while same-origin API requests
+// arrive without a session and every protected endpoint returns 401.
+const clerkProxyUrl = import.meta.env.PROD
+  ? (import.meta.env.VITE_CLERK_PROXY_URL || `${window.location.origin}/api/__clerk`)
+  : undefined;
 
 function stripBase(path: string): string {
   return basePath && path.startsWith(basePath)
