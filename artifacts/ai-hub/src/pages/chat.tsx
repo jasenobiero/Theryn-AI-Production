@@ -32,7 +32,7 @@ const OPENROUTER_MODELS = [
   { value: "x-ai/grok-4.3",                  label: "Zethon-4" },
   { value: "google/gemini-2.5-pro",           label: "Lumyra Pro" },
   { value: "meta-llama/llama-3.3-70b-instruct", label: "Sylvax-70" },
-  { value: "deepseek/deepseek-coder",         label: "Hexcore" },
+  { value: "deepseek/deepseek-v4.1-flash-1017", label: "Hexcore" },
 ];
 
 export default function ChatPage() {

@@ -3,12 +3,13 @@ export const OPENROUTER_MODELS = [
   "x-ai/grok-4.3",
   "google/gemini-2.5-pro",
   "meta-llama/llama-3.3-70b-instruct",
-  "deepseek/deepseek-coder",
+  "deepseek/deepseek-v4.1-flash-1017",
 ] as const;
 
 const OPENROUTER_MODEL_ALIASES: Record<string, string> = {
   "meta-llama/llama-3-70b-instruct": "meta-llama/llama-3.3-70b-instruct",
   "meta-llama/llama-3.3-70b-instruct": "meta-llama/llama-3.3-70b-instruct",
+  "deepseek/deepseek-coder": "deepseek/deepseek-v4.1-flash-1017",
 };
 
 export function normalizeOpenRouterModel(model?: string | null): string {
@@ -28,6 +29,7 @@ export function isVisionCapableOpenRouterModel(model?: string | null): boolean {
   const normalized = normalizeOpenRouterModel(model);
   return new Set([
     "google/gemini-2.5-pro",
+    "deepseek/deepseek-v4.1-flash-1017",
     "openai/gpt-4o",
     "openai/gpt-4-vision-preview",
     "anthropic/claude-3-5-sonnet",

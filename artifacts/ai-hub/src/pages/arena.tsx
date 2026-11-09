@@ -23,7 +23,7 @@ const MODELS: ModelDef[] = [
   { id: "zethon",   provider: "openrouter", orModel: "x-ai/grok-4.3",                   label: "Zethon-4",   dot: "bg-purple-400",  border: "border-purple-500/25 bg-purple-500/[0.03]",  textColor: "text-purple-400" },
   { id: "lumyra",   provider: "openrouter", orModel: "google/gemini-2.5-pro",            label: "Lumyra Pro", dot: "bg-blue-400",    border: "border-blue-500/25 bg-blue-500/[0.03]",      textColor: "text-blue-400" },
   { id: "sylvax",   provider: "openrouter", orModel: "meta-llama/llama-3.3-70b-instruct",  label: "Sylvax-70",  dot: "bg-cyan-400",    border: "border-cyan-500/25 bg-cyan-500/[0.03]",      textColor: "text-cyan-400" },
-  { id: "hexcore",  provider: "openrouter", orModel: "deepseek/deepseek-coder",          label: "Hexcore",    dot: "bg-red-400",     border: "border-red-500/25 bg-red-500/[0.03]",        textColor: "text-red-400" },
+  { id: "hexcore",  provider: "openrouter", orModel: "deepseek/deepseek-v4.1-flash-1017", label: "Hexcore",    dot: "bg-red-400",     border: "border-red-500/25 bg-red-500/[0.03]",        textColor: "text-red-400" },
 ];
 
 interface ColState {
@@ -63,42 +63,67 @@ function useStreamCol(model: ModelDef) {
         body: JSON.stringify({
           provider: model.provider,
           ...(model.orModel ? { model: model.orModel } : {}),
+          maxTokens: 768,
           messages: [{ role: "user", content: prompt }],
         }),
         signal: ctrl.signal,
         credentials: "include",
       });
 
-      if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        let message = "";
+        try {
+          const payload = JSON.parse(body) as { error?: unknown; message?: unknown };
+          if (typeof payload.error === "string") message = payload.error;
+          else if (typeof payload.message === "string") message = payload.message;
+        } catch {
+          message = body.trim();
+        }
+        throw new Error(message || `Chat request failed (HTTP ${res.status}). Try another model or provider.`);
+      }
+      if (!res.body) throw new Error("The chat service returned no response body.");
 
       const reader = res.body.getReader();
       const dec    = new TextDecoder();
       let raw  = "";
       let done = false;
+      let eventDone = false;
+      let buffer = "";
 
-      while (!done) {
+      const processLine = (line: string) => {
+        if (!line.startsWith("data:")) return;
+        const data = line.slice(5).trim();
+        if (!data || data === "[DONE]") return;
+        const event = JSON.parse(data) as { content?: unknown; error?: unknown; done?: unknown };
+        if (typeof event.error === "string" && event.error.trim()) throw new Error(event.error);
+        if (typeof event.content === "string" && event.content) {
+          if (!gotFirst.current) {
+            gotFirst.current = true;
+            const ms = Date.now() - startRef.current;
+            setState(s => ({ ...s, firstTokenMs: ms }));
+          }
+          raw += event.content;
+          setState(s => ({ ...s, text: raw }));
+        }
+        if (event.done === true) eventDone = true;
+      };
+
+      while (!done && !eventDone) {
         const { value, done: d } = await reader.read();
         done = d;
-        if (!value) continue;
-        const chunk = dec.decode(value, { stream: true });
-        for (const line of chunk.split("\n")) {
-          if (!line.startsWith("data: ")) continue;
-          try {
-            const ev = JSON.parse(line.slice(6).trim());
-            if (ev.done) { done = true; break; }
-            if (ev.error) { setState(s => ({ ...s, done: true, error: String(ev.error) })); return; }
-            if (ev.content) {
-              if (!gotFirst.current) {
-                gotFirst.current = true;
-                const ms = Date.now() - startRef.current;
-                setState(s => ({ ...s, firstTokenMs: ms }));
-              }
-              raw += ev.content;
-              setState(s => ({ ...s, text: raw }));
-            }
-          } catch { /* ignore */ }
+        buffer += dec.decode(value, { stream: !d });
+        const lines = buffer.split(/\r?\n/);
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.startsWith("data:")) continue;
+          processLine(line);
+          if (eventDone) break;
         }
       }
+
+      if (!eventDone && buffer.trim()) processLine(buffer);
+      if (!raw.trim()) throw new Error("The selected provider returned an empty reply. Choose another model or try again.");
       setState(s => ({ ...s, done: true, totalMs: Date.now() - startRef.current }));
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") {
@@ -212,7 +237,7 @@ function ArenaCol({ model, state, onStop }: {
 export default function ArenaPage() {
   const [input, setInput]           = useState("");
   const [firedPrompt, setFiredPrompt] = useState("");
-  const [active, setActive]         = useState<string[]>(["aetheris", "vesper", "zethon"]);
+  const [active, setActive]         = useState<string[]>(["zethon", "lumyra", "sylvax", "hexcore"]);
   const [showPicker, setShowPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -287,7 +312,7 @@ export default function ArenaPage() {
           </div>
           <div>
             <h1 className="text-sm font-bold text-white tracking-wide">Model Arena</h1>
-            <p className="text-[10px] text-white/25">Race all models on the same prompt simultaneously</p>
+            <p className="text-[10px] text-white/25">Race all models on one prompt · 768-token response cap</p>
           </div>
         </div>
 
@@ -414,3 +439,4 @@ export default function ArenaPage() {
     </div>
   );
 }
+

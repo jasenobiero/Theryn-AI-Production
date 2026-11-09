@@ -7,6 +7,7 @@ import {
   getOpenAIClientForRequest,
   getOpenRouterClientForRequest,
 } from "../../lib/provider-clients";
+import { sendChatEmptyResponse, sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
 
 const router: IRouter = Router();
 
@@ -276,32 +277,47 @@ router.post("/chat", clerkRequireAuth, async (req, res) => {
     messages: Message[];
     provider?: Provider;
     model?: string;
+    maxTokens?: number;
   } = req.body;
+  const requestedMaxTokens = req.body?.maxTokens;
 
   if (!Array.isArray(messages)) {
     res.status(400).json({ error: "messages array required" });
     return;
   }
+  if (provider !== "openai" && provider !== "anthropic" && provider !== "openrouter") {
+    res.status(400).json({ error: "provider must be openai, anthropic, or openrouter" });
+    return;
+  }
+  if (typeof model === "string" && model.length > 200) {
+    res.status(400).json({ error: "Model ID must be 200 characters or fewer" });
+    return;
+  }
 
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
+  // Arena supplies a small cap so low-balance OpenRouter accounts can still
+  // compare models. Other Studio callers retain their larger existing limits.
+  const maxTokens = typeof requestedMaxTokens === "number" && Number.isFinite(requestedMaxTokens)
+    ? Math.max(128, Math.min(4096, Math.floor(requestedMaxTokens)))
+    : undefined;
 
   const userMessages = messages.filter(m => m.role !== "system");
   const history: Message[] = [{ role: "system", content: SYSTEM_PROMPT }, ...userMessages];
+  let fullResponse = "";
+  const providerName = provider === "openai" ? "OpenAI" : provider === "anthropic" ? "Anthropic" : "OpenRouter";
 
   try {
     if (provider === "anthropic") {
       const client = await getAnthropicClientForRequest(req);
       const stream = client.messages.stream({
         model: model ?? "claude-sonnet-4-6",
-        max_tokens: 32000,
+        max_tokens: maxTokens ?? 32000,
         system: SYSTEM_PROMPT,
         messages: userMessages.map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
       });
       for await (const event of stream) {
         if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-          res.write(`data: ${JSON.stringify({ content: event.delta.text })}\n\n`);
+          fullResponse += event.delta.text;
+          writeChatEvent(res, { content: event.delta.text });
         }
       }
     } else if (provider === "openrouter") {
@@ -309,33 +325,45 @@ router.post("/chat", clerkRequireAuth, async (req, res) => {
       const normalizedModel = model && model.trim() ? model.trim() : "x-ai/grok-4.3";
       const stream = await client.chat.completions.create({
         model: normalizedModel,
-        max_tokens: 16000,
+        max_tokens: maxTokens ?? 16000,
         messages: history,
         stream: true,
       });
       for await (const chunk of stream) {
         const delta = chunk.choices[0]?.delta?.content;
-        if (delta) res.write(`data: ${JSON.stringify({ content: delta })}\n\n`);
+        if (delta) {
+          fullResponse += delta;
+          writeChatEvent(res, { content: delta });
+        }
       }
     } else {
       // OpenAI (Theryn)
       const client = await getOpenAIClientForRequest(req);
       const stream = await client.chat.completions.create({
         model: "gpt-5.2",
-        max_completion_tokens: 32000,
+        max_completion_tokens: maxTokens ?? 32000,
         messages: history,
         stream: true,
       });
       for await (const chunk of stream) {
         const delta = chunk.choices[0]?.delta?.content;
-        if (delta) res.write(`data: ${JSON.stringify({ content: delta })}\n\n`);
+        if (delta) {
+          fullResponse += delta;
+          writeChatEvent(res, { content: delta });
+        }
       }
     }
   } catch (err) {
-    res.write(`data: ${JSON.stringify({ error: String(err) })}\n\n`);
+    sendChatProviderError(res, providerName, err);
+    return;
   }
 
-  res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+  if (!fullResponse.trim()) {
+    sendChatEmptyResponse(res, providerName);
+    return;
+  }
+
+  writeChatEvent(res, { done: true });
   res.end();
 });
 
@@ -413,3 +441,4 @@ router.delete("/projects/:id", clerkRequireAuth, async (req: Request, res: Respo
 });
 
 export default router;
+
