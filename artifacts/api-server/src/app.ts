@@ -42,9 +42,28 @@ app.use(
 
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 
-const allowedOrigins = new Set(
-  (process.env.CORS_ALLOWED_ORIGINS ?? "").split(",").map(origin => origin.trim()).filter(Boolean),
-);
+function normalizeOrigin(value: string): string | null {
+  try {
+    const parsed = new URL(value);
+    if ((parsed.protocol !== "http:" && parsed.protocol !== "https:") || parsed.origin === "null") return null;
+    return parsed.origin;
+  } catch {
+    return null;
+  }
+}
+
+const configuredOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? "")
+  .split(",")
+  .map(origin => normalizeOrigin(origin.trim()))
+  .filter((origin): origin is string => Boolean(origin));
+const appBaseOrigin = process.env.APP_BASE_URL ? normalizeOrigin(process.env.APP_BASE_URL) : null;
+const allowedOrigins = new Set(configuredOrigins);
+if (appBaseOrigin) allowedOrigins.add(appBaseOrigin);
+
+const clerkAuthorizedParties = new Set(allowedOrigins);
+if (process.env.NODE_ENV === "production") {
+  clerkAuthorizedParties.add("https://theryn.dev");
+}
 app.use(cors({
   credentials: true,
   origin(origin, callback) {
@@ -56,8 +75,25 @@ app.post("/api/webhooks/clerk", apiRateLimit, express.raw({ type: "application/j
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// The browser calls this API through a same-origin Worker. Browsers commonly
+// omit Origin on same-origin GET requests, so restore it from the trusted
+// forwarded host before Clerk checks the token's authorized party.
+app.use((req, _res, next) => {
+  if (!req.headers.origin) {
+    const host = getClerkProxyHost(req);
+    const rawProtocol = req.headers["x-forwarded-proto"];
+    const protocol = (Array.isArray(rawProtocol) ? rawProtocol[0] : rawProtocol)?.split(",")[0]?.trim() || "https";
+    if (host) {
+      const forwardedOrigin = `${protocol}://${host}`;
+      if (clerkAuthorizedParties.has(forwardedOrigin)) req.headers.origin = forwardedOrigin;
+    }
+  }
+  next();
+});
+
 app.use(
   clerkMiddleware((req) => ({
+    authorizedParties: [...clerkAuthorizedParties],
     publishableKey: publishableKeyFromHost(
       getClerkProxyHost(req) ?? "",
       process.env.NODE_ENV === "production" ? undefined : process.env.CLERK_PUBLISHABLE_KEY,

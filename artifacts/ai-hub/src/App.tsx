@@ -277,12 +277,38 @@ function ClerkApiAuthBridge({ children }: { children: React.ReactNode }) {
       if (init?.headers) {
         new Headers(init.headers).forEach((value, key) => headers.set(key, value));
       }
+      let sessionToken: string | null = null;
       if (!headers.has("authorization")) {
-        const token = await getToken();
-        if (token) headers.set("Authorization", `Bearer ${token}`);
+        sessionToken = await getToken();
+        if (sessionToken) headers.set("Authorization", `Bearer ${sessionToken}`);
       }
 
-      return originalFetch(input, { ...init, headers });
+      let retryInput: RequestInfo | URL = input;
+      if (input instanceof Request) {
+        try {
+          retryInput = input.clone();
+        } catch {
+          retryInput = input;
+        }
+      }
+
+      const response = await originalFetch(input, { ...init, headers });
+      if (
+        response.status !== 401 ||
+        !sessionToken ||
+        (typeof ReadableStream !== "undefined" && init?.body instanceof ReadableStream)
+      ) {
+        return response;
+      }
+
+      try {
+        const freshToken = await getToken({ skipCache: true });
+        if (!freshToken || freshToken === sessionToken) return response;
+        headers.set("Authorization", `Bearer ${freshToken}`);
+        return await originalFetch(retryInput, { ...init, headers });
+      } catch {
+        return response;
+      }
     };
     window.fetch = authenticatedFetch;
 
