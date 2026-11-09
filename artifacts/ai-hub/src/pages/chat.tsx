@@ -28,6 +28,7 @@ const PROVIDER_NAMES: Record<Provider, string> = {
 };
 
 const OPENROUTER_MODELS = [
+  { value: "openrouter/free",               label: "Free Auto (rate limited)" },
   { value: "x-ai/grok-4.3",                  label: "Zethon-4" },
   { value: "google/gemini-2.5-pro",           label: "Lumyra Pro" },
   { value: "meta-llama/llama-3.3-70b-instruct", label: "Sylvax-70" },
@@ -44,7 +45,7 @@ export default function ChatPage() {
     initProvider === "anthropic" || initProvider === "openrouter" ? initProvider : "openai"
   );
   const [conversationId, setConversationId] = useState<number | null>(null);
-  const [selectedModel, setSelectedModel] = useState("x-ai/grok-4.3");
+  const [selectedModel, setSelectedModel] = useState("openrouter/free");
   const [showModelPicker, setShowModelPicker] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -511,3 +512,4 @@ function isImageGenerationPrompt(content: string): boolean {
 function isVideoGenerationPrompt(content: string): boolean {
   return /\b(?:generate|create|make|render|produce)\b[\s\S]{0,80}\b(?:video|film|clip|animation)\b/i.test(content);
 }
+

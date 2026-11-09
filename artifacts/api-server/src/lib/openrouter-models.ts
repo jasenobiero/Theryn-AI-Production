@@ -1,4 +1,5 @@
 export const OPENROUTER_MODELS = [
+  "openrouter/free",
   "x-ai/grok-4.3",
   "google/gemini-2.5-pro",
   "meta-llama/llama-3.3-70b-instruct",
@@ -33,3 +34,4 @@ export function isVisionCapableOpenRouterModel(model?: string | null): boolean {
     "anthropic/claude-sonnet-4-6",
   ]).has(normalized);
 }
+
