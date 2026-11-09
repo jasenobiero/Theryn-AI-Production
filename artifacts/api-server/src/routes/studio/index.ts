@@ -8,8 +8,14 @@ import {
   getOpenRouterClientForRequest,
 } from "../../lib/provider-clients";
 import { sendChatEmptyResponse, sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
+import { requireFeatureAccess } from "../../subscriptions/entitlements";
+import { requireCloudflareAi } from "../../middlewares/requireCloudflareAi";
 
 const router: IRouter = Router();
+
+router.get("/system-prompt", clerkRequireAuth, requireFeatureAccess("studio"), (_req, res) => {
+  res.json({ systemPrompt: SYSTEM_PROMPT });
+});
 
 // ─────────────────────────────────────────────────────────────
 // THERYN STUDIO — ELITE SYSTEM PROMPT
@@ -272,7 +278,7 @@ Only respond in plain text (no artifact) for purely conversational messages like
 type Provider = "openai" | "anthropic" | "openrouter";
 type Message = { role: "user" | "assistant" | "system"; content: string };
 
-router.post("/chat", clerkRequireAuth, async (req, res) => {
+router.post("/chat", clerkRequireAuth, requireCloudflareAi, requireFeatureAccess("studio"), async (req, res) => {
   const { messages, provider = "openai", model }: {
     messages: Message[];
     provider?: Provider;

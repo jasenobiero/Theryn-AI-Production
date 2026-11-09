@@ -12,11 +12,13 @@ import shieldRouter from "./shield/index";
 import subscriptionRouter from "./subscription";
 import founderRouter from "./founders";
 import videoRouter from "./video";
+import aiRouter from "./ai";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
+router.use(aiRouter);
 router.use("/openai", openaiRouter);
 router.use(videoRouter);
 router.use("/anthropic", anthropicRouter);

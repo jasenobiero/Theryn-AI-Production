@@ -60,7 +60,7 @@ app.use(
   clerkMiddleware((req) => ({
     publishableKey: publishableKeyFromHost(
       getClerkProxyHost(req) ?? "",
-      process.env.CLERK_PUBLISHABLE_KEY,
+      process.env.NODE_ENV === "production" ? undefined : process.env.CLERK_PUBLISHABLE_KEY,
     ),
   })),
 );

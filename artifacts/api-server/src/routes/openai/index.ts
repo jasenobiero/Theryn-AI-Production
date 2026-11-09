@@ -8,6 +8,7 @@ import {
 import { and, eq, asc, desc } from "drizzle-orm";
 import { getOpenAIClientForRequest, getProviderKey } from "../../lib/provider-clients";
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
+import { requireCloudflareAi } from "../../middlewares/requireCloudflareAi";
 import { requireFeatureAccess } from "../../subscriptions/entitlements";
 import { finalizeGeneration, reserveDailyGeneration, recordUsage } from "../../subscriptions/usage";
 import { sendChatEmptyResponse, sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
@@ -88,7 +89,7 @@ router.get("/conversations/:id/messages", async (req, res) => {
   res.json(msgs);
 });
 
-router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async (req, res) => {
+router.post("/conversations/:id/messages", requireCloudflareAi, requireFeatureAccess("aiChat"), async (req, res) => {
   const id = Number(req.params.id);
   const [conv] = await db.select({ id: conversations.id }).from(conversations).where(and(
     eq(conversations.id, id),

@@ -47,7 +47,9 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const configuredClerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkPubKey = import.meta.env.PROD
-  ? publishableKeyFromHost(window.location.hostname, configuredClerkPubKey)
+  // Derive the production key from this verified custom domain. Clerk's helper
+  // intentionally returns a pk_test fallback unchanged, even in production.
+  ? publishableKeyFromHost(window.location.hostname)
   : configuredClerkPubKey;
 if (!clerkPubKey) {
   throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Add your Clerk publishable key to artifacts/ai-hub/.env.local, then restart Vite.");

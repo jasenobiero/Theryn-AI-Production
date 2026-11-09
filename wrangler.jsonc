@@ -5,6 +5,9 @@
   "vars": {
     "API_ORIGIN": "https://theryn-ai-production.onrender.com"
   },
+  "ai": {
+    "binding": "AI"
+  },
   "assets": {
     "directory": "./artifacts/ai-hub/dist/public",
     "binding": "ASSETS",

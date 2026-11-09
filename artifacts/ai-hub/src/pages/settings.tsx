@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   User, Key, Settings2, Bell, Shield, LogOut,
   Eye, EyeOff, Check, Pencil, ChevronRight,
-  Cpu, Mic, Bot, Zap, AlertTriangle, Copy,
+  Mic, AlertTriangle, Copy,
 } from "lucide-react";
 import { TherynIcon } from "@/components/nexus-icon";
 
@@ -24,7 +24,7 @@ function readJson(response: Response) {
 
 const SECTIONS: { id: Section; icon: typeof User; label: string; desc: string }[] = [
   { id: "profile",     icon: User,     label: "Profile",      desc: "Your name, bio, and photo" },
-  { id: "api-keys",    icon: Key,      label: "API Keys",     desc: "Connect your own AI keys" },
+  { id: "api-keys",    icon: Key,      label: "API Keys",     desc: "Manage optional service keys" },
   { id: "preferences", icon: Settings2, label: "Preferences",  desc: "Defaults and behavior" },
   { id: "security",    icon: Shield,   label: "Security",     desc: "Account and session info" },
 ];
@@ -42,11 +42,8 @@ interface Settings {
   featureUpdatesEnabled: boolean;
 }
 
-const API_KEY_FIELDS: { key: keyof Settings; label: string; placeholder: string; hint: string; icon: typeof Cpu; color: string }[] = [
+const API_KEY_FIELDS: { key: keyof Settings; label: string; placeholder: string; hint: string; icon: typeof Mic; color: string }[] = [
   { key: "elevenlabsApiKey",   label: "ElevenLabs API Key",   placeholder: "el_xxxxxxxxxxxxxxxx",   hint: "Used for Voice TTS synthesis",       icon: Mic, color: "text-orange-400" },
-  { key: "openaiApiKey",       label: "Theryn API Key",       placeholder: "sk-xxxxxxxxxxxxxxxx",   hint: "Override for Theryn engine",         icon: Cpu, color: "text-violet-400" },
-  { key: "anthropicApiKey",    label: "Vesper API Key",       placeholder: "sk-ant-xxxxxxxx",       hint: "Override for Vesper engine",         icon: Zap, color: "text-cyan-400" },
-  { key: "openrouterApiKey",   label: "Prism API Key",        placeholder: "sk-or-v1-xxxxxxxx",     hint: "Override for Prism multi-model hub", icon: Bot, color: "text-emerald-400" },
 ];
 
 const DEFAULT_PROVIDERS = [
@@ -272,12 +269,12 @@ export default function SettingsPage() {
                 {/* ── API KEYS ── */}
                 {section === "api-keys" && (
                   <div className="space-y-5">
-                    <SectionHeader icon={Key} title="API Keys" desc="Connect your own keys for each AI engine. Keys are masked after saving." />
+                    <SectionHeader icon={Key} title="API Keys" desc="Chat and Studio run on Cloudflare Workers AI. No AI provider key is needed." />
 
                      <div className="card p-4 flex items-start gap-3 border-amber-500/15 bg-amber-500/[0.035]">
                       <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-muted-foreground/80 leading-relaxed">
-                         Keys are sent over the authenticated connection and masked in this settings view after saving. Your own saved keys take precedence over platform defaults.
+                         The Theryn and Vesper chat engines and Studio do not use personal OpenAI, Anthropic, or OpenRouter keys. Add an ElevenLabs key only if you want to use its voice synthesis service.
                       </p>
                     </div>
 
