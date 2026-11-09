@@ -10,7 +10,7 @@ import { getOpenAIClientForRequest, getProviderKey } from "../../lib/provider-cl
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
 import { requireFeatureAccess } from "../../subscriptions/entitlements";
 import { finalizeGeneration, reserveDailyGeneration, recordUsage } from "../../subscriptions/usage";
-import { sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
+import { sendChatEmptyResponse, sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
 
 const router: IRouter = Router();
 router.use(clerkRequireAuth);
@@ -124,6 +124,7 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     : storedMessages.filter(message => message.id !== replacedAssistantId);
 
   let fullResponse = "";
+  let sentResponseLength = 0;
 
   // Build multimodal content for the last user message if images were pasted
   type OAIContent =
@@ -156,11 +157,20 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
       const delta = chunk.choices[0]?.delta?.content;
       if (delta) {
         fullResponse += delta;
-        writeChatEvent(res, { content: delta });
+        if (fullResponse.trim()) {
+          const unsentContent = fullResponse.slice(sentResponseLength);
+          sentResponseLength = fullResponse.length;
+          writeChatEvent(res, { content: unsentContent });
+        }
       }
     }
   } catch (error) {
     sendChatProviderError(res, "OpenAI", error);
+    return;
+  }
+
+  if (!fullResponse.trim()) {
+    sendChatEmptyResponse(res, "OpenAI");
     return;
   }
 
@@ -207,3 +217,4 @@ router.post("/generate-image", requireFeatureAccess("imageGen"), async (req, res
 });
 
 export default router;
+

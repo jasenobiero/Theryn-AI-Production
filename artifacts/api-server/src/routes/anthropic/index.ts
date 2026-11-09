@@ -6,7 +6,7 @@ import { getAnthropicClientForRequest } from "../../lib/provider-clients";
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
 import { requireFeatureAccess } from "../../subscriptions/entitlements";
 import { recordUsage } from "../../subscriptions/usage";
-import { sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
+import { sendChatEmptyResponse, sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
 
 const router: IRouter = Router();
 router.use(clerkRequireAuth);
@@ -119,6 +119,7 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     : storedMessages.filter(message => message.id !== replacedAssistantId);
 
   let fullResponse = "";
+  let sentResponseLength = 0;
 
   type AnthropicBlock =
     | { type: "text"; text: string }
@@ -158,11 +159,20 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     for await (const event of stream) {
       if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
         fullResponse += event.delta.text;
-        writeChatEvent(res, { content: event.delta.text });
+        if (fullResponse.trim()) {
+          const unsentContent = fullResponse.slice(sentResponseLength);
+          sentResponseLength = fullResponse.length;
+          writeChatEvent(res, { content: unsentContent });
+        }
       }
     }
   } catch (error) {
     sendChatProviderError(res, "Anthropic", error);
+    return;
+  }
+
+  if (!fullResponse.trim()) {
+    sendChatEmptyResponse(res, "Anthropic");
     return;
   }
 
@@ -179,3 +189,4 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
 });
 
 export default router;
+

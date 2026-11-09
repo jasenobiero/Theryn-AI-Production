@@ -74,3 +74,15 @@ export function sendChatProviderError(res: Response, provider: ChatProvider, err
 
   res.status(normalized.status).json({ error: normalized.message });
 }
+
+export function sendChatEmptyResponse(res: Response, provider: ChatProvider): void {
+  const message = `${provider} returned an empty reply. Try another model or provider, then retry.`;
+  if (res.writableEnded || res.destroyed) return;
+  if (res.headersSent) {
+    writeChatEvent(res, { error: message });
+    res.end();
+    return;
+  }
+  res.status(502).json({ error: message });
+}
+
