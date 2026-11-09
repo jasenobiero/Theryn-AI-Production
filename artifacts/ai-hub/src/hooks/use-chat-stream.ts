@@ -8,7 +8,7 @@ export interface StreamMessage {
 }
 
 interface UseChatStreamOptions {
-  onFinish?: () => void;
+  onFinish?: () => void | Promise<void>;
   onError?: (err: Error) => void;
   onConversationId?: (id: number) => void;
 }
@@ -146,7 +146,7 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
       }]);
       setMessages(prev => [...prev, { id: assistantMsgId, role: "assistant", content: "" }]);
       await streamIntoMessage(url, body, assistantMsgId);
-      onFinish?.();
+      await onFinish?.();
     } catch (err: unknown) {
       setMessages(prev => prev.filter(message => message.id !== assistantMsgId || message.content.length > 0));
       if (err instanceof Error && err.name === "AbortError") return;
@@ -171,7 +171,7 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
     try {
       setIsStreaming(true);
       await streamIntoMessage(url, body, assistantMsgId);
-      onFinish?.();
+      await onFinish?.();
     } catch (err: unknown) {
       setMessages(prev => prev.map(message =>
         message.id === assistantMsgId ? { ...message, content: previousContent } : message

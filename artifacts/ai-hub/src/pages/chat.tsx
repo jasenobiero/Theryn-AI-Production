@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { ChatInterface, type PastedImage } from "@/components/chat-interface";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import {
@@ -34,6 +35,7 @@ const OPENROUTER_MODELS = [
 ];
 
 export default function ChatPage() {
+  const queryClient = useQueryClient();
   const params = new URLSearchParams(window.location.search);
   const initProvider = params.get("provider") as Provider | null;
   const pendingMsg = params.get("msg");
@@ -66,10 +68,10 @@ export default function ChatPage() {
   const { data: openrouterHistory } = useGetOpenrouterConversation(conversationId ?? 0, { query: { queryKey: getGetOpenrouterConversationQueryKey(conversationId ?? 0), enabled: provider === "openrouter" && !!conversationId } });
 
   const { messages, isStreaming, sendMessage, regenerateLastMessage, stopStream, resetMessages, appendExchange } = useChatStream({
-    onFinish: () => {
-      if (provider === "openai")     refetchOpenai();
-      if (provider === "anthropic")  refetchAnthropic();
-      if (provider === "openrouter") refetchOpenrouter();
+    onFinish: async () => {
+      if (provider === "openai") await refetchOpenai();
+      if (provider === "anthropic") await refetchAnthropic();
+      if (provider === "openrouter") await refetchOpenrouter();
     },
     onError: error => toast({
       title: "Chat request failed",
@@ -180,10 +182,16 @@ export default function ChatPage() {
       body.images = images.map(i => ({ dataUrl: i.dataUrl, mimeType: i.mimeType }));
     }
 
-    sendMessage(url, body, content, images?.map(i => i.dataUrl));
+    await sendMessage(url, body, content, images?.map(i => i.dataUrl));
+    const historyKey = provider === "openai"
+      ? getGetOpenaiConversationQueryKey(cid)
+      : provider === "anthropic"
+        ? getGetAnthropicConversationQueryKey(cid)
+        : getGetOpenrouterConversationQueryKey(cid);
+    await queryClient.refetchQueries({ queryKey: historyKey, exact: true });
   };
 
-  const handleRegenerate = () => {
+  const handleRegenerate = async () => {
     if (!conversationId) return;
     const lastUserMessage = [...messages].reverse().find(message => message.role === "user");
     if (!lastUserMessage) {
@@ -199,7 +207,13 @@ export default function ChatPage() {
       mimeType: dataUrl.match(/^data:([^;]+);/)?.[1] ?? "image/png",
     }));
     }
-    regenerateLastMessage(`/api/${provider}/conversations/${conversationId}/messages`, body);
+    await regenerateLastMessage(`/api/${provider}/conversations/${conversationId}/messages`, body);
+    const historyKey = provider === "openai"
+      ? getGetOpenaiConversationQueryKey(conversationId)
+      : provider === "anthropic"
+        ? getGetAnthropicConversationQueryKey(conversationId)
+        : getGetOpenrouterConversationQueryKey(conversationId);
+    await queryClient.refetchQueries({ queryKey: historyKey, exact: true });
   };
 
   const handleRenameConversation = async (id: number) => {
