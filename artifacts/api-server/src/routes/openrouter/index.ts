@@ -7,6 +7,7 @@ import { OPENROUTER_MODELS, isVisionCapableOpenRouterModel, normalizeOpenRouterM
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
 import { requireFeatureAccess } from "../../subscriptions/entitlements";
 import { recordUsage } from "../../subscriptions/usage";
+import { sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
 
 const router: IRouter = Router();
 router.use(clerkRequireAuth);
@@ -131,10 +132,6 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     ? storedMessages
     : storedMessages.filter(message => message.id !== replacedAssistantId);
 
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
   let fullResponse = "";
 
   type OAIContent =
@@ -156,20 +153,25 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     return { role: "system" as const, content: m.content };
   });
 
-  const client = await getOpenRouterClientForRequest(req);
-  const stream = await client.chat.completions.create({
-    model,
-    max_tokens: 8192,
-    messages: apiMessages,
-    stream: true,
-  });
+  try {
+    const client = await getOpenRouterClientForRequest(req);
+    const stream = await client.chat.completions.create({
+      model,
+      max_tokens: 2048,
+      messages: apiMessages,
+      stream: true,
+    });
 
-  for await (const chunk of stream) {
-    const delta = chunk.choices[0]?.delta?.content;
-    if (delta) {
-      fullResponse += delta;
-      res.write(`data: ${JSON.stringify({ content: delta })}\n\n`);
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content;
+      if (delta) {
+        fullResponse += delta;
+        writeChatEvent(res, { content: delta });
+      }
     }
+  } catch (error) {
+    sendChatProviderError(res, "OpenRouter", error);
+    return;
   }
 
   await recordUsage(req, "aiChat", { provider: "openrouter", operation: "chat" });
@@ -185,7 +187,7 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
       eq(messages.conversationId, id),
     ));
   }
-  res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+  writeChatEvent(res, { done: true });
   res.end();
 });
 

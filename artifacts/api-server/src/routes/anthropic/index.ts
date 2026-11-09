@@ -6,6 +6,7 @@ import { getAnthropicClientForRequest } from "../../lib/provider-clients";
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
 import { requireFeatureAccess } from "../../subscriptions/entitlements";
 import { recordUsage } from "../../subscriptions/usage";
+import { sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
 
 const router: IRouter = Router();
 router.use(clerkRequireAuth);
@@ -117,10 +118,6 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     ? storedMessages
     : storedMessages.filter(message => message.id !== replacedAssistantId);
 
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
   let fullResponse = "";
 
   type AnthropicBlock =
@@ -150,18 +147,23 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     return { role: m.role as "user" | "assistant", content };
   });
 
-  const client = await getAnthropicClientForRequest(req);
-  const stream = client.messages.stream({
-    model: "claude-sonnet-4-6",
-    max_tokens: 8192,
-    messages: apiMessages,
-  });
+  try {
+    const client = await getAnthropicClientForRequest(req);
+    const stream = client.messages.stream({
+      model: "claude-sonnet-4-6",
+      max_tokens: 4096,
+      messages: apiMessages,
+    });
 
-  for await (const event of stream) {
-    if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-      fullResponse += event.delta.text;
-      res.write(`data: ${JSON.stringify({ content: event.delta.text })}\n\n`);
+    for await (const event of stream) {
+      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+        fullResponse += event.delta.text;
+        writeChatEvent(res, { content: event.delta.text });
+      }
     }
+  } catch (error) {
+    sendChatProviderError(res, "Anthropic", error);
+    return;
   }
 
   await recordUsage(req, "aiChat", { provider: "anthropic", operation: "chat" });
@@ -172,7 +174,7 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
       eq(messages.conversationId, id),
     ));
   }
-  res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+  writeChatEvent(res, { done: true });
   res.end();
 });
 

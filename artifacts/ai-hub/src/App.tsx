@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -247,13 +247,19 @@ function ClerkQueryClientCacheInvalidator() {
   return null;
 }
 
-function ClerkApiAuthBridge() {
-  const { getToken } = useAuth();
+function ClerkApiAuthBridge({ children }: { children: React.ReactNode }) {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    const originalFetch = window.fetch.bind(window);
+    if (!isLoaded || !isSignedIn) return;
 
-    window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    let active = true;
+    const previousFetch = window.fetch;
+    const originalFetch = previousFetch.bind(window);
+
+    const authenticatedFetch: typeof window.fetch = async (input, init) => {
       const requestUrl = typeof input === "string"
         ? new URL(input, window.location.origin)
         : input instanceof URL
@@ -275,37 +281,70 @@ function ClerkApiAuthBridge() {
 
       return originalFetch(input, { ...init, headers });
     };
+    window.fetch = authenticatedFetch;
+
+    setStatus("loading");
+    void getToken().then(token => {
+      if (active) setStatus(token ? "ready" : "error");
+    }).catch(() => {
+      if (active) setStatus("error");
+    });
 
     return () => {
-      window.fetch = originalFetch;
+      active = false;
+      if (window.fetch === authenticatedFetch) window.fetch = previousFetch;
     };
-  }, [getToken]);
+  }, [attempt, getToken, isLoaded, isSignedIn]);
 
-  return null;
+  if (status === "ready") return <>{children}</>;
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "hsl(0 0% 4%)" }} role="status" aria-live="polite">
+      <div className="flex flex-col items-center gap-4">
+        <TherynIcon size={48} className="drop-shadow-[0_0_18px_rgba(255,255,255,0.22)] animate-pulse" />
+        {status === "error" ? (
+          <>
+            <p className="text-white/50 text-xs">Your sign-in session could not be verified.</p>
+            <button
+              type="button"
+              className="rounded-lg border border-white/10 px-4 py-2 text-xs text-white/70 hover:bg-white/5"
+              onClick={() => setAttempt(value => value + 1)}
+            >
+              Retry
+            </button>
+          </>
+        ) : (
+          <p className="text-white/30 text-xs font-mono tracking-[0.2em] uppercase">Securing your workspace…</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function AuthedRouter() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/chat" component={ChatPage} />
-        <Route path="/arena" component={ArenaPage} />
-        <Route path="/prompts" component={PromptsPage} />
-        <Route path="/voice" component={VoicePage} />
-        <Route path="/agents" component={AgentsPage} />
-        <Route path="/agents/:id/chat" component={AgentChatPage} />
-        <Route path="/studio" component={StudioPage} />
-        <Route path="/images" component={ImagesPage} />
-        <Route path="/preview" component={AiPreviewPage} />
-        <Route path="/shield" component={ShieldPage} />
-        <Route path="/bot-hub" component={BotHubPage} />
-        <Route path="/downloads" component={DownloadsPage} />
-        <Route path="/settings" component={SettingsPage} />
-        <Route path="/subscription" component={SubscriptionPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <ClerkApiAuthBridge>
+      <Layout>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/chat" component={ChatPage} />
+          <Route path="/arena" component={ArenaPage} />
+          <Route path="/prompts" component={PromptsPage} />
+          <Route path="/voice" component={VoicePage} />
+          <Route path="/agents" component={AgentsPage} />
+          <Route path="/agents/:id/chat" component={AgentChatPage} />
+          <Route path="/studio" component={StudioPage} />
+          <Route path="/images" component={ImagesPage} />
+          <Route path="/preview" component={AiPreviewPage} />
+          <Route path="/shield" component={ShieldPage} />
+          <Route path="/bot-hub" component={BotHubPage} />
+          <Route path="/downloads" component={DownloadsPage} />
+          <Route path="/settings" component={SettingsPage} />
+          <Route path="/subscription" component={SubscriptionPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Layout>
+    </ClerkApiAuthBridge>
   );
 }
 
@@ -365,7 +404,6 @@ function ClerkProviderWithRoutes() {
     >
       <QueryClientProvider client={queryClient}>
         <ClerkQueryClientCacheInvalidator />
-        <ClerkApiAuthBridge />
         <TooltipProvider>
           <AppRoutes />
           <PWAInstallPrompt />

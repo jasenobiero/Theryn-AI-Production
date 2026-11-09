@@ -10,6 +10,7 @@ import { getOpenAIClientForRequest, getProviderKey } from "../../lib/provider-cl
 import { clerkRequireAuth } from "../../middlewares/clerkRequireAuth";
 import { requireFeatureAccess } from "../../subscriptions/entitlements";
 import { finalizeGeneration, reserveDailyGeneration, recordUsage } from "../../subscriptions/usage";
+import { sendChatProviderError, writeChatEvent } from "../../lib/chat-provider-errors";
 
 const router: IRouter = Router();
 router.use(clerkRequireAuth);
@@ -122,10 +123,6 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     ? storedMessages
     : storedMessages.filter(message => message.id !== replacedAssistantId);
 
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
   let fullResponse = "";
 
   // Build multimodal content for the last user message if images were pasted
@@ -146,20 +143,25 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
     return { role: "system" as const, content: m.content };
   });
 
-  const client = await getOpenAIClientForRequest(req);
-  const stream = await client.chat.completions.create({
-    model: "gpt-5.2",
-    max_completion_tokens: 8192,
-    messages: apiMessages,
-    stream: true,
-  });
+  try {
+    const client = await getOpenAIClientForRequest(req);
+    const stream = await client.chat.completions.create({
+      model: "gpt-5.2",
+      max_completion_tokens: 4096,
+      messages: apiMessages,
+      stream: true,
+    });
 
-  for await (const chunk of stream) {
-    const delta = chunk.choices[0]?.delta?.content;
-    if (delta) {
-      fullResponse += delta;
-      res.write(`data: ${JSON.stringify({ content: delta })}\n\n`);
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content;
+      if (delta) {
+        fullResponse += delta;
+        writeChatEvent(res, { content: delta });
+      }
     }
+  } catch (error) {
+    sendChatProviderError(res, "OpenAI", error);
+    return;
   }
 
   await recordUsage(req, "aiChat", { provider: "openai", operation: "chat" });
@@ -170,7 +172,7 @@ router.post("/conversations/:id/messages", requireFeatureAccess("aiChat"), async
       eq(messages.conversationId, id),
     ));
   }
-  res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+  writeChatEvent(res, { done: true });
   res.end();
 });
 

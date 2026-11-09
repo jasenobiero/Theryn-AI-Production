@@ -13,6 +13,42 @@ interface UseChatStreamOptions {
   onConversationId?: (id: number) => void;
 }
 
+function fallbackErrorMessage(status: number): string {
+  if (status === 401) return "Your sign-in session expired. Refresh the page and sign in again.";
+  if (status === 402) return "The selected AI provider does not have enough credits. Add provider credits or choose a provider with an available balance.";
+  if (status === 429) return "The selected AI provider is rate-limiting requests. Wait a moment or choose another provider.";
+  if (status >= 500) return "The chat service is temporarily unavailable. Please try again.";
+  return `The chat request failed (HTTP ${status}). Please try again or check the provider settings.`;
+}
+
+async function readErrorMessage(response: Response): Promise<string> {
+  let body = "";
+  try {
+    body = await response.text();
+  } catch {
+    return fallbackErrorMessage(response.status);
+  }
+
+  if (body.trim()) {
+    try {
+      const payload: unknown = JSON.parse(body);
+      if (payload && typeof payload === "object") {
+        const record = payload as Record<string, unknown>;
+        if (typeof record.error === "string" && record.error.trim()) return record.error;
+        if (typeof record.message === "string" && record.message.trim()) return record.message;
+        if (record.error && typeof record.error === "object") {
+          const error = record.error as Record<string, unknown>;
+          if (typeof error.message === "string" && error.message.trim()) return error.message;
+        }
+      }
+    } catch {
+      // The server may return HTML or plain text; use a safe status message below.
+    }
+  }
+
+  return fallbackErrorMessage(response.status);
+}
+
 export function useChatStream({ onFinish, onError, onConversationId }: UseChatStreamOptions = {}) {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -32,7 +68,7 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
       credentials: "include",
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    if (!res.ok) throw new Error(await readErrorMessage(res));
     if (!res.body) throw new Error("No response body");
 
     const reader = res.body.getReader();
@@ -43,22 +79,29 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
       if (!line.startsWith("data: ")) return false;
       const dataStr = line.slice(6).trim();
       if (!dataStr || dataStr === "[DONE]") return false;
+      let data: Record<string, unknown>;
       try {
         const parsed: unknown = JSON.parse(dataStr);
         if (!parsed || typeof parsed !== "object") return false;
-        const data = parsed as Record<string, unknown>;
-        if (typeof data.conversationId === "number") onConversationId?.(data.conversationId);
-        if (data.done === true) return true;
-        const content = data.content;
-        if (typeof content === "string" && content) {
-          setMessages(prev => prev.map(msg =>
-            msg.id === assistantMsgId
-              ? { ...msg, content: msg.content + content }
-              : msg
-          ));
-        }
+        data = parsed as Record<string, unknown>;
       } catch {
         // Ignore malformed SSE events.
+        return false;
+      }
+
+      if (typeof data.error === "string" && data.error.trim()) {
+        throw new Error(data.error);
+      }
+
+      if (typeof data.conversationId === "number") onConversationId?.(data.conversationId);
+      if (data.done === true) return true;
+      const content = data.content;
+      if (typeof content === "string" && content) {
+        setMessages(prev => prev.map(msg =>
+          msg.id === assistantMsgId
+            ? { ...msg, content: msg.content + content }
+            : msg
+        ));
       }
       return false;
     };
@@ -91,6 +134,7 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
     userImages?: string[],
   ) => {
     if (!url) return;
+    const assistantMsgId = (Date.now() + 1).toString();
 
     try {
       setIsStreaming(true);
@@ -100,11 +144,11 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
         content: userContent,
         images: userImages,
       }]);
-      const assistantMsgId = (Date.now() + 1).toString();
       setMessages(prev => [...prev, { id: assistantMsgId, role: "assistant", content: "" }]);
       await streamIntoMessage(url, body, assistantMsgId);
       onFinish?.();
     } catch (err: unknown) {
+      setMessages(prev => prev.filter(message => message.id !== assistantMsgId || message.content.length > 0));
       if (err instanceof Error && err.name === "AbortError") return;
       console.error("Stream error:", err);
       onError?.(err instanceof Error ? err : new Error(String(err)));
