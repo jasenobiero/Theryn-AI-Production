@@ -20,10 +20,10 @@ interface ModelDef {
 const MODELS: ModelDef[] = [
   { id: "aetheris", provider: "openai",     label: "Theryn",   dot: "bg-green-400",   border: "border-green-500/25 bg-green-500/[0.03]",   textColor: "text-green-400" },
   { id: "vesper",   provider: "anthropic",  label: "Vesper",     dot: "bg-orange-400",  border: "border-orange-500/25 bg-orange-500/[0.03]",  textColor: "text-orange-400" },
-  { id: "zethon",   provider: "openrouter", orModel: "x-ai/grok-4.3",                   label: "Zethon-4",   dot: "bg-purple-400",  border: "border-purple-500/25 bg-purple-500/[0.03]",  textColor: "text-purple-400" },
-  { id: "lumyra",   provider: "openrouter", orModel: "google/gemini-2.5-pro",            label: "Lumyra Pro", dot: "bg-blue-400",    border: "border-blue-500/25 bg-blue-500/[0.03]",      textColor: "text-blue-400" },
-  { id: "sylvax",   provider: "openrouter", orModel: "meta-llama/llama-3.3-70b-instruct",  label: "Sylvax-70",  dot: "bg-cyan-400",    border: "border-cyan-500/25 bg-cyan-500/[0.03]",      textColor: "text-cyan-400" },
-  { id: "hexcore",  provider: "openrouter", orModel: "deepseek/deepseek-v4.1-flash-1017", label: "Hexcore",    dot: "bg-red-400",     border: "border-red-500/25 bg-red-500/[0.03]",        textColor: "text-red-400" },
+  { id: "zethon",   provider: "openrouter", orModel: "zethon",   label: "Zethon-4",   dot: "bg-purple-400",  border: "border-purple-500/25 bg-purple-500/[0.03]",  textColor: "text-purple-400" },
+  { id: "lumyra",   provider: "openrouter", orModel: "lumyra",   label: "Lumyra Pro", dot: "bg-blue-400",    border: "border-blue-500/25 bg-blue-500/[0.03]",      textColor: "text-blue-400" },
+  { id: "sylvax",   provider: "openrouter", orModel: "sylvax",   label: "Sylvax-70",  dot: "bg-cyan-400",    border: "border-cyan-500/25 bg-cyan-500/[0.03]",      textColor: "text-cyan-400" },
+  { id: "hexcore",  provider: "openrouter", orModel: "hexcore",  label: "Hexcore",    dot: "bg-red-400",     border: "border-red-500/25 bg-red-500/[0.03]",        textColor: "text-red-400" },
 ];
 
 interface ColState {

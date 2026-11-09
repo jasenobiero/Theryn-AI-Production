@@ -5,9 +5,34 @@ interface Env {
 }
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
-const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+const AI_MODELS = {
+  theryn: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  vesper: "@cf/mistralai/mistral-small-3.1-24b-instruct",
+  zethon: "@cf/qwen/qwen3.8-27b",
+  lumyra: "@cf/google/gemma-4-26b-a4b-it",
+  sylvax: "@cf/meta/llama-4-scout-17b-16e-instruct",
+  hexcore: "@cf/openai/gpt-oss-20b",
+} as const;
+const MODEL_ALIASES: Record<string, string> = {
+  ...AI_MODELS,
+  "openrouter/free": AI_MODELS.zethon,
+  "x-ai/grok-4.3": AI_MODELS.zethon,
+  "deepseek/deepseek-v4.1-flash-1017": AI_MODELS.zethon,
+  "google/gemini-2.5-pro": AI_MODELS.lumyra,
+  "meta-llama/llama-3.3-70b-instruct": AI_MODELS.sylvax,
+  "deepseek/deepseek-coder": AI_MODELS.hexcore,
+  "@cf/deepseek-ai/deepseek-v4.1-flash-1017": AI_MODELS.zethon,
+  "@cf/zai-org/glm-5.3": AI_MODELS.hexcore,
+};
 const THERYN_PROMPT = "You are Theryn, a helpful, accurate, friendly AI assistant. Answer clearly, admit uncertainty, and ask a focused follow-up question when needed.";
 const VESPER_PROMPT = "You are Vesper, a thoughtful, warm, precise AI assistant. Give considered answers with useful context, while staying concise and honest about uncertainty.";
+
+function selectModel(provider: "openai" | "anthropic" | "openrouter" | undefined, requested: unknown): string {
+  if (typeof requested === "string" && MODEL_ALIASES[requested]) return MODEL_ALIASES[requested];
+  if (provider === "anthropic") return AI_MODELS.vesper;
+  if (provider === "openrouter") return AI_MODELS.zethon;
+  return AI_MODELS.theryn;
+}
 
 function getApiOrigin(value: string | undefined): URL | null {
   if (!value) return null;
@@ -59,8 +84,8 @@ function sseResponse(run: (emit: (payload: unknown) => void, fail: (message: str
   return new Response(stream, { headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no" } });
 }
 
-async function collectAiStream(ai: Ai, messages: ChatMessage[], emit: (payload: unknown) => void): Promise<string> {
-  const stream = await ai.run(MODEL, { messages, stream: true, max_tokens: 4096 }) as ReadableStream<string | { response?: string }>;
+async function collectAiStream(ai: Ai, model: string, messages: ChatMessage[], maxTokens: number, emit: (payload: unknown) => void): Promise<string> {
+  const stream = await ai.run(model, { messages, stream: true, max_tokens: maxTokens }) as ReadableStream<string | Uint8Array | ArrayBuffer | { response?: string }>;
   const reader = stream.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -78,16 +103,22 @@ async function collectAiStream(ai: Ai, messages: ChatMessage[], emit: (payload: 
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
-    if (typeof value === "object") {
+    if (typeof value === "string") {
+      buffer += value;
+    } else if (value instanceof Uint8Array) {
+      buffer += decoder.decode(value, { stream: true });
+    } else if (value instanceof ArrayBuffer) {
+      buffer += decoder.decode(new Uint8Array(value), { stream: true });
+    } else if (value && typeof value === "object") {
       const content = value.response ?? "";
       if (content) { output += content; emit({ content }); }
       continue;
     }
-    buffer += typeof value === "string" ? value : decoder.decode(value as BufferSource, { stream: true });
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? "";
     for (const line of lines) consumeLine(line.trimEnd());
   }
+  buffer += decoder.decode();
   if (buffer.trim()) consumeLine(buffer.trimEnd());
   return output;
 }
@@ -95,7 +126,7 @@ async function collectAiStream(ai: Ai, messages: ChatMessage[], emit: (payload: 
 async function chat(request: Request, env: Env, origin: URL, provider: "openai" | "anthropic" | "openrouter", conversationId: string): Promise<Response> {
   const authError = await authorized(request, origin, "aiChat");
   if (authError) return authError;
-  const rawBody = await request.json().catch(() => null) as { content?: unknown; regenerate?: unknown; images?: unknown } | null;
+  const rawBody = await request.json().catch(() => null) as { content?: unknown; regenerate?: unknown; images?: unknown; model?: unknown } | null;
   const content = typeof rawBody?.content === "string" ? rawBody.content : "";
   const regenerate = rawBody?.regenerate === true;
   if (!rawBody || (!regenerate && !content.trim()) || content.length > 20_000) return errorResponse("A chat message is required and must be under 20,000 characters.", 400);
@@ -108,10 +139,11 @@ async function chat(request: Request, env: Env, origin: URL, provider: "openai" 
   const system = provider === "anthropic" ? VESPER_PROMPT : THERYN_PROMPT;
   const messages: ChatMessage[] = [{ role: "system", content: system }, ...history.map(message => ({ role: message.role as "user" | "assistant", content: message.content }))];
   if (!regenerate) messages.push({ role: "user", content });
+  const model = selectModel(provider, rawBody.model);
 
   return sseResponse(async (emit, fail) => {
     try {
-      const response = await collectAiStream(env.AI, messages, emit);
+      const response = await collectAiStream(env.AI, model, messages, 4096, emit);
       if (!response.trim()) { fail("The model returned an empty response. Please try again."); return; }
       const persisted = await apiFetch(request, origin, "/api/ai/persist-chat", { method: "POST", body: JSON.stringify({ conversationId: Number(conversationId), provider, content, response, regenerate }) });
       if (!persisted.ok) { const error = await persisted.json().catch(() => ({})) as { error?: string }; fail(error.error ?? "The response could not be saved."); return; }
@@ -123,16 +155,21 @@ async function chat(request: Request, env: Env, origin: URL, provider: "openai" 
 async function studio(request: Request, env: Env, origin: URL): Promise<Response> {
   const authError = await authorized(request, origin, "studio");
   if (authError) return authError;
-  const body = await request.json().catch(() => null) as { messages?: unknown } | null;
+  const body = await request.json().catch(() => null) as { messages?: unknown; provider?: unknown; model?: unknown; maxTokens?: unknown } | null;
   if (!Array.isArray(body?.messages) || body.messages.length === 0 || body.messages.length > 40) return errorResponse("A valid Studio message history is required.", 400);
   const promptResponse = await apiFetch(request, origin, "/api/studio/system-prompt");
   if (!promptResponse.ok) return new Response(promptResponse.body, { status: promptResponse.status, headers: promptResponse.headers });
   const { systemPrompt } = await promptResponse.json() as { systemPrompt: string };
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt }, ...(body.messages as ChatMessage[]).filter(message => ["user", "assistant"].includes(message.role) && typeof message.content === "string")];
   if (messages.length < 2 || messages.some(message => message.content.length > 100_000)) return errorResponse("Studio messages are invalid or too large.", 400);
+  const provider = body.provider === "anthropic" || body.provider === "openrouter" ? body.provider : "openai";
+  const model = selectModel(provider, body.model);
+  const maxTokens = typeof body.maxTokens === "number" && Number.isFinite(body.maxTokens)
+    ? Math.max(128, Math.min(4096, Math.floor(body.maxTokens)))
+    : 4096;
   return sseResponse(async (emit, fail) => {
     try {
-      const output = await collectAiStream(env.AI, messages, emit);
+      const output = await collectAiStream(env.AI, model, messages, maxTokens, emit);
       if (!output.trim()) { fail("The model returned an empty response. Please try again."); return; }
       const recorded = await apiFetch(request, origin, "/api/ai/record-studio-usage", { method: "POST", body: JSON.stringify({}) });
       if (!recorded.ok) { fail("Studio usage could not be recorded. Please try again."); return; }

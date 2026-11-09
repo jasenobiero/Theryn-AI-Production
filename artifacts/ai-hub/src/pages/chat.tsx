@@ -24,15 +24,15 @@ type Provider = "openai" | "anthropic" | "openrouter";
 const PROVIDER_NAMES: Record<Provider, string> = {
   openai: "Theryn",
   anthropic: "Vesper",
-  openrouter: "Prism",
+  openrouter: "Cloudflare Models",
 };
 
 const OPENROUTER_MODELS = [
-  { value: "openrouter/free",               label: "Free Auto (rate limited)" },
-  { value: "x-ai/grok-4.3",                  label: "Zethon-4" },
-  { value: "google/gemini-2.5-pro",           label: "Lumyra Pro" },
-  { value: "meta-llama/llama-3.3-70b-instruct", label: "Sylvax-70" },
-  { value: "deepseek/deepseek-v4.1-flash-1017", label: "Hexcore" },
+  { value: "openrouter/free", label: "Auto · Qwen 3.8 27B" },
+  { value: "zethon", label: "Zethon-4 · Qwen 3.8 27B" },
+  { value: "lumyra", label: "Lumyra Pro · Gemma 4 26B" },
+  { value: "sylvax", label: "Sylvax-70 · Llama 4 Scout" },
+  { value: "hexcore", label: "Hexcore · GPT OSS 20B" },
 ];
 
 export default function ChatPage() {
