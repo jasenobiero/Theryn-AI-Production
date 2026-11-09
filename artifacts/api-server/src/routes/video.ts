@@ -4,7 +4,6 @@ import { requireFeatureAccess } from "../subscriptions/entitlements";
 import { finalizeGeneration, reserveDailyGeneration } from "../subscriptions/usage";
 
 const router: IRouter = Router();
-router.use(clerkRequireAuth);
 
 function runwayKey(): string | undefined {
   return [process.env.RUNWAY_API_KEY, process.env.RUNWAYML_API_SECRET]
@@ -12,7 +11,7 @@ function runwayKey(): string | undefined {
     .find((value): value is string => Boolean(value && !/^(your-|replace-with-)/i.test(value)));
 }
 
-router.post("/video/generate", requireFeatureAccess("videoGen"), async (req, res) => {
+router.post("/video/generate", clerkRequireAuth, requireFeatureAccess("videoGen"), async (req, res) => {
   const promptText = typeof req.body?.prompt === "string" ? req.body.prompt.trim() : "";
   const ratio = req.body?.ratio === "720:1280" ? "720:1280" : "1280:720";
   const duration = Number(req.body?.duration ?? 5);
@@ -54,7 +53,7 @@ router.post("/video/generate", requireFeatureAccess("videoGen"), async (req, res
   }
 });
 
-router.get("/video/tasks/:id", requireFeatureAccess("videoGen"), async (req, res) => {
+router.get("/video/tasks/:id", clerkRequireAuth, requireFeatureAccess("videoGen"), async (req, res) => {
   const taskId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   if (!/^[a-zA-Z0-9_-]{8,128}$/.test(taskId)) {
     res.status(400).json({ error: "Invalid video task ID." });
