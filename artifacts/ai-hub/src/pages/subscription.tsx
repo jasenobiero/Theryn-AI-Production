@@ -154,13 +154,13 @@ export default function SubscriptionPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId }),
       });
-      const payload = await response.json() as { approvalUrl?: string; error?: string };
+      const payload = await response.json().catch(() => ({})) as { approvalUrl?: string; error?: string };
       if (!response.ok || !payload.approvalUrl) {
-        throw new Error(payload.error ?? "Could not start PayPal checkout.");
+        throw new Error(payload.error ?? "Subscription checkout is unavailable right now. Please try again later.");
       }
       window.location.assign(payload.approvalUrl);
     } catch (checkoutFailure) {
-      setCheckoutError(checkoutFailure instanceof Error ? checkoutFailure.message : "Could not start PayPal checkout.");
+      setCheckoutError(checkoutFailure instanceof Error ? checkoutFailure.message : "Subscription checkout is unavailable right now. Please try again later.");
       setPendingPlan(null);
     }
   }
@@ -289,9 +289,9 @@ export default function SubscriptionPage() {
                     disabled={isCurrent || !canCheckout || pendingPlan !== null}
                     onClick={() => void startPayPalCheckout(plan.id)}
                     className={`mt-4 h-9 border text-xs font-medium disabled:cursor-not-allowed ${canCheckout ? "border-cyan-100/20 bg-cyan-100/10 text-cyan-50 hover:bg-cyan-100/15" : "border-white/[0.08] bg-white/[0.03] text-white/35"}`}
-                    aria-label={isCurrent ? `Current ${plan.name} plan` : canCheckout ? `Subscribe to ${plan.name} with PayPal` : "PayPal billing setup required"}
+                    aria-label={isCurrent ? `Current ${plan.name} plan` : canCheckout ? `Subscribe to ${plan.name}` : "Subscription billing setup required"}
                   >
-                    {isCurrent ? "Current plan" : pendingPlan === plan.id ? "Connecting to PayPal..." : canCheckout ? "Subscribe with PayPal" : plan.paypalEnabled ? "Contact support to switch" : "PayPal setup required"}
+                    {isCurrent ? "Current plan" : pendingPlan === plan.id ? "Opening checkout..." : canCheckout ? "Subscribe" : plan.paypalEnabled ? "Contact support to switch" : "Billing setup required"}
                   </button>
                 </article>
               );
@@ -360,3 +360,4 @@ function UsageTable({ rows }: { rows: Usage["history"] }) {
   if (rows.length === 0) return <p className="px-4 py-8 text-center text-xs text-white/35">No recorded usage during this period.</p>;
   return <ul className="divide-y divide-white/[0.06]">{rows.map((row, index) => <li key={`${row.createdAt}-${index}`} className="flex justify-between gap-4 px-4 py-3 text-xs"><span className="text-white/65">{FEATURE_LABELS[row.feature] ?? row.feature} <span className="text-white/30">· {row.status}</span></span><span className="text-white/55">{row.credits} credits · {formatDate(row.createdAt)}</span></li>)}</ul>;
 }
+

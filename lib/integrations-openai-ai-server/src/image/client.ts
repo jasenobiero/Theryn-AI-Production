@@ -17,7 +17,7 @@ export async function generateImageBuffer(
   apiKey?: string,
 ): Promise<Buffer> {
   const response = await createImageClient(apiKey).images.generate({
-    model: "gpt-image-1",
+    model: "gpt-image-2.5-flare",
     prompt,
     size,
   });
@@ -41,7 +41,7 @@ export async function editImages(
   );
 
   const response = await createImageClient(apiKey).images.edit({
-    model: "gpt-image-1",
+    model: "gpt-image-2.5-flare",
     image: images,
     prompt,
   });
@@ -56,3 +56,4 @@ export async function editImages(
 
   return imageBytes;
 }
+
