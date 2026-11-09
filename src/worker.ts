@@ -26,6 +26,7 @@ const MODEL_ALIASES: Record<string, string> = {
 };
 const THERYN_PROMPT = "You are Theryn, a helpful, accurate, friendly AI assistant. Answer clearly, admit uncertainty, and ask a focused follow-up question when needed.";
 const VESPER_PROMPT = "You are Vesper, a thoughtful, warm, precise AI assistant. Give considered answers with useful context, while staying concise and honest about uncertainty.";
+const ARENA_PROMPT = "You are a helpful general-purpose AI assistant. Answer the user's actual request directly, clearly, and accurately. Do not assume the user wants to build an app or website unless they ask for one. Be concise and acknowledge uncertainty when appropriate.";
 
 function selectModel(provider: "openai" | "anthropic" | "openrouter" | undefined, requested: unknown): string {
   if (typeof requested === "string" && MODEL_ALIASES[requested]) return MODEL_ALIASES[requested];
@@ -155,11 +156,14 @@ async function chat(request: Request, env: Env, origin: URL, provider: "openai" 
 async function studio(request: Request, env: Env, origin: URL): Promise<Response> {
   const authError = await authorized(request, origin, "studio");
   if (authError) return authError;
-  const body = await request.json().catch(() => null) as { messages?: unknown; provider?: unknown; model?: unknown; maxTokens?: unknown } | null;
+  const body = await request.json().catch(() => null) as { messages?: unknown; provider?: unknown; model?: unknown; maxTokens?: unknown; mode?: unknown } | null;
   if (!Array.isArray(body?.messages) || body.messages.length === 0 || body.messages.length > 40) return errorResponse("A valid Studio message history is required.", 400);
-  const promptResponse = await apiFetch(request, origin, "/api/studio/system-prompt");
-  if (!promptResponse.ok) return new Response(promptResponse.body, { status: promptResponse.status, headers: promptResponse.headers });
-  const { systemPrompt } = await promptResponse.json() as { systemPrompt: string };
+  let systemPrompt = ARENA_PROMPT;
+  if (body.mode !== "arena") {
+    const promptResponse = await apiFetch(request, origin, "/api/studio/system-prompt");
+    if (!promptResponse.ok) return new Response(promptResponse.body, { status: promptResponse.status, headers: promptResponse.headers });
+    ({ systemPrompt } = await promptResponse.json() as { systemPrompt: string });
+  }
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt }, ...(body.messages as ChatMessage[]).filter(message => ["user", "assistant"].includes(message.role) && typeof message.content === "string")];
   if (messages.length < 2 || messages.some(message => message.content.length > 100_000)) return errorResponse("Studio messages are invalid or too large.", 400);
   const provider = body.provider === "anthropic" || body.provider === "openrouter" ? body.provider : "openai";

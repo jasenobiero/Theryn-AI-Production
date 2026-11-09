@@ -61,6 +61,7 @@ function useStreamCol(model: ModelDef) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          mode: "arena",
           provider: model.provider,
           ...(model.orModel ? { model: model.orModel } : {}),
           maxTokens: 768,
