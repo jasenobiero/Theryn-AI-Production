@@ -21,4 +21,3 @@ test("keeps the supported OpenRouter model catalog in sync", () => {
     "deepseek/deepseek-v4.1-flash-1017",
   ]);
 });
-

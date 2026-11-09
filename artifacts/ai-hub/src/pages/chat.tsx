@@ -96,11 +96,53 @@ export default function ChatPage() {
   useEffect(() => { setConversationId(null); }, [provider]);
 
   const handleSend = async (content: string, images?: PastedImage[]) => {
+    if (!images?.length && isGifGenerationPrompt(content)) {
+      const controller = new AbortController();
+      mediaAbortRef.current = controller;
+      setIsGeneratingMedia(true);
+      try {
+        const response = await fetch("/api/openai/generate-gif", {
+          method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+          signal: controller.signal, body: JSON.stringify({ prompt: content.replace(/^.*?\b(?:gif|animation)\b[:, ]*/i, "") || content }),
+        });
+        const result = await response.json() as { b64_json?: string; error?: string };
+        if (!response.ok || !result.b64_json) throw new Error(result.error ?? `GIF generation failed (${response.status})`);
+        appendExchange(content, "Animated GIF generated.", undefined, [`data:image/gif;base64,${result.b64_json}`]);
+      } catch (error) {
+        if (!(error instanceof Error && error.name === "AbortError")) toast({ title: "GIF generation failed", description: error instanceof Error ? error.message : "Check provider settings and try again.", variant: "destructive" });
+      } finally { setIsGeneratingMedia(false); mediaAbortRef.current = null; }
+      return;
+    }
+
     if (!images?.length && isVideoGenerationPrompt(content)) {
-      toast({
-        title: "Video generation coming soon",
-        description: "No compatible video provider is configured yet, so no video was created.",
-      });
+      const controller = new AbortController();
+      mediaAbortRef.current = controller;
+      setIsGeneratingMedia(true);
+      try {
+        const response = await fetch("/api/video/generate", {
+          method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+          signal: controller.signal, body: JSON.stringify({ prompt: content }),
+        });
+        const result = await response.json() as { taskId?: string; error?: string };
+        if (!response.ok || !result.taskId) throw new Error(result.error ?? `Video generation failed (${response.status})`);
+        let finalVideoUrl: string | undefined;
+        const deadline = Date.now() + 10 * 60 * 1000;
+        while (Date.now() < deadline) {
+          await new Promise((resolve, reject) => {
+            const timer = window.setTimeout(resolve, 4000);
+            controller.signal.addEventListener("abort", () => { window.clearTimeout(timer); reject(new DOMException("Aborted", "AbortError")); }, { once: true });
+          });
+          const statusResponse = await fetch(`/api/video/tasks/${encodeURIComponent(result.taskId)}`, { credentials: "include", signal: controller.signal });
+          const status = await statusResponse.json() as { status?: string; videoUrl?: string; error?: string };
+          if (!statusResponse.ok) throw new Error(status.error ?? "Could not check video status.");
+          if (status.status === "SUCCEEDED" && status.videoUrl) { finalVideoUrl = status.videoUrl; break; }
+          if (status.status === "FAILED" || status.status === "CANCELED") throw new Error(status.error ?? "The video provider could not complete this request.");
+        }
+        if (!finalVideoUrl) throw new Error("Video generation is taking longer than expected. Try again later.");
+        appendExchange(content, "Video generated with Runway.", undefined, undefined, [finalVideoUrl]);
+      } catch (error) {
+        if (!(error instanceof Error && error.name === "AbortError")) toast({ title: "Video generation failed", description: error instanceof Error ? error.message : "Check provider settings and try again.", variant: "destructive" });
+      } finally { setIsGeneratingMedia(false); mediaAbortRef.current = null; }
       return;
     }
 
@@ -513,3 +555,7 @@ function isVideoGenerationPrompt(content: string): boolean {
   return /\b(?:generate|create|make|render|produce)\b[\s\S]{0,80}\b(?:video|film|clip|animation)\b/i.test(content);
 }
 
+function isGifGenerationPrompt(content: string): boolean {
+  return /\b(?:generate|create|make|draw|render)\b[\s\S]{0,80}\b(?:gif|animated gif|animation)\b/i.test(content)
+    || /^\s*gif\s*:/i.test(content);
+}

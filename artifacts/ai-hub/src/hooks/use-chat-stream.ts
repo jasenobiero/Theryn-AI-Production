@@ -5,6 +5,7 @@ export interface StreamMessage {
   role: "user" | "assistant";
   content: string;
   images?: string[]; // data URLs — display only, never persisted
+  videos?: string[]; // provider URLs — display only, never persisted
 }
 
 interface UseChatStreamOptions {
@@ -198,10 +199,11 @@ export function useChatStream({ onFinish, onError, onConversationId }: UseChatSt
     assistantContent: string,
     userImages?: string[],
     assistantImages?: string[],
+    assistantVideos?: string[],
   ) => {
     setMessages(prev => [...prev,
       { id: crypto.randomUUID(), role: "user", content: userContent, images: userImages },
-      { id: crypto.randomUUID(), role: "assistant", content: assistantContent, images: assistantImages },
+      { id: crypto.randomUUID(), role: "assistant", content: assistantContent, images: assistantImages, videos: assistantVideos },
     ]);
   }, []);
 

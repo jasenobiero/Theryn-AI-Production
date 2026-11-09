@@ -6,7 +6,7 @@ import type { SubscriptionFeature } from "./config";
 
 const DAILY_GENERATION_LIMIT = 5;
 
-export async function reserveDailyGeneration(req: Request): Promise<{
+export async function reserveDailyGeneration(req: Request, feature: "imageGen" | "videoGen" = "imageGen"): Promise<{
   reservationId: string | null;
   remaining: number;
   resetAt: Date;
@@ -39,7 +39,7 @@ export async function reserveDailyGeneration(req: Request): Promise<{
 
     const [reservation] = await tx.insert(usageRecords).values({
       userId,
-      feature: "imageGen",
+      feature,
       credits: 1,
       idempotencyKey: randomUUID(),
       status: "pending",

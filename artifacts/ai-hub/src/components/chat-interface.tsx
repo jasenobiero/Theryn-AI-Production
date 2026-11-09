@@ -15,6 +15,7 @@ interface ChatMessage {
   role: string;
   content: string;
   images?: string[]; // data URLs for display
+  videos?: string[];
 }
 
 interface ChatInterfaceProps {
@@ -177,6 +178,9 @@ export function ChatInterface({
                       ))}
                     </div>
                   )}
+                  {msg.videos?.map((src, i) => (
+                    <video key={i} src={src} controls playsInline className="mb-2 max-w-full rounded-xl border border-white/10" />
+                  ))}
                   {/* Text content */}
                   {msg.content && msg.content !== "(image)" && (
                     msg.role === "assistant"

@@ -441,4 +441,3 @@ router.delete("/projects/:id", clerkRequireAuth, async (req: Request, res: Respo
 });
 
 export default router;
-

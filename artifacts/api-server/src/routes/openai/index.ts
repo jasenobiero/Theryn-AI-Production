@@ -216,5 +216,48 @@ router.post("/generate-image", requireFeatureAccess("imageGen"), async (req, res
   }
 });
 
-export default router;
+router.post("/generate-gif", requireFeatureAccess("gifGen"), async (req, res) => {
+  const prompt = typeof req.body?.prompt === "string" ? req.body.prompt.trim() : "";
+  const frameCount = Number(req.body?.frameCount ?? 9);
+  const frameDurationMs = Number(req.body?.frameDurationMs ?? 200);
+  if (!prompt || prompt.length > 4000) {
+    res.status(400).json({ error: "Enter a prompt up to 4,000 characters." });
+    return;
+  }
+  if (!Number.isInteger(frameCount) || frameCount < 2 || frameCount > 16
+    || !Number.isInteger(frameDurationMs) || frameDurationMs < 20 || frameDurationMs > 2000) {
+    res.status(400).json({ error: "GIF settings are outside the supported range." });
+    return;
+  }
+  const reservation = await reserveDailyGeneration(req);
+  if (!reservation.reservationId) {
+    res.status(429).json({ error: "Daily media generation limit reached.", limit: 5, resetAt: reservation.resetAt });
+    return;
+  }
+  try {
+    const apiKey = await getProviderKey(req, "openaiApiKey");
+    if (!apiKey) throw new Error("OpenAI is not configured. Add OPENAI_API_KEY in Render.");
+    const baseUrl = (process.env.AI_INTEGRATIONS_OPENAI_BASE_URL ?? "https://api.openai.com/v1").replace(/\/$/, "");
+    const upstream = await fetch(`${baseUrl}/images/generations`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "gpt-image-2.5-flare", prompt, size: "auto", output_format: "gif", frame_count: frameCount,
+        frame_duration_ms: frameDurationMs,
+      }),
+    });
+    const payload = await upstream.json() as { data?: Array<{ b64_json?: string }>; error?: { message?: string } };
+    const gif = payload.data?.[0]?.b64_json;
+    if (!upstream.ok || !gif) {
+      throw new Error(payload.error?.message || `OpenAI GIF generation failed (${upstream.status}).`);
+    }
+    await finalizeGeneration(reservation.reservationId, "committed");
+    res.json({ b64_json: gif, generationsRemainingToday: reservation.remaining, resetAt: reservation.resetAt });
+  } catch (error) {
+    await finalizeGeneration(reservation.reservationId, "failed");
+    req.log?.error({ err: error }, "GIF generation failed");
+    res.status(502).json({ error: error instanceof Error ? error.message : "GIF generation failed. Check OpenAI settings and try again." });
+  }
+});
 
+export default router;

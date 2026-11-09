@@ -21,6 +21,7 @@ import AgentsPage from "@/pages/agents";
 import AgentChatPage from "@/pages/agent-chat";
 import StudioPage from "@/pages/studio";
 import ImagesPage from "@/pages/images";
+import MediaPage from "@/pages/media";
 import AiPreviewPage from "@/pages/ai-preview";
 import ArenaPage from "@/pages/arena";
 import PromptsPage from "@/pages/prompts";
@@ -335,6 +336,7 @@ function AuthedRouter() {
           <Route path="/agents/:id/chat" component={AgentChatPage} />
           <Route path="/studio" component={StudioPage} />
           <Route path="/images" component={ImagesPage} />
+          <Route path="/media" component={MediaPage} />
           <Route path="/preview" component={AiPreviewPage} />
           <Route path="/shield" component={ShieldPage} />
           <Route path="/bot-hub" component={BotHubPage} />

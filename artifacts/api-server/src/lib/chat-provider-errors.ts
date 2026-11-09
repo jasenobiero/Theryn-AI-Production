@@ -85,4 +85,3 @@ export function sendChatEmptyResponse(res: Response, provider: ChatProvider): vo
   }
   res.status(502).json({ error: message });
 }
-

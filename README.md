@@ -83,6 +83,7 @@ pnpm -C artifacts/ai-hub build
 - `CORS_ALLOWED_ORIGINS`
 - `AI_INTEGRATIONS_OPENAI_API_KEY`
 - `AI_INTEGRATIONS_ANTHROPIC_API_KEY`
+- `RUNWAY_API_KEY` for text-to-video generation (Runway Gen-4.5)
 - `AI_INTEGRATIONS_OPENROUTER_API_KEY`
 - `ELEVENLABS_API_KEY`
 - `THERYN_BOT_API_TOKEN`
@@ -93,6 +94,8 @@ pnpm -C artifacts/ai-hub build
 - `FEATURE_ANNOUNCEMENT_ADMIN_TOKEN`
 - `PAYPAL_ENV`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`
 - `PAYPAL_PLAN_ID_PLUS`, `PAYPAL_PLAN_ID_PRO`, `PAYPAL_PLAN_ID_ULTRA`
+
+Image generation and animated GIF generation use the OpenAI API key. GPT Image API access, organization verification where required, and available API billing are prerequisites. Video generation uses a Runway API key and billed Runway credits. Chat subscriptions use the configured PayPal REST app, webhook, and monthly plan IDs; Apple Pay and Google Pay availability depends on the PayPal checkout/account and recurring-payment eligibility for the buyer's region.
 
 PayPal recurring billing, Cloudflare API routing, Clerk founder enrollment, and early-feature email setup are documented in [DEPLOYMENT.md](DEPLOYMENT.md).
 

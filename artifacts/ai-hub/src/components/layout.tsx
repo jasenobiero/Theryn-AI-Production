@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import {
   Bot, MessageSquare, Mic, Home, Menu,
   Settings, PenSquare, LogOut, Sparkles, Zap, BookMarked, Command, ShieldCheck, Radio, Download,
-  CreditCard, Eye, Image,
+  CreditCard, Eye, Image, Clapperboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -23,6 +23,7 @@ const NAV_SECTIONS = [
       { href: "/arena",   icon: Zap,         label: "Arena",        badge: "NEW", badgeColor: "bg-orange-500/20 text-orange-300 border-orange-500/20" },
       { href: "/studio",  icon: Sparkles,    label: "Studio" },
       { href: "/images",  icon: Image,       label: "Images" },
+      { href: "/media",   icon: Clapperboard, label: "GIFs & Video" },
       { href: "/preview", icon: Eye,         label: "AI Preview" },
     ],
   },

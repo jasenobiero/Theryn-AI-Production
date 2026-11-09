@@ -360,4 +360,3 @@ function UsageTable({ rows }: { rows: Usage["history"] }) {
   if (rows.length === 0) return <p className="px-4 py-8 text-center text-xs text-white/35">No recorded usage during this period.</p>;
   return <ul className="divide-y divide-white/[0.06]">{rows.map((row, index) => <li key={`${row.createdAt}-${index}`} className="flex justify-between gap-4 px-4 py-3 text-xs"><span className="text-white/65">{FEATURE_LABELS[row.feature] ?? row.feature} <span className="text-white/30">· {row.status}</span></span><span className="text-white/55">{row.credits} credits · {formatDate(row.createdAt)}</span></li>)}</ul>;
 }
-

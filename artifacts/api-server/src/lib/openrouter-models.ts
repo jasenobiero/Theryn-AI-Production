@@ -36,4 +36,3 @@ export function isVisionCapableOpenRouterModel(model?: string | null): boolean {
     "anthropic/claude-sonnet-4-6",
   ]).has(normalized);
 }
-
