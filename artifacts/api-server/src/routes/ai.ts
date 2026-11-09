@@ -6,9 +6,8 @@ import { getConfiguredAccess, getEffectivePlan, isSubscriptionFeature, requireFe
 import { recordUsage } from "../subscriptions/usage";
 
 const router: IRouter = Router();
-router.use(clerkRequireAuth);
 
-router.get("/ai/authorize", async (req, res) => {
+router.get("/ai/authorize", clerkRequireAuth, async (req, res) => {
   const feature = typeof req.query.feature === "string" ? req.query.feature : "";
   if (!isSubscriptionFeature(feature) || (feature !== "aiChat" && feature !== "studio")) {
     res.status(400).json({ error: "Unsupported AI feature." });
@@ -22,7 +21,7 @@ router.get("/ai/authorize", async (req, res) => {
   res.json({ authorized: true, feature });
 });
 
-router.post("/ai/persist-chat", requireFeatureAccess("aiChat"), async (req, res) => {
+router.post("/ai/persist-chat", clerkRequireAuth, requireFeatureAccess("aiChat"), async (req, res) => {
   const conversationId = Number(req.body?.conversationId);
   const provider = req.body?.provider;
   const content = typeof req.body?.content === "string" ? req.body.content : "";
@@ -62,7 +61,7 @@ router.post("/ai/persist-chat", requireFeatureAccess("aiChat"), async (req, res)
   res.json({ success: true });
 });
 
-router.post("/ai/record-studio-usage", async (req, res) => {
+router.post("/ai/record-studio-usage", clerkRequireAuth, async (req, res) => {
   await recordUsage(req, "studio", { provider: "cloudflare-workers-ai", operation: "studio_chat" });
   res.json({ success: true });
 });
