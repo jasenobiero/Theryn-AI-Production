@@ -94,10 +94,8 @@ app.use((req, _res, next) => {
 app.use(
   clerkMiddleware((req) => ({
     authorizedParties: [...clerkAuthorizedParties],
-    publishableKey: publishableKeyFromHost(
-      getClerkProxyHost(req) ?? "",
-      process.env.NODE_ENV === "production" ? undefined : process.env.CLERK_PUBLISHABLE_KEY,
-    ),
+    publishableKey: process.env.CLERK_PUBLISHABLE_KEY?.trim()
+      || publishableKeyFromHost(getClerkProxyHost(req) ?? ""),
   })),
 );
 

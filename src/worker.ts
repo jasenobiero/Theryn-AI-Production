@@ -51,7 +51,11 @@ function apiNotConfigured(): Response {
 
 function upstreamRequest(request: Request, origin: URL, path: string, init?: RequestInit): Request {
   const incoming = new URL(request.url);
-  const headers = new Headers(init?.headers ?? request.headers);
+  const headers = new Headers(request.headers);
+  if (init?.headers) {
+    new Headers(init.headers).forEach((value, key) => headers.set(key, value));
+  }
+  if (!headers.has("Origin")) headers.set("Origin", incoming.origin);
   headers.set("X-Forwarded-Host", incoming.host);
   headers.set("X-Forwarded-Proto", incoming.protocol.slice(0, -1));
   if (init?.body !== undefined) headers.set("Content-Type", "application/json");
