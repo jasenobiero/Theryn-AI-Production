@@ -17,7 +17,6 @@ import {
 
 const app: Express = express();
 app.set("trust proxy", 1);
-app.use(helmet());
 
 const apiRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -26,21 +25,8 @@ const apiRateLimit = rateLimit({
   legacyHeaders: false,
 });
 
-app.use(
-  pinoHttp({
-    logger,
-    serializers: {
-      req(req) {
-        return { id: req.id, method: req.method, url: req.url?.split("?")[0] };
-      },
-      res(res) {
-        return { statusCode: res.statusCode };
-      },
-    },
-  }),
-);
 
-app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
+
 
 function normalizeOrigin(value: string): string | null {
   try {
@@ -64,6 +50,45 @@ const clerkAuthorizedParties = new Set(allowedOrigins);
 if (process.env.NODE_ENV === "production") {
   clerkAuthorizedParties.add("https://theryn.dev");
 }
+// Let Clerk's Frontend API proxy handle its route before authentication.
+app.use(CLERK_PROXY_PATH, helmet(), clerkProxyMiddleware());
+
+// Clerk must run before CORS, parsers, and application routes.
+app.use(
+  clerkMiddleware((req) => {
+    // Same-origin GET requests commonly omit Origin. Restore it from the
+    // trusted proxy host before Clerk validates the session token's azp.
+    if (!req.headers.origin) {
+      const host = getClerkProxyHost(req);
+      const rawProtocol = req.headers["x-forwarded-proto"];
+      const protocol = (Array.isArray(rawProtocol) ? rawProtocol[0] : rawProtocol)?.split(",")[0]?.trim() || "https";
+      if (host) {
+        const forwardedOrigin = `${protocol}://${host}`;
+        if (clerkAuthorizedParties.has(forwardedOrigin)) req.headers.origin = forwardedOrigin;
+      }
+    }
+    return {
+      authorizedParties: [...clerkAuthorizedParties],
+      publishableKey: process.env.CLERK_PUBLISHABLE_KEY?.trim()
+        || publishableKeyFromHost(getClerkProxyHost(req) ?? ""),
+    };
+  }),
+);
+
+app.use(helmet());
+app.use(
+  pinoHttp({
+    logger,
+    serializers: {
+      req(req) {
+        return { id: req.id, method: req.method, url: req.url?.split("?")[0] };
+      },
+      res(res) {
+        return { statusCode: res.statusCode };
+      },
+    },
+  }),
+);
 app.use(cors({
   credentials: true,
   origin(origin, callback) {
@@ -78,26 +103,7 @@ app.use(express.urlencoded({ extended: true }));
 // The browser calls this API through a same-origin Worker. Browsers commonly
 // omit Origin on same-origin GET requests, so restore it from the trusted
 // forwarded host before Clerk checks the token's authorized party.
-app.use((req, _res, next) => {
-  if (!req.headers.origin) {
-    const host = getClerkProxyHost(req);
-    const rawProtocol = req.headers["x-forwarded-proto"];
-    const protocol = (Array.isArray(rawProtocol) ? rawProtocol[0] : rawProtocol)?.split(",")[0]?.trim() || "https";
-    if (host) {
-      const forwardedOrigin = `${protocol}://${host}`;
-      if (clerkAuthorizedParties.has(forwardedOrigin)) req.headers.origin = forwardedOrigin;
-    }
-  }
-  next();
-});
 
-app.use(
-  clerkMiddleware((req) => ({
-    authorizedParties: [...clerkAuthorizedParties],
-    publishableKey: process.env.CLERK_PUBLISHABLE_KEY?.trim()
-      || publishableKeyFromHost(getClerkProxyHost(req) ?? ""),
-  })),
-);
 
 app.use("/api", apiRateLimit, router);
 
