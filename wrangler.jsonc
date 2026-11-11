@@ -3,7 +3,7 @@
   "main": "./src/worker.ts",
   "compatibility_date": "2026-11-07",
   "vars": {
-    "API_ORIGIN": "https://theryn-ai-production.onrender.com"
+    "API_ORIGIN": "https://theryn-ai-production-production.up.railway.app"
   },
   "ai": {
     "binding": "AI"
