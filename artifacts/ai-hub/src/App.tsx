@@ -11,7 +11,6 @@ import {
   useClerk, useAuth,
 } from "@clerk/react";
 import { Redirect } from "wouter";
-import { publishableKeyFromHost } from "@clerk/react/internal";
 import { shadcn } from "@clerk/themes";
 
 import Home from "@/pages/home";
@@ -46,11 +45,9 @@ const queryClient = new QueryClient({
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const configuredClerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-const clerkPubKey = configuredClerkPubKey || (import.meta.env.PROD
-  ? publishableKeyFromHost(window.location.hostname)
-  : undefined);
+const clerkPubKey = configuredClerkPubKey;
 if (!clerkPubKey) {
-  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Add your Clerk publishable key to artifacts/ai-hub/.env.local, then restart Vite.");
+  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Add it to artifacts/ai-hub/.env.local for development or provide it to the production build.");
 }
 
 // The web app uses direct Clerk authentication and sends the session token to
