@@ -16,6 +16,9 @@ const basePath = process.env.BASE_PATH ?? "/";
 
 export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, import.meta.dirname, "");
+  if (mode === "production" && !(env.VITE_CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY)) {
+    throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY. Supply the Clerk production publishable key when building the frontend.");
+  }
   const apiProxy = {
     "/api": {
       target: env.API_PROXY_TARGET || "http://127.0.0.1:3001",
