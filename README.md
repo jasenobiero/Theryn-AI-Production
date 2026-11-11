@@ -62,17 +62,17 @@ pnpm -C artifacts/ai-hub build
 
 ## Deployment notes
 
-- The frontend is designed to deploy to Cloudflare Pages.
-- The API is a Node/Express service and should be hosted separately (for example Railway, Render, Fly.io, or a VPS).
-- Do not deploy the API directly on Cloudflare Pages without converting it to Workers/Pages Functions.
+- The production frontend is deployed as static assets through the Cloudflare Worker in [wrangler.jsonc](wrangler.jsonc).
+- That Worker also binds Cloudflare Workers AI and forwards same-origin `/api/*` requests to the Express API on Render.
+- The production API is the `Theryn-AI-Production` Render service. Keep its secrets in Render; do not put them in the frontend build or git.
+- See [DEPLOYMENT.md](DEPLOYMENT.md) for build, publish, and verification steps.
 
 ## Key environment variables
 
 ### Frontend
 
-- `VITE_CLERK_PUBLISHABLE_KEY`
-- `VITE_CLERK_PROXY_URL`
-- `VITE_API_BASE_URL`
+- `VITE_CLERK_PUBLISHABLE_KEY` (set at production build time; it is public)
+- `VITE_CLERK_PROXY_URL` only if a verified Clerk proxy is configured
 
 ### API
 
@@ -81,10 +81,9 @@ pnpm -C artifacts/ai-hub build
 - `CLERK_PUBLISHABLE_KEY`
 - `SESSION_SECRET`
 - `CORS_ALLOWED_ORIGINS`
-- `AI_INTEGRATIONS_OPENAI_API_KEY`
-- `AI_INTEGRATIONS_ANTHROPIC_API_KEY`
-- `RUNWAY_API_KEY` for text-to-video generation (Runway Gen-4.5)
-- `AI_INTEGRATIONS_OPENROUTER_API_KEY`
+- `APP_BASE_URL`
+- `OPENAI_API_KEY` or `AI_INTEGRATIONS_OPENAI_API_KEY` for images and GIFs
+- `RUNWAY_API_KEY` or `RUNWAYML_API_SECRET` for video generation
 - `ELEVENLABS_API_KEY`
 - `THERYN_BOT_API_TOKEN`
 - `APP_BASE_URL`
@@ -94,6 +93,8 @@ pnpm -C artifacts/ai-hub build
 - `FEATURE_ANNOUNCEMENT_ADMIN_TOKEN`
 - `PAYPAL_ENV`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`
 - `PAYPAL_PLAN_ID_PLUS`, `PAYPAL_PLAN_ID_PRO`, `PAYPAL_PLAN_ID_ULTRA`
+
+Theryn chat, Studio, and Arena use Cloudflare Workers AI; Anthropic and OpenRouter API keys are not required for those features.
 
 Image generation and animated GIF generation use the OpenAI API key. GPT Image API access, organization verification where required, and available API billing are prerequisites. Video generation uses a Runway API key and billed Runway credits. Chat subscriptions use the configured PayPal REST app, webhook, and monthly plan IDs; Apple Pay and Google Pay availability depends on the PayPal checkout/account and recurring-payment eligibility for the buyer's region.
 
