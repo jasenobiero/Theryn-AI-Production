@@ -4,9 +4,23 @@ import { type Request, type Response, type NextFunction } from "express";
 import { db, usersTable } from "@workspace/db";
 
 export async function clerkRequireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { userId: clerkUserId } = getAuth(req);
+  const auth = getAuth(req);
+  const clerkUserId = auth.userId;
   const userId = clerkUserId ?? getBotUserId(req);
   if (!userId) {
+    const authorization = req.get("authorization") ?? "";
+    const cookieHeader = req.headers.cookie ?? "";
+    req.log?.warn({
+      path: req.path,
+      bearerTokenPresent: /^Bearer\s+\S+/i.test(authorization),
+      sessionCookiePresent: /(?:^|;\s*)__session=/.test(cookieHeader),
+      clerkAuthenticated: auth.isAuthenticated,
+      clerkSessionPresent: Boolean(auth.sessionId),
+      hasClerkSecretKey: Boolean(process.env.CLERK_SECRET_KEY?.trim()),
+      hasClerkPublishableKey: Boolean(process.env.CLERK_PUBLISHABLE_KEY?.trim()),
+      origin: req.get("origin") ?? null,
+      forwardedHostPresent: Boolean(req.get("x-forwarded-host")),
+    }, "Clerk authentication rejected API request");
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
